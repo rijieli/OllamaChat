@@ -35,6 +35,7 @@
 		64E569892B23CE4D00B87CD6 /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = 64E569882B23CE4D00B87CD6 /* MarkdownUI */; };
 		DB6D278F2B7DE9CA00318297 /* ChatView+SystemPrompt.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6D278E2B7DE9CA00318297 /* ChatView+SystemPrompt.swift */; };
 		DBECB4D02B7DF3DB00C9F3C0 /* View+.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBECB4CF2B7DF3DB00C9F3C0 /* View+.swift */; };
+		DBECB4D22B7DFE8F00C9F3C0 /* View+Tracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBECB4D12B7DFE8F00C9F3C0 /* View+Tracking.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -86,6 +87,7 @@
 		32DCE6BA2ADB090500A24528 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		DB6D278E2B7DE9CA00318297 /* ChatView+SystemPrompt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatView+SystemPrompt.swift"; sourceTree = "<group>"; };
 		DBECB4CF2B7DF3DB00C9F3C0 /* View+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+.swift"; sourceTree = "<group>"; };
+		DBECB4D12B7DFE8F00C9F3C0 /* View+Tracking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+Tracking.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -227,6 +229,7 @@
 			isa = PBXGroup;
 			children = (
 				DBECB4CF2B7DF3DB00C9F3C0 /* View+.swift */,
+				DBECB4D12B7DFE8F00C9F3C0 /* View+Tracking.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -373,6 +376,7 @@
 				32CDC0322AD2DF4200D4DA6B /* ChatController.swift in Sources */,
 				32D730C72AD3F77100DF8044 /* ChatBubble.swift in Sources */,
 				DB6D278F2B7DE9CA00318297 /* ChatView+SystemPrompt.swift in Sources */,
+				DBECB4D22B7DFE8F00C9F3C0 /* View+Tracking.swift in Sources */,
 				32CDC0212AD2B50600D4DA6B /* MenuItem.swift in Sources */,
 				320EE92E2ADAED4F00758FB9 /* ManageModelsController.swift in Sources */,
 				32CDC02C2AD2DE7600D4DA6B /* MenuView.swift in Sources */,

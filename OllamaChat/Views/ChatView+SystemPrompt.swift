@@ -22,15 +22,28 @@ extension ChatView {
             ZStack {
                 GeometryReader { proxy in
                     ZStack {
-                        VStack(spacing: 0) {
-                            TextEditor(text: $systemPrompt)
-                                .font(.body)
-                                .onSubmit {
-                                    viewModel.current.system = systemPrompt
-                                }
-                                .focused(self.$isPopupFocused)
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 16)
+                        VStack(spacing: 12) {
+                            Text("System")
+                                .font(.title)
+                                .fontWeight(.bold)
+                                .padding(.leading, 12)
+                                .maxWidth(alignment: .leading)
+                                .padding(.bottom, 4)
+                            ZStack {
+                                TextEditor(text: $systemPrompt)
+                                    .font(.body)
+                                    .onSubmit {
+                                        viewModel.current.system = systemPrompt
+                                    }
+                                    .focused(self.$isPopupFocused)
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 16)
+                            }
+                            .background(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .strokeBorder(Color.black.opacity(0.1), lineWidth: 1)
+                            )
+                            .background()
                             
                             HStack {
                                 Button("Cancel") {
@@ -45,42 +58,19 @@ extension ChatView {
                             }
                             .frame(height: 32)
                             .maxWidth(alignment: .trailing)
-                            .padding(12)
                         }
+                        .padding(12)
                     }
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .strokeBorder(Color.black.opacity(0.1), lineWidth: 1)
-                    )
-                    .background() {
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(.white)
-                    }
-                    .transition(.push(from: .bottom))
-                    .frame(
-                        width: proxy.size.width > 400 ? 400 : proxy.size.width,
-                        height: proxy.size.height > 300 ? 300 : proxy.size.height
-                    )
-                    .compositingGroup()
-                    .shadow(color: .black.opacity(0.2), radius: 4, y: 2)
                     .maxFrame()
                 }
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .onTapGesture {
-                viewModel.showSystemConfig = false
-            }
-            .animation(.default, value: viewModel.showSystemConfig)
+            .frame(minWidth: 360, minHeight: 300, idealHeight: 300)
             .task {
                 systemPrompt = viewModel.current.system
                 isPopupFocused = true
             }
         }
         
-    }
-    
-    func systemPromptView() -> some View {
-        SystemEditorView(viewModel: viewModel)
     }
     
 }

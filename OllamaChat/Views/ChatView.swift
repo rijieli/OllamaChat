@@ -42,10 +42,13 @@ struct ChatView: View {
                         .markdownTextStyle{
                             ForegroundColor(Color.white)
                         }
-                        .padding([.leading, .trailing])
+                        .padding([.leading, .trailing], 8)
                         .padding([.top, .bottom], 8)
                         .textSelection(.enabled)
                         .background(Color.blue)
+                    }
+                    .onHover { _ in
+                        print("hover")
                     }
                     ChatBubble(direction: .left) {
                         Markdown {
@@ -65,7 +68,7 @@ struct ChatView: View {
                                 }
                                 .background(Color.white.opacity(0.25))
                         }
-                        .padding([.leading, .trailing])
+                        .padding([.leading, .trailing], 8)
                         .padding([.top, .bottom], 8)
                         .textSelection(.enabled)
                         .foregroundStyle(Color.secondary)
@@ -183,10 +186,8 @@ struct ChatView: View {
                 }
             }
         }
-        .overlay {
-            if viewModel.showSystemConfig {
-                systemPromptView()
-            }
+        .sheet(isPresented: $viewModel.showSystemConfig) {
+            SystemEditorView(viewModel: viewModel)
         }
     }
     
