@@ -122,6 +122,7 @@ struct ChatView: View {
                                 .padding(.trailing, 12)
                                 .frame(maxWidth: .infinity, alignment: .trailing)
                                 .animation(.default, value: disabledButton)
+                                .keyboardShortcut(.return, modifiers: .command)
                             }
                     }
                     .background(
@@ -246,6 +247,7 @@ struct ChatView: View {
     }
     
     func send() {
+        guard !viewModel.current.prompt.isEmpty else { return }
         Task {
             do {
                 self.errorModel.showError = false
