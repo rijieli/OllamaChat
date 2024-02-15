@@ -11,7 +11,6 @@ import SwiftUI
 struct ChatView: View {
     let fontSize: CGFloat = 15
     
-    @State private var prompt: PromptModel = .init(prompt: "", model: "", system: "")
     @State private var sentPrompt: [String] = []
     @State private var receivedResponse: [String] = []
     @State private var tags: tagsParent?
@@ -19,15 +18,18 @@ struct ChatView: View {
     @State private var disabledEditor: Bool = false
     @State private var showingErrorPopover: Bool = false
     @State private var errorModel: ErrorModel = .init(showError: false, errorTitle: "", errorMessage: "")
+    
+    @ObservedObject var viewModel = ViewModel()
+    
     @FocusState private var promptFieldIsFocused: Bool
+    
     @AppStorage("host") private var host = "http://127.0.0.1"
     @AppStorage("port") private var port = "11434"
     @AppStorage("timeoutRequest") private var timeoutRequest = "60"
     @AppStorage("timeoutResource") private var timeoutResource = "604800"
     
     var body: some View {
-        VStack(spacing: 0)
-        {
+        VStack(spacing: 0) {
             ScrollView {
                 Text("This is the start of your chat")
                     .foregroundStyle(.secondary)
@@ -72,53 +74,64 @@ struct ChatView: View {
                 }
             }
             .defaultScrollAnchor(.bottom)
-            HStack(alignment: .bottom){
-                ZStack {
-                    TextEditor(text: self.$prompt.prompt)
-                        .font(.body)
-                        .onSubmit {
-                            !self.disabledButton ? self.send() : nil
-                        }
-                        .disabled(self.disabledEditor)
-                        .focused(self.$promptFieldIsFocused)
-                        .onChange(of: self.prompt.prompt) {
-                            if self.prompt.prompt.count > 0 {
-                                self.disabledButton = false
-                            } else {
-                                self.disabledButton = true
-                            }
-                        }
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 16)
-                }
-                .frame(height: 160)
-                .frame(maxWidth: .infinity)
-                .background(Color.white)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-                
-                VStack {
-                    Button {
-                        self.send()
-                    } label: {
-                        Image(systemName: "paperplane.fill")
-                            .frame(width: 20, height: 20, alignment: .center)
-                            .frame(width: 40, height: 40)
-                            .foregroundStyle(.black)
+            VStack {
+                HStack {
+                    actionButton("gearshape.fill") {
+                        viewModel.showSystemConfig = true
                     }
-                    .disabled(self.disabledButton)
                     
-                    Button {
+                    actionButton("trash.fill") {
                         self.resetChat()
-                    } label: {
-                        Image(systemName: "trash.fill")
-                            .frame(width: 20, height: 20, alignment: .center)
-                            .frame(width: 40, height: 40)
-                            .foregroundStyle(.black)
                     }
                 }
+                .frame(height: 40)
+                .padding(.trailing, 12)
+                .frame(maxWidth: .infinity, alignment: .trailing)
+                
+                HStack(spacing: 12) {
+                    ZStack {
+                        TextEditor(text: $viewModel.current.prompt)
+                            .font(.body)
+                            .onSubmit {
+                                !self.disabledButton ? self.send() : nil
+                            }
+                            .disabled(self.disabledEditor)
+                            .focused(self.$promptFieldIsFocused)
+                            .onChange(of: viewModel.current.prompt) {
+                                self.disabledButton = viewModel.current.prompt.isEmpty
+                            }
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 16)
+                            .opacity(disabledEditor ? 0 : 1)
+                            .overlay {
+                                Button {
+                                    send()
+                                } label: {
+                                    Image(systemName: "arrow.up.circle.fill")
+                                        .font(.system(size: 24))
+                                        .frame(width: 20, height: 20, alignment: .center)
+                                        .frame(width: 40, height: 40)
+                                        .foregroundStyle(.blue)
+                                        .contentShape(Rectangle())
+                                }
+                                .buttonStyle(.plain)
+                                .opacity(self.disabledButton ? 0 : 1)
+                                .padding(.trailing, 12)
+                                .frame(maxWidth: .infinity, alignment: .trailing)
+                                .animation(.default, value: disabledButton)
+                            }
+                    }
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .strokeBorder(Color.black.opacity(0.2), lineWidth: 1)
+                    )
+                    .padding(.horizontal, 12)
+                    .padding(.bottom, 12)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                }
+                .frame(maxHeight: .infinity)
             }
-            .padding()
-            .background(.ultraThickMaterial)
+            .frame(height: 160)
         }
         .frame(minWidth: 400, idealWidth: 700, minHeight: 600, idealHeight: 800)
         .background(Color(NSColor.controlBackgroundColor))
@@ -128,7 +141,7 @@ struct ChatView: View {
         .toolbar {
             ToolbarItemGroup(placement: .automatic){
                 HStack {
-                    Picker("Model:", selection: self.$prompt.model) {
+                    Picker("Model:", selection: $viewModel.current.model) {
                         ForEach(self.tags?.models ?? [], id: \.self) { model in
                             Text(model.name).tag(model.name)
                         }
@@ -170,6 +183,24 @@ struct ChatView: View {
                 }
             }
         }
+        .overlay {
+            if viewModel.showSystemConfig {
+                systemPromptView()
+            }
+        }
+    }
+    
+    func actionButton(_ sfName: String, action: (() -> Void)?) -> some View {
+        Button {
+            action?()
+        } label: {
+            Image(systemName: sfName)
+                .frame(width: 20, height: 20, alignment: .center)
+                .frame(width: 40, height: 32)
+                .foregroundStyle(.white)
+                .background(Capsule().fill(Color.blue))
+        }
+        .buttonStyle(.plain)
     }
     
     func getTags() {
@@ -181,13 +212,13 @@ struct ChatView: View {
                 self.tags = try await getLocalModels(host: "\(self.host):\(self.port)", timeoutRequest: self.timeoutRequest, timeoutResource: self.timeoutResource)
                 if(self.tags != nil){
                     if(self.tags!.models.count > 0){
-                        self.prompt.model = self.tags!.models[0].name
+                        viewModel.current.model = self.tags!.models[0].name
                     }else{
-                        self.prompt.model = ""
+                        viewModel.current.model = ""
                         self.errorModel = noModelsError(error: nil)
                     }
                 }else{
-                    self.prompt.model = ""
+                    viewModel.current.model = ""
                     self.errorModel = noModelsError(error: nil)
                 }
             } catch let NetError.invalidURL(error) {
@@ -215,20 +246,28 @@ struct ChatView: View {
                 self.errorModel.showError = false
                 self.disabledEditor = true
                 
-                self.sentPrompt.append(self.prompt.prompt)
+                self.sentPrompt.append(viewModel.current.prompt)
                 
-                var chatHistory = ChatModel(model: self.prompt.model, messages: [])
+                var messages = [ChatMessage]()
+                
+                if !viewModel.current.system.isEmpty {
+                    messages.append(ChatMessage(role: "system", content: viewModel.current.system))
+                }
                 
                 for i in 0 ..< self.sentPrompt.count {
-                    chatHistory.messages.append(ChatMessage(role: "user", content: self.sentPrompt[i]))
+                    messages.append(ChatMessage(role: "user", content: self.sentPrompt[i]))
                     if i < self.receivedResponse.count {
-                        chatHistory.messages.append(ChatMessage(role: "assistant", content: self.receivedResponse[i]))
+                        messages.append(ChatMessage(role: "assistant", content: self.receivedResponse[i]))
                     }
                 }
                 
                 self.receivedResponse.append("")
                 
-                print("Sending request")
+                let chatHistory = ChatModel(
+                    model: viewModel.current.model,
+                    messages: messages
+                )
+                
                 let endpoint = "\(host):\(port)" + "/api/chat"
                 
                 guard let url = URL(string: endpoint) else {
@@ -242,6 +281,8 @@ struct ChatView: View {
                 let encoder = JSONEncoder()
                 encoder.keyEncodingStrategy = .convertToSnakeCase
                 request.httpBody = try encoder.encode(chatHistory)
+                
+                print("Sending request \(chatHistory)")
                 
                 let data: URLSession.AsyncBytes
                 let response: URLResponse
@@ -267,7 +308,7 @@ struct ChatView: View {
                     self.receivedResponse[self.receivedResponse.count - 1].append(decoded.message.content)
                 }
                 self.disabledEditor = false
-                self.prompt.prompt = ""
+                viewModel.current.prompt = ""
             } catch let NetError.invalidURL(error) {
                 errorModel = invalidURLError(error: error)
             } catch let NetError.invalidData(error) {
@@ -285,4 +326,16 @@ struct ChatView: View {
 
 #Preview {
     ChatView()
+}
+
+extension ChatView {
+    
+    class ViewModel: ObservableObject {
+        
+        @Published var showSystemConfig = false
+        
+        @Published var current: PromptModel = .init(prompt: "", model: "", system: "")
+        
+    }
+    
 }

@@ -37,6 +37,9 @@
         }
       }
     },
+    "Cancel" : {
+
+    },
     "Connected" : {
 
     },
@@ -144,6 +147,9 @@
 
     },
     "Resources Timeout (in sec. Default: 604800):" : {
+
+    },
+    "Save" : {
 
     },
     "Server Status: " : {

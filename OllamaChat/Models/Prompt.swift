@@ -18,7 +18,11 @@ struct ChatModel: Encodable{
     var messages: [ChatMessage]
 }
 
-struct ChatMessage :Encodable, Equatable, Hashable, Decodable{
+struct ChatMessage :Encodable, Equatable, Hashable, Decodable, CustomStringConvertible {
     var role: String
     var content: String
+    
+    var description: String {
+        "\(role) : \(content)"
+    }
 }

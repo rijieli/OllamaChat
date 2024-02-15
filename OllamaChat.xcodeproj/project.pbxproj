@@ -33,6 +33,8 @@
 		32D730C92AD5FB8200DF8044 /* ErrorModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32D730C82AD5FB8200DF8044 /* ErrorModel.swift */; };
 		32DCE6BB2ADB090500A24528 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32DCE6BA2ADB090500A24528 /* ContentView.swift */; };
 		64E569892B23CE4D00B87CD6 /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = 64E569882B23CE4D00B87CD6 /* MarkdownUI */; };
+		DB6D278F2B7DE9CA00318297 /* ChatView+SystemPrompt.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6D278E2B7DE9CA00318297 /* ChatView+SystemPrompt.swift */; };
+		DBECB4D02B7DF3DB00C9F3C0 /* View+.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBECB4CF2B7DF3DB00C9F3C0 /* View+.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -82,6 +84,8 @@
 		32D730C62AD3F77100DF8044 /* ChatBubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatBubble.swift; sourceTree = "<group>"; };
 		32D730C82AD5FB8200DF8044 /* ErrorModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorModel.swift; sourceTree = "<group>"; };
 		32DCE6BA2ADB090500A24528 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		DB6D278E2B7DE9CA00318297 /* ChatView+SystemPrompt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatView+SystemPrompt.swift"; sourceTree = "<group>"; };
+		DBECB4CF2B7DF3DB00C9F3C0 /* View+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -133,6 +137,7 @@
 		327B90452AD17EA300A94F10 /* OllamaChat */ = {
 			isa = PBXGroup;
 			children = (
+				DBECB4CE2B7DF3C900C9F3C0 /* Extensions */,
 				32CDC0262AD2B6E300D4DA6B /* Utils */,
 				32CDC01F2AD2B4BD00D4DA6B /* Views */,
 				32CDC01E2AD2B4B700D4DA6B /* Controllers */,
@@ -201,6 +206,7 @@
 				3271CD122ADAD23400B14DD2 /* SettingsView.swift */,
 				320EE92B2ADAE7DE00758FB9 /* ManageModelsView.swift */,
 				32DCE6BA2ADB090500A24528 /* ContentView.swift */,
+				DB6D278E2B7DE9CA00318297 /* ChatView+SystemPrompt.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -215,6 +221,14 @@
 				3271CD102ADAC94500B14DD2 /* ErrorMessages.swift */,
 			);
 			path = Utils;
+			sourceTree = "<group>";
+		};
+		DBECB4CE2B7DF3C900C9F3C0 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				DBECB4CF2B7DF3DB00C9F3C0 /* View+.swift */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -358,10 +372,12 @@
 				32D730C92AD5FB8200DF8044 /* ErrorModel.swift in Sources */,
 				32CDC0322AD2DF4200D4DA6B /* ChatController.swift in Sources */,
 				32D730C72AD3F77100DF8044 /* ChatBubble.swift in Sources */,
+				DB6D278F2B7DE9CA00318297 /* ChatView+SystemPrompt.swift in Sources */,
 				32CDC0212AD2B50600D4DA6B /* MenuItem.swift in Sources */,
 				320EE92E2ADAED4F00758FB9 /* ManageModelsController.swift in Sources */,
 				32CDC02C2AD2DE7600D4DA6B /* MenuView.swift in Sources */,
 				32CDC0302AD2DED600D4DA6B /* ChatView.swift in Sources */,
+				DBECB4D02B7DF3DB00C9F3C0 /* View+.swift in Sources */,
 				32CDC02E2AD2DEA500D4DA6B /* JSONParser.swift in Sources */,
 				32CDC0232AD2B57400D4DA6B /* Prompt.swift in Sources */,
 				3271CD112ADAC94500B14DD2 /* ErrorMessages.swift in Sources */,
