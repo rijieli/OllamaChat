@@ -35,7 +35,9 @@ struct ChatView: View {
                     .foregroundStyle(.secondary)
                     .padding()
                 ForEach(Array(self.sentPrompt.enumerated()), id: \.offset) { idx, sent in
-                    ChatBubble(direction: .right) {
+                    ChatBubble(direction: .right, onTapFloatingButton: {
+                        print(idx)
+                    }) {
                         Markdown {
                             .init(sent.trimmingCharacters(in: .whitespacesAndNewlines))
                         }
@@ -47,9 +49,7 @@ struct ChatView: View {
                         .textSelection(.enabled)
                         .background(Color.blue)
                     }
-                    .onHover { _ in
-                        print("hover")
-                    }
+                    
                     ChatBubble(direction: .left) {
                         Markdown {
                             .init(self.receivedResponse.indices.contains(idx) ?
@@ -149,10 +149,11 @@ struct ChatView: View {
                             Text(model.name).tag(model.name)
                         }
                     }
-                    NavigationLink {
-                        ManageModelsView()
+                    Button {
+                        viewModel.showModelConfig = true
                     } label: {
-                        Label("Manage Models", systemImage: "gearshape")
+                        Label("Manage Models", systemImage: "cube")
+                            .fontWeight(.bold)
                     }
                 }
                 if self.errorModel.showError {
@@ -188,6 +189,9 @@ struct ChatView: View {
         }
         .sheet(isPresented: $viewModel.showSystemConfig) {
             SystemEditorView(viewModel: viewModel)
+        }
+        .sheet(isPresented: $viewModel.showModelConfig) {
+            ManageModelsView()
         }
     }
     
@@ -335,7 +339,13 @@ extension ChatView {
         
         @Published var showSystemConfig = false
         
-        @Published var current: PromptModel = .init(prompt: "", model: "", system: "")
+        @Published var showModelConfig = false
+        
+        @Published var current: PromptModel = .init(
+            prompt: "",
+            model: "",
+            system: AppSettings.globalSystem
+        )
         
     }
     

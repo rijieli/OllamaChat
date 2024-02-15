@@ -17,6 +17,7 @@ struct ManageModelsView: View {
     @State private var showingErrorPopover: Bool = false
     @State private var totalSize: Double = 0
     @State private var completedSoFar: Double = 0
+    @State private var globalSystemPrompt = AppSettings.globalSystem
     
     @AppStorage("host") private var host = "http://127.0.0.1"
     @AppStorage("port") private var port = "11434"
@@ -50,6 +51,7 @@ struct ManageModelsView: View {
                     }
                 }
             }
+            .frame(maxHeight: 450)
             
             HStack{
                 Text("Duplicate Model:")
@@ -68,7 +70,16 @@ struct ManageModelsView: View {
                         .frame(width: 20, height: 20, alignment: .center)
                 }
             }
-            Spacer()
+            
+            HStack{
+                Text("Global System Prompt:")
+                        .font(.headline)
+                TextField("Global System Prompt", text: $globalSystemPrompt)
+                    .textFieldStyle(.roundedBorder)
+                Button("Save"){
+                    AppSettings.globalSystem = globalSystemPrompt
+                }
+            }
             HStack{
                 Text("Add Model:")
                     .font(.headline)
@@ -93,10 +104,9 @@ struct ManageModelsView: View {
                     .textSelection(.enabled)
                 Text("A good starting model is llama2. Simply write the model name in the field above")
             }
-            Spacer()
         }
         .padding()
-        .frame(minWidth: 400, idealWidth: 500, minHeight: 600, idealHeight: 800)
+        .frame(minWidth: 400, idealWidth: 600, minHeight: 400, idealHeight: 800)
         .task {
             getTags()
         }
@@ -119,10 +129,12 @@ struct ManageModelsView: View {
                             }
                             .padding()
                         }
-                }else{
+                } else {
                     Text("Server:")
+                        .fixedWidth()
                     Label("Connected", systemImage: "circle.fill")
                         .foregroundStyle(.green)
+                        .fixedWidth()
                 }
                 Button{
                     getTags()

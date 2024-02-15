@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct SettingsView: View {
+    
     private enum Tabs: Hashable {
             case general, models
         }

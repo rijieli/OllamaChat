@@ -36,6 +36,9 @@
 		DB6D278F2B7DE9CA00318297 /* ChatView+SystemPrompt.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6D278E2B7DE9CA00318297 /* ChatView+SystemPrompt.swift */; };
 		DBECB4D02B7DF3DB00C9F3C0 /* View+.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBECB4CF2B7DF3DB00C9F3C0 /* View+.swift */; };
 		DBECB4D22B7DFE8F00C9F3C0 /* View+Tracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBECB4D12B7DFE8F00C9F3C0 /* View+Tracking.swift */; };
+		DBECB4D42B7E03AB00C9F3C0 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBECB4D32B7E03AB00C9F3C0 /* AppSettings.swift */; };
+		DBECB4D62B7E03CD00C9F3C0 /* UserDefaultsBacked.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBECB4D52B7E03CD00C9F3C0 /* UserDefaultsBacked.swift */; };
+		DBECB4D82B7E0EA500C9F3C0 /* View+Hover.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBECB4D72B7E0EA500C9F3C0 /* View+Hover.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -88,6 +91,9 @@
 		DB6D278E2B7DE9CA00318297 /* ChatView+SystemPrompt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatView+SystemPrompt.swift"; sourceTree = "<group>"; };
 		DBECB4CF2B7DF3DB00C9F3C0 /* View+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+.swift"; sourceTree = "<group>"; };
 		DBECB4D12B7DFE8F00C9F3C0 /* View+Tracking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+Tracking.swift"; sourceTree = "<group>"; };
+		DBECB4D32B7E03AB00C9F3C0 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
+		DBECB4D52B7E03CD00C9F3C0 /* UserDefaultsBacked.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsBacked.swift; sourceTree = "<group>"; };
+		DBECB4D72B7E0EA500C9F3C0 /* View+Hover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+Hover.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -187,6 +193,7 @@
 				32CDC0242AD2B59700D4DA6B /* Response.swift */,
 				32CDC0332AD2F93700D4DA6B /* Tags.swift */,
 				32D730C82AD5FB8200DF8044 /* ErrorModel.swift */,
+				DBECB4D32B7E03AB00C9F3C0 /* AppSettings.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -221,6 +228,7 @@
 				32CDC02D2AD2DEA500D4DA6B /* JSONParser.swift */,
 				32D730C62AD3F77100DF8044 /* ChatBubble.swift */,
 				3271CD102ADAC94500B14DD2 /* ErrorMessages.swift */,
+				DBECB4D52B7E03CD00C9F3C0 /* UserDefaultsBacked.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -230,6 +238,7 @@
 			children = (
 				DBECB4CF2B7DF3DB00C9F3C0 /* View+.swift */,
 				DBECB4D12B7DFE8F00C9F3C0 /* View+Tracking.swift */,
+				DBECB4D72B7E0EA500C9F3C0 /* View+Hover.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -377,6 +386,7 @@
 				32D730C72AD3F77100DF8044 /* ChatBubble.swift in Sources */,
 				DB6D278F2B7DE9CA00318297 /* ChatView+SystemPrompt.swift in Sources */,
 				DBECB4D22B7DFE8F00C9F3C0 /* View+Tracking.swift in Sources */,
+				DBECB4D82B7E0EA500C9F3C0 /* View+Hover.swift in Sources */,
 				32CDC0212AD2B50600D4DA6B /* MenuItem.swift in Sources */,
 				320EE92E2ADAED4F00758FB9 /* ManageModelsController.swift in Sources */,
 				32CDC02C2AD2DE7600D4DA6B /* MenuView.swift in Sources */,
@@ -384,12 +394,14 @@
 				DBECB4D02B7DF3DB00C9F3C0 /* View+.swift in Sources */,
 				32CDC02E2AD2DEA500D4DA6B /* JSONParser.swift in Sources */,
 				32CDC0232AD2B57400D4DA6B /* Prompt.swift in Sources */,
+				DBECB4D62B7E03CD00C9F3C0 /* UserDefaultsBacked.swift in Sources */,
 				3271CD112ADAC94500B14DD2 /* ErrorMessages.swift in Sources */,
 				320EE92C2ADAE7DE00758FB9 /* ManageModelsView.swift in Sources */,
 				3271CD132ADAD23400B14DD2 /* SettingsView.swift in Sources */,
 				32CDC02A2AD2DD9200D4DA6B /* Menu.swift in Sources */,
 				32CDC0342AD2F93700D4DA6B /* Tags.swift in Sources */,
 				32DCE6BB2ADB090500A24528 /* ContentView.swift in Sources */,
+				DBECB4D42B7E03AB00C9F3C0 /* AppSettings.swift in Sources */,
 				327B90472AD17EA300A94F10 /* OllamaChatApp.swift in Sources */,
 				32CDC0252AD2B59700D4DA6B /* Response.swift in Sources */,
 				32CDC0282AD2B70000D4DA6B /* NetworkErrors.swift in Sources */,

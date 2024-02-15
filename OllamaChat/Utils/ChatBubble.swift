@@ -8,11 +8,18 @@
 import SwiftUI
 
 struct ChatBubble<Content>: View where Content: View {
+    
+    @State var hovered = false
+    
+    var onTapFloatingButton: (() -> Void)?
+    
     let direction: ChatBubbleShape.Direction
     let content: () -> Content
-    init(direction: ChatBubbleShape.Direction, @ViewBuilder content: @escaping () -> Content) {
+    
+    init(direction: ChatBubbleShape.Direction, onTapFloatingButton: (() -> Void)? = nil, @ViewBuilder content: @escaping () -> Content) {
         self.content = content
         self.direction = direction
+        self.onTapFloatingButton = onTapFloatingButton
     }
 
     var body: some View {
@@ -22,11 +29,29 @@ struct ChatBubble<Content>: View where Content: View {
             }
             content()
                 .mask { RoundedRectangle(cornerRadius: 12, style: .continuous) }
+                .overlay(alignment: .leading) {
+                    if let onTapFloatingButton, hovered {
+                        Button {
+                            let _ = print("Tapped")
+                            onTapFloatingButton()
+                        } label: {
+                            Image(systemName: "arrow.clockwise.circle.fill")
+                                .font(.system(size: 16, weight: .bold))
+                                .frame(width: 30, height: 30)
+                                .contentShape(Rectangle())
+                        }
+                        .offset(x: -30)
+                        .buttonStyle(.plain)
+                        .zIndex(1)
+                    }
+                }
             if direction == .left {
                 Spacer(minLength: 32)
             }
         }
-        .padding([(direction == .left) ? .leading : .trailing, .top, .bottom], 5)
+        .contentShape(Rectangle())
+        //.whenHovered { hovered = $0 } This code block mouse click
+        .padding([(direction == .left) ? .leading : .trailing, .top, .bottom], 12)
     }
 }
 
