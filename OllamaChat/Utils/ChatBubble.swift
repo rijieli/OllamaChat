@@ -32,7 +32,6 @@ struct ChatBubble<Content>: View where Content: View {
                 .overlay(alignment: .leading) {
                     if let onTapFloatingButton, hovered {
                         Button {
-                            let _ = print("Tapped")
                             onTapFloatingButton()
                         } label: {
                             Image(systemName: "arrow.clockwise.circle.fill")
@@ -50,7 +49,7 @@ struct ChatBubble<Content>: View where Content: View {
             }
         }
         .contentShape(Rectangle())
-        //.whenHovered { hovered = $0 } This code block mouse click
+        .onHover { hovered = $0 }
         .padding([(direction == .left) ? .leading : .trailing, .top, .bottom], 12)
     }
 }

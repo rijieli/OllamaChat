@@ -11,129 +11,142 @@ import SwiftUI
 struct ChatView: View {
     let fontSize: CGFloat = 15
     
-    @State private var sentPrompt: [String] = []
-    @State private var receivedResponse: [String] = []
-    @State private var tags: tagsParent?
-    @State private var disabledButton: Bool = true
-    @State private var disabledEditor: Bool = false
+    @State private var tags: ModelGroup?
     @State private var showingErrorPopover: Bool = false
-    @State private var errorModel: ErrorModel = .init(showError: false, errorTitle: "", errorMessage: "")
     
     @ObservedObject var viewModel = ViewModel()
     
     @FocusState private var promptFieldIsFocused: Bool
     
-    @AppStorage("host") private var host = "http://127.0.0.1"
-    @AppStorage("port") private var port = "11434"
-    @AppStorage("timeoutRequest") private var timeoutRequest = "60"
-    @AppStorage("timeoutResource") private var timeoutResource = "604800"
+    @Namespace var bottomID
     
     var body: some View {
         VStack(spacing: 0) {
-            ScrollView {
-                Text("This is the start of your chat")
-                    .foregroundStyle(.secondary)
-                    .padding()
-                ForEach(Array(self.sentPrompt.enumerated()), id: \.offset) { idx, sent in
-                    ChatBubble(direction: .right, onTapFloatingButton: {
-                        print(idx)
-                    }) {
-                        Markdown {
-                            .init(sent.trimmingCharacters(in: .whitespacesAndNewlines))
+            ScrollViewReader { proxy in
+                ScrollView {
+                    Text("This is the start of your chat")
+                        .foregroundStyle(.secondary)
+                        .padding()
+                    ForEach(Array(viewModel.sentPrompt.enumerated()), id: \.offset) { idx, sent in
+                        ChatBubble(direction: .right, onTapFloatingButton: {
+                            viewModel.resendUntil(idx)
+                        }) {
+                            Markdown {
+                                .init(sent.trimmingCharacters(in: .whitespacesAndNewlines))
+                            }
+                            .markdownTextStyle{
+                                ForegroundColor(Color.white)
+                            }
+                            .padding([.leading, .trailing], 8)
+                            .padding([.top, .bottom], 8)
+                            .textSelection(.enabled)
+                            .background(Color.blue)
                         }
-                        .markdownTextStyle{
-                            ForegroundColor(Color.white)
+                        
+                        ChatBubble(direction: .left) {
+                            Markdown {
+                                .init(viewModel.receivedResponse.indices.contains(idx) ?
+                                      viewModel.receivedResponse[idx].trimmingCharacters(in: .whitespacesAndNewlines) :
+                                        "...")
+                            }
+                            .markdownTextStyle(\.code) {
+                                FontFamilyVariant(.monospaced)
+                                BackgroundColor(.white.opacity(0.25))
+                            }
+                            .markdownBlockStyle(\.codeBlock) { configuration in
+                                configuration.label
+                                    .padding()
+                                    .markdownTextStyle {
+                                        FontFamilyVariant(.monospaced)
+                                    }
+                                    .background(Color.white.opacity(0.25))
+                            }
+                            .padding([.leading, .trailing], 8)
+                            .padding([.top, .bottom], 8)
+                            .textSelection(.enabled)
+                            .foregroundStyle(Color.secondary)
+                            .background(Color(NSColor.secondarySystemFill))
                         }
-                        .padding([.leading, .trailing], 8)
-                        .padding([.top, .bottom], 8)
-                        .textSelection(.enabled)
-                        .background(Color.blue)
                     }
                     
-                    ChatBubble(direction: .left) {
-                        Markdown {
-                            .init(self.receivedResponse.indices.contains(idx) ?
-                                  self.receivedResponse[idx].trimmingCharacters(in: .whitespacesAndNewlines) :
-                                    "...")
+                    Color.clear
+                        .maxWidth()
+                        .frame(height: 40)
+                        .id(bottomID)
+                    
+                }
+                .maxFrame()
+                .defaultScrollAnchor(.bottom)
+                .overlay(alignment: .bottom) {
+                    HStack {
+                        if viewModel.waitingResponse {
+                            actionButton("stop.fill") {
+                                viewModel.work?.cancel()
+                            }
+                            .transition(.opacity)
                         }
-                        .markdownTextStyle(\.code) {
-                            FontFamilyVariant(.monospaced)
-                            BackgroundColor(.white.opacity(0.25))
+                        
+                        actionButton("gearshape.fill") {
+                            viewModel.showSystemConfig = true
                         }
-                        .markdownBlockStyle(\.codeBlock) { configuration in
-                            configuration.label
-                                .padding()
-                                .markdownTextStyle {
-                                    FontFamilyVariant(.monospaced)
-                                }
-                                .background(Color.white.opacity(0.25))
+                        
+                        actionButton("trash.fill") {
+                            viewModel.resetChat()
                         }
-                        .padding([.leading, .trailing], 8)
-                        .padding([.top, .bottom], 8)
-                        .textSelection(.enabled)
-                        .foregroundStyle(Color.secondary)
-                        .background(Color(NSColor.secondarySystemFill))
                     }
+                    .frame(height: 40)
+                    .padding(.trailing, 12)
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+                    .animation(.smooth, value: viewModel.waitingResponse)
+                    .padding(.bottom, 8)
+                }
+                .onChange(of: viewModel.receivedResponse) { _, _ in
+                    proxy.scrollTo(bottomID)
                 }
             }
-            .defaultScrollAnchor(.bottom)
+            
+            
             VStack {
-                HStack {
-                    actionButton("gearshape.fill") {
-                        viewModel.showSystemConfig = true
-                    }
-                    
-                    actionButton("trash.fill") {
-                        self.resetChat()
-                    }
+                ZStack {
+                    TextEditor(text: $viewModel.current.prompt)
+                        .font(.body)
+                        .onSubmit {
+                            !viewModel.disabledButton ? viewModel.send() : nil
+                        }
+                        .disabled(viewModel.waitingResponse)
+                        .focused($promptFieldIsFocused)
+                        .onChange(of: viewModel.current.prompt) {
+                            viewModel.disabledButton = viewModel.current.prompt.isEmpty
+                        }
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 16)
+                        .opacity(viewModel.waitingResponse ? 0 : 1)
+                        .overlay {
+                            Button {
+                                viewModel.send()
+                            } label: {
+                                Image(systemName: "arrow.up.circle.fill")
+                                    .font(.system(size: 24))
+                                    .frame(width: 20, height: 20, alignment: .center)
+                                    .frame(width: 40, height: 40)
+                                    .foregroundStyle(.blue)
+                                    .contentShape(Rectangle())
+                            }
+                            .buttonStyle(.plain)
+                            .opacity(viewModel.waitingResponse ? 0 : 1)
+                            .padding(.trailing, 12)
+                            .frame(maxWidth: .infinity, alignment: .trailing)
+                            .animation(.default, value: viewModel.waitingResponse)
+                            .keyboardShortcut(.return, modifiers: .command)
+                        }
                 }
-                .frame(height: 40)
-                .padding(.trailing, 12)
-                .frame(maxWidth: .infinity, alignment: .trailing)
-                
-                HStack(spacing: 12) {
-                    ZStack {
-                        TextEditor(text: $viewModel.current.prompt)
-                            .font(.body)
-                            .onSubmit {
-                                !self.disabledButton ? self.send() : nil
-                            }
-                            .disabled(self.disabledEditor)
-                            .focused(self.$promptFieldIsFocused)
-                            .onChange(of: viewModel.current.prompt) {
-                                self.disabledButton = viewModel.current.prompt.isEmpty
-                            }
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 16)
-                            .opacity(disabledEditor ? 0 : 1)
-                            .overlay {
-                                Button {
-                                    send()
-                                } label: {
-                                    Image(systemName: "arrow.up.circle.fill")
-                                        .font(.system(size: 24))
-                                        .frame(width: 20, height: 20, alignment: .center)
-                                        .frame(width: 40, height: 40)
-                                        .foregroundStyle(.blue)
-                                        .contentShape(Rectangle())
-                                }
-                                .buttonStyle(.plain)
-                                .opacity(self.disabledButton ? 0 : 1)
-                                .padding(.trailing, 12)
-                                .frame(maxWidth: .infinity, alignment: .trailing)
-                                .animation(.default, value: disabledButton)
-                                .keyboardShortcut(.return, modifiers: .command)
-                            }
-                    }
-                    .background(
-                        RoundedRectangle(cornerRadius: 12)
-                            .strokeBorder(Color.black.opacity(0.2), lineWidth: 1)
-                    )
-                    .padding(.horizontal, 12)
-                    .padding(.bottom, 12)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                }
-                .frame(maxHeight: .infinity)
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .strokeBorder(Color.black.opacity(0.2), lineWidth: 1)
+                )
+                .padding(.horizontal, 12)
+                .padding(.bottom, 12)
+                .maxFrame()
             }
             .frame(height: 160)
         }
@@ -157,7 +170,7 @@ struct ChatView: View {
                             .fontWeight(.bold)
                     }
                 }
-                if self.errorModel.showError {
+                if viewModel.errorModel.showError {
                     Button {
                         self.showingErrorPopover.toggle()
                     } label: {
@@ -166,10 +179,10 @@ struct ChatView: View {
                     }
                     .popover(isPresented: self.$showingErrorPopover) {
                         VStack(alignment: .leading) {
-                            Text(self.errorModel.errorTitle)
+                            Text(viewModel.errorModel.errorTitle)
                                 .font(.title2)
                                 .textSelection(.enabled)
-                            Text(self.errorModel.errorMessage)
+                            Text(viewModel.errorModel.errorMessage)
                                 .textSelection(.enabled)
                         }
                         .padding()
@@ -212,123 +225,35 @@ struct ChatView: View {
     func getTags() {
         Task {
             do {
-                self.disabledButton = false
-                self.disabledEditor = false
-                self.errorModel.showError = false
-                self.tags = try await getLocalModels(host: "\(self.host):\(self.port)", timeoutRequest: self.timeoutRequest, timeoutResource: self.timeoutResource)
+                viewModel.disabledButton = false
+                viewModel.waitingResponse = false
+                viewModel.errorModel.showError = false
+                self.tags = try await getLocalModels(host: "\(viewModel.host):\(viewModel.port)", timeoutRequest: viewModel.timeoutRequest, timeoutResource: viewModel.timeoutResource)
                 if(self.tags != nil){
                     if(self.tags!.models.count > 0){
                         viewModel.current.model = self.tags!.models[0].name
                     }else{
                         viewModel.current.model = ""
-                        self.errorModel = noModelsError(error: nil)
+                        viewModel.errorModel = noModelsError(error: nil)
                     }
                 }else{
                     viewModel.current.model = ""
-                    self.errorModel = noModelsError(error: nil)
+                    viewModel.errorModel = noModelsError(error: nil)
                 }
             } catch let NetError.invalidURL(error) {
-                self.errorModel = invalidURLError(error: error)
+                viewModel.errorModel = invalidURLError(error: error)
             } catch let NetError.invalidData(error) {
-                self.errorModel = invalidTagsDataError(error: error)
+                viewModel.errorModel = invalidTagsDataError(error: error)
             } catch let NetError.invalidResponse(error) {
-                self.errorModel = invalidResponseError(error: error)
+                viewModel.errorModel = invalidResponseError(error: error)
             } catch let NetError.unreachable(error) {
-                self.errorModel = unreachableError(error: error)
+                viewModel.errorModel = unreachableError(error: error)
             } catch {
-                self.errorModel = genericError(error: error)
+                viewModel.errorModel = genericError(error: error)
             }
         }
     }
     
-    func resetChat() {
-        self.sentPrompt = []
-        self.receivedResponse = []
-    }
-    
-    func send() {
-        guard !viewModel.current.prompt.isEmpty else { return }
-        Task {
-            do {
-                self.errorModel.showError = false
-                self.disabledEditor = true
-                
-                self.sentPrompt.append(viewModel.current.prompt)
-                
-                var messages = [ChatMessage]()
-                
-                if !viewModel.current.system.isEmpty {
-                    messages.append(ChatMessage(role: "system", content: viewModel.current.system))
-                }
-                
-                for i in 0 ..< self.sentPrompt.count {
-                    messages.append(ChatMessage(role: "user", content: self.sentPrompt[i]))
-                    if i < self.receivedResponse.count {
-                        messages.append(ChatMessage(role: "assistant", content: self.receivedResponse[i]))
-                    }
-                }
-                
-                self.receivedResponse.append("")
-                
-                let chatHistory = ChatModel(
-                    model: viewModel.current.model,
-                    messages: messages
-                )
-                
-                let endpoint = "\(host):\(port)" + "/api/chat"
-                
-                guard let url = URL(string: endpoint) else {
-                    throw NetError.invalidURL(error: nil)
-                }
-                
-                var request = URLRequest(url: url)
-                request.httpMethod = "POST"
-                request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-                
-                let encoder = JSONEncoder()
-                encoder.keyEncodingStrategy = .convertToSnakeCase
-                request.httpBody = try encoder.encode(chatHistory)
-                
-                print("Sending request \(chatHistory)")
-                
-                let data: URLSession.AsyncBytes
-                let response: URLResponse
-                
-                do {
-                    let sessionConfig = URLSessionConfiguration.default
-                    sessionConfig.timeoutIntervalForRequest = Double(timeoutRequest) ?? 60
-                    sessionConfig.timeoutIntervalForResource = Double(timeoutResource) ?? 604800
-                    (data, response) = try await URLSession(configuration: sessionConfig).bytes(for: request)
-                } catch {
-                    throw NetError.unreachable(error: error)
-                }
-                
-                guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
-                    throw NetError.invalidResponse(error: nil)
-                }
-                
-                for try await line in data.lines {
-                    let decoder = JSONDecoder()
-                    decoder.keyDecodingStrategy = .convertFromSnakeCase
-                    let data = line.data(using: .utf8)!
-                    let decoded = try decoder.decode(ResponseModel.self, from: data)
-                    self.receivedResponse[self.receivedResponse.count - 1].append(decoded.message.content)
-                }
-                self.disabledEditor = false
-                viewModel.current.prompt = ""
-            } catch let NetError.invalidURL(error) {
-                errorModel = invalidURLError(error: error)
-            } catch let NetError.invalidData(error) {
-                errorModel = invalidDataError(error: error)
-            } catch let NetError.invalidResponse(error) {
-                errorModel = invalidResponseError(error: error)
-            } catch let NetError.unreachable(error) {
-                errorModel = unreachableError(error: error)
-            } catch {
-                self.errorModel = genericError(error: error)
-            }
-        }
-    }
 }
 
 #Preview {
@@ -338,6 +263,11 @@ struct ChatView: View {
 extension ChatView {
     
     class ViewModel: ObservableObject {
+        
+        @AppStorage("host") var host = "http://127.0.0.1"
+        @AppStorage("port") var port = "11434"
+        @AppStorage("timeoutRequest") var timeoutRequest = "60"
+        @AppStorage("timeoutResource") var timeoutResource = "604800"
         
         @Published var showSystemConfig = false
         
@@ -349,6 +279,122 @@ extension ChatView {
             system: AppSettings.globalSystem
         )
         
+        @Published var receivedResponse: [String] = []
+        @Published var sentPrompt: [String] = []
+        
+        @Published var waitingResponse: Bool = false
+        @Published var disabledButton: Bool = true
+        
+        @Published var errorModel = ErrorModel(showError: false, errorTitle: "", errorMessage: "")
+        
+        var work: Task<Void, Never>?
+        
+        @MainActor
+        func send() {
+            guard !current.prompt.isEmpty else { return }
+            work = Task {
+                do {
+                    self.errorModel.showError = false
+                    waitingResponse = true
+                    
+                    self.sentPrompt.append(current.prompt)
+                    
+                    var messages = [ChatMessage]()
+                    
+                    if !current.system.isEmpty {
+                        messages.append(ChatMessage(role: "system", content: current.system))
+                    }
+                    
+                    for i in 0 ..< self.sentPrompt.count {
+                        messages.append(ChatMessage(role: "user", content: self.sentPrompt[i]))
+                        if i < receivedResponse.count {
+                            messages.append(ChatMessage(role: "assistant", content: self.receivedResponse[i]))
+                        }
+                    }
+                    
+                    self.receivedResponse.append("")
+                    
+                    let chatHistory = ChatModel(
+                        model: current.model,
+                        messages: messages
+                    )
+                    
+                    let endpoint = "\(host):\(port)" + "/api/chat"
+                    
+                    guard let url = URL(string: endpoint) else {
+                        throw NetError.invalidURL(error: nil)
+                    }
+                    
+                    var request = URLRequest(url: url)
+                    request.httpMethod = "POST"
+                    request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+                    
+                    let encoder = JSONEncoder()
+                    encoder.keyEncodingStrategy = .convertToSnakeCase
+                    request.httpBody = try encoder.encode(chatHistory)
+                    
+                    print("Sending request \(chatHistory)")
+                    
+                    let data: URLSession.AsyncBytes
+                    let response: URLResponse
+                    
+                    do {
+                        let sessionConfig = URLSessionConfiguration.default
+                        sessionConfig.timeoutIntervalForRequest = Double(timeoutRequest) ?? 60
+                        sessionConfig.timeoutIntervalForResource = Double(timeoutResource) ?? 604800
+                        (data, response) = try await URLSession(configuration: sessionConfig).bytes(for: request)
+                    } catch {
+                        throw NetError.unreachable(error: error)
+                    }
+                    
+                    guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
+                        throw NetError.invalidResponse(error: nil)
+                    }
+                    
+                    for try await line in data.lines {
+                        let decoder = JSONDecoder()
+                        decoder.keyDecodingStrategy = .convertFromSnakeCase
+                        let data = line.data(using: .utf8)!
+                        let decoded = try decoder.decode(ResponseModel.self, from: data)
+                        self.receivedResponse[self.receivedResponse.count - 1].append(decoded.message.content)
+                    }
+                    waitingResponse = false
+                    current.prompt = ""
+                } catch let NetError.invalidURL(error) {
+                    errorModel = invalidURLError(error: error)
+                } catch let NetError.invalidData(error) {
+                    errorModel = invalidDataError(error: error)
+                } catch let NetError.invalidResponse(error) {
+                    errorModel = invalidResponseError(error: error)
+                } catch let NetError.unreachable(error) {
+                    errorModel = unreachableError(error: error)
+                } catch let error as URLError where error.code == .cancelled {
+                    waitingResponse = false
+                    current.prompt = ""
+                } catch {
+                    self.errorModel = genericError(error: error)
+                }
+            }
+        }
+        
+        func resetChat() {
+            waitingResponse = false
+            work?.cancel()
+            sentPrompt = []
+            receivedResponse = []
+        }
+        
+        @MainActor
+        func resendUntil(_ idx: Int) {
+            guard idx <= (sentPrompt.count - 1) else { return }
+            let prompt = sentPrompt[idx]
+            waitingResponse = false
+            work?.cancel()
+            sentPrompt = sentPrompt.prefix(idx).map { $0 }
+            receivedResponse = receivedResponse.prefix(idx).map { $0 }
+            current.prompt = prompt
+            send()
+        }
     }
     
 }

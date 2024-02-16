@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ManageModelsView: View {
-    @State private var tags: tagsParent?
+    @State private var tags: ModelGroup?
     @State private var errorModel: ErrorModel = ErrorModel(showError: false, errorTitle: "", errorMessage: "")
     @State private var modelName: String = ""
     @State private var toDuplicate: String = ""

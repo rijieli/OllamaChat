@@ -51,7 +51,7 @@ func sendPrompt(host:String, prompt: PromptModel, timeoutRequest: String, timeou
     }
 }
 
-func getLocalModels(host: String, timeoutRequest: String, timeoutResource: String) async throws -> tagsParent{
+func getLocalModels(host: String, timeoutRequest: String, timeoutResource: String) async throws -> ModelGroup {
     let endpoint = host + "/api/tags"
     
     guard let url = URL(string: endpoint) else {
@@ -76,7 +76,7 @@ func getLocalModels(host: String, timeoutRequest: String, timeoutResource: Strin
     do {
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
-        let decoded = try decoder.decode(tagsParent.self, from: data)
+        let decoded = try decoder.decode(ModelGroup.self, from: data)
         return decoded
     } catch {
         throw NetError.invalidData(error: error)
