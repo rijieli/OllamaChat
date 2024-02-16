@@ -7,6 +7,7 @@
 
 import MarkdownUI
 import SwiftUI
+import SwiftUIIntrospect
 
 struct ChatView: View {
     let fontSize: CGFloat = 15
@@ -109,6 +110,10 @@ struct ChatView: View {
             VStack {
                 ZStack {
                     TextEditor(text: $viewModel.current.prompt)
+                        .introspect(.textEditor, on: .macOS(.v14, .v13)) { nsTextView in
+                            nsTextView.isAutomaticQuoteSubstitutionEnabled = false
+                            nsTextView.isAutomaticDashSubstitutionEnabled = false
+                        }
                         .font(.body)
                         .onSubmit {
                             !viewModel.disabledButton ? viewModel.send() : nil
