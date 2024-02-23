@@ -1,12 +1,19 @@
-# Ollama-SwiftUI
+# Ollama Chat
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 <p align="center">
     <img src="assets/images/OllamaSwift.svg" width="128">
 </p>
+
+This project forks from [@kghandour](https://github.com/kghandour)'s [Ollama-SwiftUI](https://github.com/kghandour/Ollama-SwiftUI)
+
 A user-friendly interface for [Ollama AI](https://ollama.ai) created in Swift. This application is not directly affiliated with Ollama.ai
 
 **This app requires Ollama to be installed and online to function.** Install Ollama: https://ollama.ai
+
+If you already install Ollama, now you can download **Ollama Chat**:
+
+[![Download OllamaChat](https://img.shields.io/badge/Download-OllamaChat-green?style=for-the-badge&logo=apple)](https://github.com/rijieli/OllamaChat/releases/latest/download/OllamaChat.dmg)
 
 ## Table of Content
 1. [Introduction](#introduction)
@@ -60,11 +67,11 @@ A user-friendly interface for [Ollama AI](https://ollama.ai) created in Swift. T
 - This is completely normal. Open source applications are often not submitted to Apple for code review. You can read more about it [here](https://support.apple.com/en-gb/guide/mac-help/mh40616/mac). This does not mean that the application is not safe. In fact, this is the beauty of open source. You can verify it yourself. 
 
 ### 4. I would like a new feature X 
-- Feel free to create a suggestion by creating a new issue in the repo, or emailing me feedback@kghandour.com 
+- Feel free to create a suggestion by creating a new issue
 - This is a passion project so it will not be perfect and since I am doing it on my own time, I will try my best to get to it as soon as possible.
 
 ### 5. I found bug X
-- Feel free to create a bug report by creating a new issue in the repo, or emailing me bugs@kghandour.com 
+- Feel free to create a bug report by creating a new issue
 - This is a passion project so it will not be perfect and since I am doing it on my own time, I will try my best to get to it as soon as possible.
 
 ### 6. I would like to contribute to the project
@@ -74,13 +81,14 @@ A user-friendly interface for [Ollama AI](https://ollama.ai) created in Swift. T
 - This is a very simple light-weight user interface. As long as you can run https://ollama.ai locally, then this application should work as well.
 
 
-## Dark Mode also available!
-![Chat dialogue example darkmode](assets/images/DarkMode1.png)
-![Chat dialogue example darkmode](assets/images/DarkMode2.png)
+## Dark Mode
+
+👷[WIP]
 
 ## Feedback and Contributions:
-For bugs and feedback, please create a new issue or email bugs@kghandour.com 
+For bugs and feedback, please create a new issue
+
 Feel free to contribute by creating a Pull request and the best effort will be done to review and merge.
 
-## Contributors Hall of Fame:
-@HiRoS-neko
+If you believe that a feature should be included in the original project [Ollama-SwiftUI](https://github.com/kghandour/Ollama-SwiftUI)
+, please open an issue.

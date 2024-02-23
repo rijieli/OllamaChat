@@ -8,6 +8,7 @@
 import MarkdownUI
 import SwiftUI
 import SwiftUIIntrospect
+import Hue
 
 struct ChatView: View {
     let fontSize: CGFloat = 15
@@ -66,7 +67,7 @@ struct ChatView: View {
                             .padding([.top, .bottom], 8)
                             .textSelection(.enabled)
                             .foregroundStyle(Color.secondary)
-                            .background(Color(NSColor.secondarySystemFill))
+                            .background(Color(hex: "#EBEBEB"))
                         }
                     }
                     
@@ -77,7 +78,7 @@ struct ChatView: View {
                     
                 }
                 .maxFrame()
-                .defaultScrollAnchor(.bottom)
+                //.defaultScrollAnchor(.bottom)
                 .overlay(alignment: .bottom) {
                     HStack {
                         if viewModel.waitingResponse {
@@ -101,59 +102,57 @@ struct ChatView: View {
                     .animation(.smooth, value: viewModel.waitingResponse)
                     .padding(.bottom, 8)
                 }
-                .onChange(of: viewModel.receivedResponse) { _, _ in
+                .onChange(of: viewModel.receivedResponse) { _ in
                     proxy.scrollTo(bottomID)
                 }
             }
             
-            
-            VStack {
-                ZStack {
-                    TextEditor(text: $viewModel.current.prompt)
-                        .introspect(.textEditor, on: .macOS(.v14, .v13)) { nsTextView in
-                            nsTextView.isAutomaticQuoteSubstitutionEnabled = false
-                            nsTextView.isAutomaticDashSubstitutionEnabled = false
+            ZStack {
+                TextEditor(text: $viewModel.current.prompt)
+                    .introspect(.textEditor, on: .macOS(.v14, .v13)) { nsTextView in
+                        nsTextView.isAutomaticQuoteSubstitutionEnabled = false
+                        nsTextView.isAutomaticDashSubstitutionEnabled = false
+                    }
+                    .font(.body)
+                    .onSubmit {
+                        !viewModel.disabledButton ? viewModel.send() : nil
+                    }
+                    .disabled(viewModel.waitingResponse)
+                    .focused($promptFieldIsFocused)
+                    .onChange(of: viewModel.current.prompt) { _ in
+                        viewModel.disabledButton = viewModel.current.prompt.isEmpty
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 16)
+                    .opacity(viewModel.waitingResponse ? 0 : 1)
+                    .overlay {
+                        Button {
+                            viewModel.send()
+                        } label: {
+                            Image(systemName: "arrow.up.circle.fill")
+                                .font(.system(size: 24))
+                                .frame(width: 20, height: 20, alignment: .center)
+                                .frame(width: 40, height: 40)
+                                .foregroundStyle(.blue)
+                                .contentShape(Rectangle())
                         }
-                        .font(.body)
-                        .onSubmit {
-                            !viewModel.disabledButton ? viewModel.send() : nil
-                        }
-                        .disabled(viewModel.waitingResponse)
-                        .focused($promptFieldIsFocused)
-                        .onChange(of: viewModel.current.prompt) {
-                            viewModel.disabledButton = viewModel.current.prompt.isEmpty
-                        }
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 16)
+                        .buttonStyle(.plain)
                         .opacity(viewModel.waitingResponse ? 0 : 1)
-                        .overlay {
-                            Button {
-                                viewModel.send()
-                            } label: {
-                                Image(systemName: "arrow.up.circle.fill")
-                                    .font(.system(size: 24))
-                                    .frame(width: 20, height: 20, alignment: .center)
-                                    .frame(width: 40, height: 40)
-                                    .foregroundStyle(.blue)
-                                    .contentShape(Rectangle())
-                            }
-                            .buttonStyle(.plain)
-                            .opacity(viewModel.waitingResponse ? 0 : 1)
-                            .padding(.trailing, 12)
-                            .frame(maxWidth: .infinity, alignment: .trailing)
-                            .animation(.default, value: viewModel.waitingResponse)
-                            .keyboardShortcut(.return, modifiers: .command)
-                        }
-                }
-                .background(
-                    RoundedRectangle(cornerRadius: 12)
-                        .strokeBorder(Color.black.opacity(0.2), lineWidth: 1)
-                )
-                .padding(.horizontal, 12)
-                .padding(.bottom, 12)
-                .maxFrame()
+                        .padding(.trailing, 12)
+                        .frame(maxWidth: .infinity, alignment: .trailing)
+                        .animation(.default, value: viewModel.waitingResponse)
+                        .keyboardShortcut(.return, modifiers: .command)
+                    }
             }
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .strokeBorder(Color.black.opacity(0.2), lineWidth: 1)
+            )
+            .padding(.horizontal, 12)
+            .padding(.bottom, 12)
+            .maxFrame()
             .frame(height: 160)
+            
         }
         .frame(minWidth: 400, idealWidth: 700, minHeight: 600, idealHeight: 800)
         .background(Color(NSColor.controlBackgroundColor))

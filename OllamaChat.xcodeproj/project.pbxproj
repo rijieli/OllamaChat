@@ -40,6 +40,8 @@
 		DBECB4D42B7E03AB00C9F3C0 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBECB4D32B7E03AB00C9F3C0 /* AppSettings.swift */; };
 		DBECB4D62B7E03CD00C9F3C0 /* UserDefaultsBacked.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBECB4D52B7E03CD00C9F3C0 /* UserDefaultsBacked.swift */; };
 		DBECB4D82B7E0EA500C9F3C0 /* View+Hover.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBECB4D72B7E0EA500C9F3C0 /* View+Hover.swift */; };
+		DBF592C62B872B3E0085D1BF /* Hue in Frameworks */ = {isa = PBXBuildFile; productRef = DBF592C52B872B3E0085D1BF /* Hue */; };
+		DBF592C82B872B820085D1BF /* Color+.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF592C72B872B820085D1BF /* Color+.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -95,6 +97,7 @@
 		DBECB4D32B7E03AB00C9F3C0 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
 		DBECB4D52B7E03CD00C9F3C0 /* UserDefaultsBacked.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsBacked.swift; sourceTree = "<group>"; };
 		DBECB4D72B7E0EA500C9F3C0 /* View+Hover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+Hover.swift"; sourceTree = "<group>"; };
+		DBF592C72B872B820085D1BF /* Color+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,6 +105,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DBF592C62B872B3E0085D1BF /* Hue in Frameworks */,
 				64E569892B23CE4D00B87CD6 /* MarkdownUI in Frameworks */,
 				DB5B94DF2B7FB76600273FFA /* SwiftUIIntrospect in Frameworks */,
 			);
@@ -241,6 +245,7 @@
 				DBECB4CF2B7DF3DB00C9F3C0 /* View+.swift */,
 				DBECB4D12B7DFE8F00C9F3C0 /* View+Tracking.swift */,
 				DBECB4D72B7E0EA500C9F3C0 /* View+Hover.swift */,
+				DBF592C72B872B820085D1BF /* Color+.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -264,6 +269,7 @@
 			packageProductDependencies = (
 				64E569882B23CE4D00B87CD6 /* MarkdownUI */,
 				DB5B94DE2B7FB76600273FFA /* SwiftUIIntrospect */,
+				DBF592C52B872B3E0085D1BF /* Hue */,
 			);
 			productName = "Ollama Swift";
 			productReference = 327B90432AD17EA300A94F10 /* OllamaChat.app */;
@@ -341,6 +347,7 @@
 			packageReferences = (
 				64E569872B23CE4D00B87CD6 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
 				DB5B94DD2B7FB76600273FFA /* XCRemoteSwiftPackageReference "swiftui-introspect" */,
+				DBF592C42B872B3E0085D1BF /* XCRemoteSwiftPackageReference "Hue" */,
 			);
 			productRefGroup = 327B90442AD17EA300A94F10 /* Products */;
 			projectDirPath = "";
@@ -386,6 +393,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				32D730C92AD5FB8200DF8044 /* ErrorModel.swift in Sources */,
+				DBF592C82B872B820085D1BF /* Color+.swift in Sources */,
 				32CDC0322AD2DF4200D4DA6B /* ChatController.swift in Sources */,
 				32D730C72AD3F77100DF8044 /* ChatBubble.swift in Sources */,
 				DB6D278F2B7DE9CA00318297 /* ChatView+SystemPrompt.swift in Sources */,
@@ -502,7 +510,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.1.1;
+				MARKETING_VERSION = 1.1.2;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -562,7 +570,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.1.1;
+				MARKETING_VERSION = 1.1.2;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
@@ -592,6 +600,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ideasform.ollamachat;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -621,6 +630,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ideasform.ollamachat;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -750,6 +760,14 @@
 				minimumVersion = 1.1.2;
 			};
 		};
+		DBF592C42B872B3E0085D1BF /* XCRemoteSwiftPackageReference "Hue" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/zenangst/Hue.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -762,6 +780,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = DB5B94DD2B7FB76600273FFA /* XCRemoteSwiftPackageReference "swiftui-introspect" */;
 			productName = SwiftUIIntrospect;
+		};
+		DBF592C52B872B3E0085D1BF /* Hue */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DBF592C42B872B3E0085D1BF /* XCRemoteSwiftPackageReference "Hue" */;
+			productName = Hue;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

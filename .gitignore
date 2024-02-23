@@ -33,6 +33,8 @@ DerivedData/
 
 .DS_Store
 
+*.dmg
+
 ## Playgrounds
 timeline.xctimeline
 playground.xcworkspace

@@ -12,6 +12,7 @@ struct OllamaChatApp: App {
     var body: some Scene {
         let mainWindow = WindowGroup {
             ContentView()
+                .preferredColorScheme(.light)
           }
           #if os(macOS)      
           Settings {

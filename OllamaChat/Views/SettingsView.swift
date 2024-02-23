@@ -35,7 +35,7 @@ struct GeneralSettingsView: View {
                 HStack{
                     TextField("Host IP:", text: $host)
                     TextField("Port:", text: $port)
-                        .onChange(of: port) {
+                        .onChange(of: port) { _ in
                             let filtered = port.filter { "0123456789".contains($0) }
                             if filtered != port {
                                 self.port = filtered
@@ -43,7 +43,7 @@ struct GeneralSettingsView: View {
                         }
                 }
                 TextField("Request Timeout (in sec. Default 60):", text: $timeoutRequest)
-                    .onChange(of: timeoutRequest) {
+                    .onChange(of: timeoutRequest) { _ in
                         let filtered = timeoutRequest.filter { "0123456789".contains($0) }
                         if filtered != timeoutRequest {
                             self.timeoutRequest = filtered
@@ -51,7 +51,7 @@ struct GeneralSettingsView: View {
                     }
                 
                 TextField("Resources Timeout (in sec. Default: 604800):", text: $timeoutResource)
-                    .onChange(of: timeoutResource) {
+                    .onChange(of: timeoutResource) { _ in
                         let filtered = timeoutResource.filter { "0123456789".contains($0) }
                         if filtered != timeoutResource {
                             self.timeoutResource = filtered
