@@ -5,9 +5,14 @@
     <img src="assets/images/OllamaSwift.svg" width="128">
 </p>
 
-This project forks from [@kghandour](https://github.com/kghandour)'s [Ollama-SwiftUI](https://github.com/kghandour/Ollama-SwiftUI)
-
 A user-friendly interface for [Ollama AI](https://ollama.ai) created in Swift. This application is not directly affiliated with Ollama.ai
+
+This project forks from [@kghandour](https://github.com/kghandour)'s [Ollama-SwiftUI](https://github.com/kghandour/Ollama-SwiftUI) with extra features:
+
+* Retry
+* Global system prompt
+* System prompt per chat
+* macOS 13 support
 
 **This app requires Ollama to be installed and online to function.** Install Ollama: https://ollama.ai
 
