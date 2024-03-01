@@ -10,6 +10,7 @@ A user-friendly interface for [Ollama AI](https://ollama.ai) created in Swift. T
 This project forks from [@kghandour](https://github.com/kghandour)'s [Ollama-SwiftUI](https://github.com/kghandour/Ollama-SwiftUI) with extra features:
 
 * Retry
+* `cmd` + `enter` to send message
 * Global system prompt
 * System prompt per chat
 * macOS 13 support
