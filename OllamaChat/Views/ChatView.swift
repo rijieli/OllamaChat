@@ -30,9 +30,7 @@ struct ChatView: View {
                         .foregroundStyle(.secondary)
                         .padding()
                     ForEach(Array(viewModel.sentPrompt.enumerated()), id: \.offset) { idx, sent in
-                        ChatBubble(direction: .right, onTapFloatingButton: {
-                            viewModel.resendUntil(idx)
-                        }) {
+                        ChatBubble(direction: .right, floatingButtonsAlignment: .bottomTrailing) {
                             Markdown {
                                 .init(sent.trimmingCharacters(in: .whitespacesAndNewlines))
                             }
@@ -43,6 +41,49 @@ struct ChatView: View {
                             .padding([.top, .bottom], 8)
                             .textSelection(.enabled)
                             .background(Color.blue)
+                        } buttons: {
+                            HStack(spacing: 4) {
+                                Button {
+                                    viewModel.resendUntil(idx)
+                                } label: {
+                                    Image(systemName: "arrow.clockwise.circle.fill")
+                                        .font(.system(size: 16, weight: .bold))
+                                        .frame(width: 30, height: 30)
+                                        .contentShape(Rectangle())
+                                }
+                                .buttonStyle(.plain)
+                                
+                                Button {
+                                    viewModel.editingCellIndex = idx
+                                } label: {
+                                    Image(systemName: "pencil.circle.fill")
+                                        .font(.system(size: 16, weight: .bold))
+                                        .frame(width: 30, height: 30)
+                                        .contentShape(Rectangle())
+                                }
+                                .buttonStyle(.plain)
+                            }
+                            .frame(height: 30)
+                            .padding(.horizontal, 4)
+                            .background {
+                                Capsule().fill(.background)
+                            }
+                            .offset(x: -4, y: -4)
+                        }
+                        .overlay {
+                            if let editIndex = viewModel.editingCellIndex, editIndex == idx  {
+                                ZStack {
+                                    VStack(spacing: 0) {
+                                        TextEditor(text: $viewModel.sentPrompt[idx])
+                                            .padding(8)
+                                        Button("Save") {
+                                            viewModel.editingCellIndex = nil
+                                            viewModel.resendUntil(idx)
+                                        }
+                                    }
+                                }
+                                .background(RoundedRectangle(cornerRadius: 12, style: .continuous).fill(.blue))
+                            }
                         }
                         
                         ChatBubble(direction: .left) {
@@ -68,6 +109,8 @@ struct ChatView: View {
                             .textSelection(.enabled)
                             .foregroundStyle(Color.secondary)
                             .background(Color(hex: "#EBEBEB"))
+                        } buttons: {
+                            EmptyView()
                         }
                     }
                     
@@ -288,6 +331,8 @@ extension ChatView {
         
         @Published var waitingResponse: Bool = false
         @Published var disabledButton: Bool = true
+        
+        @Published var editingCellIndex: Int? = nil
         
         @Published var errorModel = ErrorModel(showError: false, errorTitle: "", errorMessage: "")
         

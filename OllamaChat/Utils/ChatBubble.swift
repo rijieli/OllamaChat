@@ -7,19 +7,20 @@
 
 import SwiftUI
 
-struct ChatBubble<Content>: View where Content: View {
+struct ChatBubble<Content: View, FloatingButtons: View>: View {
     
     @State var hovered = false
     
-    var onTapFloatingButton: (() -> Void)?
-    
     let direction: ChatBubbleShape.Direction
-    let content: () -> Content
+    let floatingButtonsAlignment: Alignment
+    let content: Content
+    let buttons: FloatingButtons
     
-    init(direction: ChatBubbleShape.Direction, onTapFloatingButton: (() -> Void)? = nil, @ViewBuilder content: @escaping () -> Content) {
-        self.content = content
+    init(direction: ChatBubbleShape.Direction, floatingButtonsAlignment: Alignment = .bottomTrailing, @ViewBuilder content: () -> Content, @ViewBuilder buttons: () -> FloatingButtons) {
+        self.content = content()
         self.direction = direction
-        self.onTapFloatingButton = onTapFloatingButton
+        self.buttons = buttons()
+        self.floatingButtonsAlignment = floatingButtonsAlignment
     }
 
     var body: some View {
@@ -27,21 +28,11 @@ struct ChatBubble<Content>: View where Content: View {
             if direction == .right {
                 Spacer(minLength: 32)
             }
-            content()
+            content
                 .mask { RoundedRectangle(cornerRadius: 12, style: .continuous) }
-                .overlay(alignment: .leading) {
-                    if let onTapFloatingButton, hovered {
-                        Button {
-                            onTapFloatingButton()
-                        } label: {
-                            Image(systemName: "arrow.clockwise.circle.fill")
-                                .font(.system(size: 16, weight: .bold))
-                                .frame(width: 30, height: 30)
-                                .contentShape(Rectangle())
-                        }
-                        .offset(x: -30)
-                        .buttonStyle(.plain)
-                        .zIndex(1)
+                .overlay(alignment: floatingButtonsAlignment) {
+                    if hovered {
+                        buttons.zIndex(1)
                     }
                 }
             if direction == .left {

@@ -34,6 +34,7 @@
 		32DCE6BB2ADB090500A24528 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32DCE6BA2ADB090500A24528 /* ContentView.swift */; };
 		64E569892B23CE4D00B87CD6 /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = 64E569882B23CE4D00B87CD6 /* MarkdownUI */; };
 		DB5B94DF2B7FB76600273FFA /* SwiftUIIntrospect in Frameworks */ = {isa = PBXBuildFile; productRef = DB5B94DE2B7FB76600273FFA /* SwiftUIIntrospect */; };
+		DB6493972BEA831700AB747E /* OllamaChat.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = DB6493952BEA831700AB747E /* OllamaChat.xcdatamodeld */; };
 		DB6D278F2B7DE9CA00318297 /* ChatView+SystemPrompt.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6D278E2B7DE9CA00318297 /* ChatView+SystemPrompt.swift */; };
 		DBECB4D02B7DF3DB00C9F3C0 /* View+.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBECB4CF2B7DF3DB00C9F3C0 /* View+.swift */; };
 		DBECB4D22B7DFE8F00C9F3C0 /* View+Tracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBECB4D12B7DFE8F00C9F3C0 /* View+Tracking.swift */; };
@@ -91,6 +92,7 @@
 		32D730C62AD3F77100DF8044 /* ChatBubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatBubble.swift; sourceTree = "<group>"; };
 		32D730C82AD5FB8200DF8044 /* ErrorModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorModel.swift; sourceTree = "<group>"; };
 		32DCE6BA2ADB090500A24528 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		DB6493962BEA831700AB747E /* OllamaChat.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = OllamaChat.xcdatamodel; sourceTree = "<group>"; };
 		DB6D278E2B7DE9CA00318297 /* ChatView+SystemPrompt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatView+SystemPrompt.swift"; sourceTree = "<group>"; };
 		DBECB4CF2B7DF3DB00C9F3C0 /* View+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+.swift"; sourceTree = "<group>"; };
 		DBECB4D12B7DFE8F00C9F3C0 /* View+Tracking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+Tracking.swift"; sourceTree = "<group>"; };
@@ -131,6 +133,7 @@
 		327B903A2AD17EA300A94F10 = {
 			isa = PBXGroup;
 			children = (
+				DB6493952BEA831700AB747E /* OllamaChat.xcdatamodeld */,
 				327B90452AD17EA300A94F10 /* OllamaChat */,
 				327B90572AD17EA400A94F10 /* Ollama SwiftTests */,
 				327B90612AD17EA400A94F10 /* Ollama SwiftUITests */,
@@ -395,6 +398,7 @@
 				32D730C92AD5FB8200DF8044 /* ErrorModel.swift in Sources */,
 				DBF592C82B872B820085D1BF /* Color+.swift in Sources */,
 				32CDC0322AD2DF4200D4DA6B /* ChatController.swift in Sources */,
+				DB6493972BEA831700AB747E /* OllamaChat.xcdatamodeld in Sources */,
 				32D730C72AD3F77100DF8044 /* ChatBubble.swift in Sources */,
 				DB6D278F2B7DE9CA00318297 /* ChatView+SystemPrompt.swift in Sources */,
 				DBECB4D22B7DFE8F00C9F3C0 /* View+Tracking.swift in Sources */,
@@ -787,6 +791,20 @@
 			productName = Hue;
 		};
 /* End XCSwiftPackageProductDependency section */
+
+/* Begin XCVersionGroup section */
+		DB6493952BEA831700AB747E /* OllamaChat.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				DB6493962BEA831700AB747E /* OllamaChat.xcdatamodel */,
+			);
+			currentVersion = DB6493962BEA831700AB747E /* OllamaChat.xcdatamodel */;
+			name = OllamaChat.xcdatamodeld;
+			path = "/Users/roger/Workspace/Ollama-SwiftUI/OllamaChat.xcdatamodeld";
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 327B903B2AD17EA300A94F10 /* Project object */;
 }
