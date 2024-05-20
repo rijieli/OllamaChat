@@ -63,8 +63,3 @@ struct GeneralSettingsView: View {
         .frame(width: 550, height: 130)
     }
 }
-
-
-#Preview {
-    SettingsView()
-}

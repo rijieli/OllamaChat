@@ -54,7 +54,7 @@ struct ChatView: View {
                                 .buttonStyle(.plain)
                                 
                                 Button {
-                                    viewModel.editingCellIndex = idx
+                                    viewModel.editMessage(index: idx)
                                 } label: {
                                     Image(systemName: "pencil.circle.fill")
                                         .font(.system(size: 16, weight: .bold))
@@ -69,21 +69,6 @@ struct ChatView: View {
                                 Capsule().fill(.background)
                             }
                             .offset(x: -4, y: -4)
-                        }
-                        .overlay {
-                            if let editIndex = viewModel.editingCellIndex, editIndex == idx  {
-                                ZStack {
-                                    VStack(spacing: 0) {
-                                        TextEditor(text: $viewModel.sentPrompt[idx])
-                                            .padding(8)
-                                        Button("Save") {
-                                            viewModel.editingCellIndex = nil
-                                            viewModel.resendUntil(idx)
-                                        }
-                                    }
-                                }
-                                .background(RoundedRectangle(cornerRadius: 12, style: .continuous).fill(.blue))
-                            }
                         }
                         
                         ChatBubble(direction: .left) {
@@ -254,6 +239,9 @@ struct ChatView: View {
         .sheet(isPresented: $viewModel.showModelConfig) {
             ManageModelsView()
         }
+        .sheet(isPresented: $viewModel.showEditingMessage) {
+            MessageEditorView(viewModel: viewModel)
+        }
     }
     
     func actionButton(_ sfName: String, action: (() -> Void)?) -> some View {
@@ -303,10 +291,6 @@ struct ChatView: View {
     
 }
 
-#Preview {
-    ChatView()
-}
-
 extension ChatView {
     
     class ViewModel: ObservableObject {
@@ -317,6 +301,10 @@ extension ChatView {
         @AppStorage("timeoutResource") var timeoutResource = "604800"
         
         @Published var showSystemConfig = false
+        
+        @Published var showEditingMessage = false
+        
+        var editingCellIndex: Int? = nil
         
         @Published var showModelConfig = false
         
@@ -331,8 +319,6 @@ extension ChatView {
         
         @Published var waitingResponse: Bool = false
         @Published var disabledButton: Bool = true
-        
-        @Published var editingCellIndex: Int? = nil
         
         @Published var errorModel = ErrorModel(showError: false, errorTitle: "", errorMessage: "")
         
@@ -443,6 +429,11 @@ extension ChatView {
             receivedResponse = receivedResponse.prefix(idx).map { $0 }
             current.prompt = prompt
             send()
+        }
+        
+        func editMessage(index: Int) {
+            editingCellIndex = index
+            showEditingMessage = true
         }
     }
     

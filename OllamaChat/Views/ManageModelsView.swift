@@ -267,7 +267,3 @@ struct ManageModelsView: View {
         }
     }
 }
-
-#Preview {
-    ManageModelsView()
-}

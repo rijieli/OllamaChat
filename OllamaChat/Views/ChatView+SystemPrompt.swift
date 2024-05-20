@@ -73,4 +73,63 @@ extension ChatView {
         
     }
     
+    struct MessageEditorView: View {
+        
+        @ObservedObject var viewModel: ViewModel
+        
+        @State var info: String = ""
+        
+        @FocusState private var isPopupFocused: Bool
+        
+        var body: some View {
+            ZStack {
+                GeometryReader { proxy in
+                    ZStack {
+                        VStack(spacing: 12) {
+                            ZStack {
+                                TextEditor(text: $info)
+                                    .font(.body)
+                                    .onSubmit {
+                                        viewModel.sentPrompt[viewModel.editingCellIndex!] = info
+                                    }
+                                    .focused(self.$isPopupFocused)
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 16)
+                            }
+                            .background(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .strokeBorder(Color.black.opacity(0.1), lineWidth: 1)
+                            )
+                            .background()
+                            
+                            HStack {
+                                Button("Cancel") {
+                                    isPopupFocused = false
+                                    viewModel.editingCellIndex = nil
+                                    viewModel.showEditingMessage = false
+                                }
+                                
+                                Button("Save") {
+                                    viewModel.sentPrompt[viewModel.editingCellIndex!] = info
+                                    viewModel.resendUntil(viewModel.editingCellIndex!)
+                                    viewModel.editingCellIndex = nil
+                                    viewModel.showEditingMessage = false
+                                }
+                            }
+                            .frame(height: 32)
+                            .maxWidth(alignment: .trailing)
+                        }
+                        .padding(12)
+                    }
+                    .maxFrame()
+                }
+            }
+            .frame(minWidth: 360, minHeight: 300, idealHeight: 300)
+            .task {
+                info = viewModel.sentPrompt[viewModel.editingCellIndex!]
+                isPopupFocused = true
+            }
+        }
+        
+    }
 }
