@@ -29,53 +29,15 @@ struct ChatView: View {
                     Text("This is the start of your chat")
                         .foregroundStyle(.secondary)
                         .padding()
-                    ForEach(Array(viewModel.sentPrompt.enumerated()), id: \.offset) { idx, sent in
-                        ChatBubble(direction: .right, floatingButtonsAlignment: .bottomTrailing) {
+                    let messages = viewModel.messages.filter { $0.role != .system }
+                    ForEach(messages) { message in
+                        let isUser = message.role == .user
+                        ChatBubble(direction: isUser ? .right : .left, floatingButtonsAlignment: .bottomTrailing) {
                             Markdown {
-                                .init(sent.trimmingCharacters(in: .whitespacesAndNewlines))
+                                .init(message.content.trimmingCharacters(in: .whitespacesAndNewlines))
                             }
                             .markdownTextStyle{
-                                ForegroundColor(Color.white)
-                            }
-                            .padding([.leading, .trailing], 8)
-                            .padding([.top, .bottom], 8)
-                            .textSelection(.enabled)
-                            .background(Color.blue)
-                        } buttons: {
-                            HStack(spacing: 4) {
-                                Button {
-                                    viewModel.resendUntil(idx)
-                                } label: {
-                                    Image(systemName: "arrow.clockwise.circle.fill")
-                                        .font(.system(size: 16, weight: .bold))
-                                        .frame(width: 30, height: 30)
-                                        .contentShape(Rectangle())
-                                }
-                                .buttonStyle(.plain)
-                                
-                                Button {
-                                    viewModel.editMessage(index: idx)
-                                } label: {
-                                    Image(systemName: "pencil.circle.fill")
-                                        .font(.system(size: 16, weight: .bold))
-                                        .frame(width: 30, height: 30)
-                                        .contentShape(Rectangle())
-                                }
-                                .buttonStyle(.plain)
-                            }
-                            .frame(height: 30)
-                            .padding(.horizontal, 4)
-                            .background {
-                                Capsule().fill(.background)
-                            }
-                            .offset(x: -4, y: -4)
-                        }
-                        
-                        ChatBubble(direction: .left) {
-                            Markdown {
-                                .init(viewModel.receivedResponse.indices.contains(idx) ?
-                                      viewModel.receivedResponse[idx].trimmingCharacters(in: .whitespacesAndNewlines) :
-                                        "...")
+                                isUser ? ForegroundColor(Color.white) : ForegroundColor(Color.black)
                             }
                             .markdownTextStyle(\.code) {
                                 FontFamilyVariant(.monospaced)
@@ -92,10 +54,40 @@ struct ChatView: View {
                             .padding([.leading, .trailing], 8)
                             .padding([.top, .bottom], 8)
                             .textSelection(.enabled)
-                            .foregroundStyle(Color.secondary)
-                            .background(Color(hex: "#EBEBEB"))
+                            .background(isUser ? Color.blue : Color(hex: "#EBEBEB"))
                         } buttons: {
-                            EmptyView()
+                            HStack(spacing: 4) {
+                                if isUser {
+                                    Button {
+                                        viewModel.resendUntil(message)
+                                    } label: {
+                                        Image(systemName: "arrow.clockwise.circle.fill")
+                                            .font(.system(size: 16, weight: .bold))
+                                            .frame(width: 24, height: 24)
+                                            .contentShape(Rectangle())
+                                    }
+                                    .buttonStyle(.plain)
+                                }
+                                Button {
+                                    viewModel.editMessage(message)
+                                } label: {
+                                    Image(systemName: "pencil.circle.fill")
+                                        .font(.system(size: 16, weight: .bold))
+                                        .frame(width: 24, height: 24)
+                                        .contentShape(Rectangle())
+                                }
+                                .buttonStyle(.plain)
+                            }
+                            .frame(height: 24)
+                            .frame(minWidth: 36)
+                            .padding(.horizontal, 4)
+                            .background {
+                                Capsule().fill(.background)
+                            }
+                            .overlay {
+                                Capsule().strokeBorder(Color.black.opacity(0.2), lineWidth: 1)
+                            }
+                            .offset(x: -4, y: -4)
                         }
                     }
                     
@@ -130,13 +122,13 @@ struct ChatView: View {
                     .animation(.smooth, value: viewModel.waitingResponse)
                     .padding(.bottom, 8)
                 }
-                .onChange(of: viewModel.receivedResponse) { _ in
+                .onChange(of: viewModel.messages) { _ in
                     proxy.scrollTo(bottomID)
                 }
             }
             
             ZStack {
-                TextEditor(text: $viewModel.current.prompt)
+                TextEditor(text: $viewModel.current.content)
                     .introspect(.textEditor, on: .macOS(.v14, .v13)) { nsTextView in
                         nsTextView.isAutomaticQuoteSubstitutionEnabled = false
                         nsTextView.isAutomaticDashSubstitutionEnabled = false
@@ -147,8 +139,8 @@ struct ChatView: View {
                     }
                     .disabled(viewModel.waitingResponse)
                     .focused($promptFieldIsFocused)
-                    .onChange(of: viewModel.current.prompt) { _ in
-                        viewModel.disabledButton = viewModel.current.prompt.isEmpty
+                    .onChange(of: viewModel.current.content) { _ in
+                        viewModel.disabledButton = viewModel.current.content.isEmpty
                     }
                     .padding(.horizontal, 12)
                     .padding(.vertical, 16)
@@ -190,7 +182,7 @@ struct ChatView: View {
         .toolbar {
             ToolbarItemGroup(placement: .automatic){
                 HStack {
-                    Picker("Model:", selection: $viewModel.current.model) {
+                    Picker("Model:", selection: $viewModel.model) {
                         ForEach(self.tags?.models ?? [], id: \.self) { model in
                             Text(model.name).tag(model.name)
                         }
@@ -266,13 +258,13 @@ struct ChatView: View {
                 self.tags = try await getLocalModels(host: "\(viewModel.host):\(viewModel.port)", timeoutRequest: viewModel.timeoutRequest, timeoutResource: viewModel.timeoutResource)
                 if(self.tags != nil){
                     if(self.tags!.models.count > 0){
-                        viewModel.current.model = self.tags!.models[0].name
+                        viewModel.model = self.tags!.models[0].name
                     }else{
-                        viewModel.current.model = ""
+                        viewModel.model = ""
                         viewModel.errorModel = noModelsError(error: nil)
                     }
                 }else{
-                    viewModel.current.model = ""
+                    viewModel.model = ""
                     viewModel.errorModel = noModelsError(error: nil)
                 }
             } catch let NetError.invalidURL(error) {
@@ -293,6 +285,10 @@ struct ChatView: View {
 
 extension ChatView {
     
+    struct Message {
+        let content: String
+    }
+    
     class ViewModel: ObservableObject {
         
         @AppStorage("host") var host = "http://127.0.0.1"
@@ -308,14 +304,11 @@ extension ChatView {
         
         @Published var showModelConfig = false
         
-        @Published var current: PromptModel = .init(
-            prompt: "",
-            model: "",
-            system: AppSettings.globalSystem
-        )
+        @Published var model: String = ""
         
-        @Published var receivedResponse: [String] = []
-        @Published var sentPrompt: [String] = []
+        @Published var current = ChatMessage(role: .user, content: "")
+        
+        @Published var messages: [ChatMessage] = []
         
         @Published var waitingResponse: Bool = false
         @Published var disabledButton: Bool = true
@@ -326,31 +319,23 @@ extension ChatView {
         
         @MainActor
         func send() {
-            guard !current.prompt.isEmpty else { return }
             work = Task {
                 do {
                     self.errorModel.showError = false
                     waitingResponse = true
                     
-                    self.sentPrompt.append(current.prompt)
-                    
-                    var messages = [ChatMessage]()
-                    
-                    if !current.system.isEmpty {
-                        messages.append(ChatMessage(role: "system", content: current.system))
+                    if messages.isEmpty {
+                        messages.append(ChatMessage(role: .system, content: AppSettings.globalSystem))
                     }
                     
-                    for i in 0 ..< self.sentPrompt.count {
-                        messages.append(ChatMessage(role: "user", content: self.sentPrompt[i]))
-                        if i < receivedResponse.count {
-                            messages.append(ChatMessage(role: "assistant", content: self.receivedResponse[i]))
-                        }
+                    if !current.content.isEmpty {
+                        self.messages.append(current)
                     }
                     
-                    self.receivedResponse.append("")
+                    current = .init(role: .user, content: "")
                     
                     let chatHistory = ChatModel(
-                        model: current.model,
+                        model: model,
                         messages: messages
                     )
                     
@@ -386,15 +371,17 @@ extension ChatView {
                         throw NetError.invalidResponse(error: nil)
                     }
                     
+                    self.messages.append(.init(role: .assistant, content: ""))
                     for try await line in data.lines {
                         let decoder = JSONDecoder()
                         decoder.keyDecodingStrategy = .convertFromSnakeCase
                         let data = line.data(using: .utf8)!
-                        let decoded = try decoder.decode(ResponseModel.self, from: data)
-                        self.receivedResponse[self.receivedResponse.count - 1].append(decoded.message.content)
+                        let decoded = try! decoder.decode(ResponseModel.self, from: data)
+                        self.messages[self.messages.index(before: self.messages.endIndex)].content += decoded.message.content
                     }
+                    
                     waitingResponse = false
-                    current.prompt = ""
+                    current.content = ""
                 } catch let NetError.invalidURL(error) {
                     errorModel = invalidURLError(error: error)
                 } catch let NetError.invalidData(error) {
@@ -405,7 +392,7 @@ extension ChatView {
                     errorModel = unreachableError(error: error)
                 } catch let error as URLError where error.code == .cancelled {
                     waitingResponse = false
-                    current.prompt = ""
+                    current.content = ""
                 } catch {
                     self.errorModel = genericError(error: error)
                 }
@@ -415,25 +402,35 @@ extension ChatView {
         func resetChat() {
             waitingResponse = false
             work?.cancel()
-            sentPrompt = []
-            receivedResponse = []
+            messages = [ChatMessage(role: .system, content: AppSettings.globalSystem)]
         }
         
         @MainActor
-        func resendUntil(_ idx: Int) {
-            guard idx <= (sentPrompt.count - 1) else { return }
-            let prompt = sentPrompt[idx]
+        func resendUntil(_ message: ChatMessage) {
+            guard let idx = messages.firstIndex(where: { $0.id == message.id}) else { return }
             waitingResponse = false
             work?.cancel()
-            sentPrompt = sentPrompt.prefix(idx).map { $0 }
-            receivedResponse = receivedResponse.prefix(idx).map { $0 }
-            current.prompt = prompt
-            send()
+            if idx < messages.endIndex {
+                messages = Array(messages[...idx])
+            }
+            current = .init(role: .user, content: "")
+            if messages.last?.role == .user {
+                send()
+            }
         }
         
-        func editMessage(index: Int) {
-            editingCellIndex = index
+        func editMessage(_ message: ChatMessage) {
+            guard let idx = messages.firstIndex(where: { $0.id == message.id}) else { return }
+            editingCellIndex = idx
             showEditingMessage = true
+        }
+        
+        func updateMessage(at index: Int, with newText: String) {
+            // Ensure the index is within bounds
+            guard messages.indices.contains(index) else { return }
+            
+            // Update the content of the message
+            messages[index].content = newText
         }
     }
     

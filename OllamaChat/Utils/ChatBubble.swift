@@ -32,7 +32,7 @@ struct ChatBubble<Content: View, FloatingButtons: View>: View {
                 .mask { RoundedRectangle(cornerRadius: 12, style: .continuous) }
                 .overlay(alignment: floatingButtonsAlignment) {
                     if hovered {
-                        buttons.zIndex(1)
+                        buttons.fixedSize().zIndex(1)
                     }
                 }
             if direction == .left {

@@ -33,7 +33,7 @@ extension ChatView {
                                 TextEditor(text: $systemPrompt)
                                     .font(.body)
                                     .onSubmit {
-                                        viewModel.current.system = systemPrompt
+                                        updateSystem()
                                     }
                                     .focused(self.$isPopupFocused)
                                     .padding(.horizontal, 12)
@@ -52,8 +52,7 @@ extension ChatView {
                                 }
                                 
                                 Button("Save") {
-                                    viewModel.current.system = systemPrompt
-                                    viewModel.showSystemConfig = false
+                                    updateSystem()
                                 }
                             }
                             .frame(height: 32)
@@ -66,11 +65,17 @@ extension ChatView {
             }
             .frame(minWidth: 360, minHeight: 300, idealHeight: 300)
             .task {
-                systemPrompt = viewModel.current.system
+                systemPrompt = viewModel.messages.first(where: { $0.role == .system })?.content ?? ""
                 isPopupFocused = true
             }
         }
         
+        func updateSystem() {
+            if let idx = viewModel.messages.firstIndex(where: { $0.role == .system }) {
+                viewModel.updateMessage(at: idx, with: systemPrompt)
+            }
+            viewModel.showSystemConfig = false
+        }
     }
     
     struct MessageEditorView: View {
@@ -90,7 +95,7 @@ extension ChatView {
                                 TextEditor(text: $info)
                                     .font(.body)
                                     .onSubmit {
-                                        viewModel.sentPrompt[viewModel.editingCellIndex!] = info
+                                        saveChange()
                                     }
                                     .focused(self.$isPopupFocused)
                                     .padding(.horizontal, 12)
@@ -105,15 +110,18 @@ extension ChatView {
                             HStack {
                                 Button("Cancel") {
                                     isPopupFocused = false
-                                    viewModel.editingCellIndex = nil
                                     viewModel.showEditingMessage = false
+                                    viewModel.editingCellIndex = nil
                                 }
                                 
-                                Button("Save") {
-                                    viewModel.sentPrompt[viewModel.editingCellIndex!] = info
-                                    viewModel.resendUntil(viewModel.editingCellIndex!)
-                                    viewModel.editingCellIndex = nil
-                                    viewModel.showEditingMessage = false
+                                Button("Update") {
+                                    saveChange(update: true)
+                                }
+                                
+                                if let idx = viewModel.editingCellIndex, viewModel.messages[idx].role == .user {
+                                    Button("Save") {
+                                        saveChange()
+                                    }
                                 }
                             }
                             .frame(height: 32)
@@ -126,10 +134,18 @@ extension ChatView {
             }
             .frame(minWidth: 360, minHeight: 300, idealHeight: 300)
             .task {
-                info = viewModel.sentPrompt[viewModel.editingCellIndex!]
+                info = viewModel.messages[viewModel.editingCellIndex!].content
                 isPopupFocused = true
             }
         }
         
+        func saveChange(update: Bool = false) {
+            viewModel.updateMessage(at: viewModel.editingCellIndex!, with: info)
+            if !update {
+                viewModel.resendUntil(viewModel.messages[viewModel.editingCellIndex!])
+            }
+            viewModel.editingCellIndex = nil
+            viewModel.showEditingMessage = false
+        }
     }
 }
