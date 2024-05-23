@@ -57,4 +57,8 @@ struct ChatMessage: Identifiable, Encodable, Equatable, Hashable, Decodable, Cus
     var description: String {
         "\(role.rawValue) : \(content)"
     }
+    
+    static var globalSystem: Self {
+        ChatMessage(role: .system, content: AppSettings.globalSystem)
+    }
 }

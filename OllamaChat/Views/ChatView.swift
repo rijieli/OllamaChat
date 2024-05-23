@@ -308,7 +308,7 @@ extension ChatView {
         
         @Published var current = ChatMessage(role: .user, content: "")
         
-        @Published var messages: [ChatMessage] = []
+        @Published var messages: [ChatMessage] = [.globalSystem]
         
         @Published var waitingResponse: Bool = false
         @Published var disabledButton: Bool = true
@@ -325,7 +325,7 @@ extension ChatView {
                     waitingResponse = true
                     
                     if messages.isEmpty {
-                        messages.append(ChatMessage(role: .system, content: AppSettings.globalSystem))
+                        messages.append(.globalSystem)
                     }
                     
                     if !current.content.isEmpty {
@@ -402,7 +402,7 @@ extension ChatView {
         func resetChat() {
             waitingResponse = false
             work?.cancel()
-            messages = [ChatMessage(role: .system, content: AppSettings.globalSystem)]
+            messages = [.globalSystem]
         }
         
         @MainActor
