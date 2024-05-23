@@ -23,6 +23,8 @@ DerivedData/
 *.perspectivev3
 !default.perspectivev3
 
+OllamaChat.app
+
 ## Obj-C/Swift specific
 *.hmap
 
