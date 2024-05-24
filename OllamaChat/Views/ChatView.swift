@@ -129,10 +129,7 @@ struct ChatView: View {
             
             ZStack {
                 TextEditor(text: $viewModel.current.content)
-                    .introspect(.textEditor, on: .macOS(.v14, .v13)) { nsTextView in
-                        nsTextView.isAutomaticQuoteSubstitutionEnabled = false
-                        nsTextView.isAutomaticDashSubstitutionEnabled = false
-                    }
+                    .disableAutoQuotes()
                     .font(.body)
                     .onSubmit {
                         !viewModel.disabledButton ? viewModel.send() : nil

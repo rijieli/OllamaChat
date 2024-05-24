@@ -31,6 +31,7 @@ extension ChatView {
                                 .padding(.bottom, 4)
                             ZStack {
                                 TextEditor(text: $systemPrompt)
+                                    .disableAutoQuotes()
                                     .font(.body)
                                     .onSubmit {
                                         updateSystem()
@@ -93,6 +94,7 @@ extension ChatView {
                         VStack(spacing: 12) {
                             ZStack {
                                 TextEditor(text: $info)
+                                    .disableAutoQuotes()
                                     .font(.body)
                                     .onSubmit {
                                         saveChange()
