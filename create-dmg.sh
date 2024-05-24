@@ -2,11 +2,11 @@
 
 # Check if the folder name is provided
 if [ -z "$1" ]; then
-  echo "Usage: $0 <folder-path>"
-  exit 1
+  FOLDER_PATH="Product/"
+else
+  FOLDER_PATH=$1
 fi
 
-FOLDER_PATH=$1
 DMG_NAME="OllamaChat.dmg"
 
 # Check if OllamaChat.dmg already exists in the current directory
