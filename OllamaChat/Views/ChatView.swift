@@ -58,29 +58,22 @@ struct ChatView: View {
                         } buttons: {
                             HStack(spacing: 4) {
                                 if isUser {
-                                    Button {
+                                    bubbleButton("arrow.clockwise.circle.fill") {
                                         viewModel.resendUntil(message)
-                                    } label: {
-                                        Image(systemName: "arrow.clockwise.circle.fill")
-                                            .font(.system(size: 16, weight: .bold))
-                                            .frame(width: 24, height: 24)
-                                            .contentShape(Rectangle())
                                     }
-                                    .buttonStyle(.plain)
                                 }
-                                Button {
+                                bubbleButton("pencil.circle.fill") {
                                     viewModel.editMessage(message)
-                                } label: {
-                                    Image(systemName: "pencil.circle.fill")
-                                        .font(.system(size: 16, weight: .bold))
-                                        .frame(width: 24, height: 24)
-                                        .contentShape(Rectangle())
                                 }
-                                .buttonStyle(.plain)
+                                bubbleButton("doc.on.doc.fill") {
+                                    let pasteboard = NSPasteboard.general
+                                    pasteboard.clearContents() // Clears the pasteboard before writing
+                                    pasteboard.setString(message.content, forType: .string)
+                                }
                             }
                             .frame(height: 24)
                             .frame(minWidth: 36)
-                            .padding(.horizontal, 4)
+                            .padding(.horizontal, 3)
                             .background {
                                 Capsule().fill(.background)
                             }
@@ -278,13 +271,23 @@ struct ChatView: View {
         }
     }
     
+    func bubbleButton(_ systemName: String, action: VoidClosureOptionl) -> some View {
+        Button {
+            action?()
+        } label: {
+            Image(systemName: systemName)
+                .resizable()
+                .scaledToFit()
+                .font(.system(size: 16, weight: .bold))
+                .padding(4)
+                .frame(width: 24, height: 24)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+    }
 }
 
 extension ChatView {
-    
-    struct Message {
-        let content: String
-    }
     
     class ViewModel: ObservableObject {
         
