@@ -69,6 +69,13 @@ struct ChatListView: View {
                                 newName = item.name
                                 showRenameDialog = true
                             }
+                            Button("Duplicate") {
+                                DispatchQueue.main.async {
+                                    let duplicated = SingleChat.duplicate(item)
+                                    CoreDataStack.shared.saveContext()
+                                    chatViewModel.loadChat(duplicated)
+                                }
+                            }
                             Button("Delete") {
                                 DispatchQueue.main.async {
                                     CoreDataStack.shared.context.delete(item)

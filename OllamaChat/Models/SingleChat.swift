@@ -60,17 +60,15 @@ extension SingleChat {
         }
     }
     
+    public class var chatCount: Int {
+        let fetchRequest: NSFetchRequest<SingleChat> = SingleChat.fetchRequest()
+        return (try? CoreDataStack.shared.context.count(for: fetchRequest)) ?? 0
+    }
+    
     public class func createNewSingleChat(messages: [ChatMessage], model: String) -> SingleChat {
         let context = CoreDataStack.shared.context
-        let fetchRequest: NSFetchRequest<SingleChat> = SingleChat.fetchRequest()
-        
-        var chatCount = 0
-        do {
-            chatCount = try context.count(for: fetchRequest)
-        } catch {
-            print("Failed to fetch chat count: \(error)")
-        }
-        
+        let chatCount = chatCount
+
         // Create new SingleChat instance
         let newChat = SingleChat(context: context)
         newChat.id = UUID()
@@ -78,6 +76,21 @@ extension SingleChat {
         newChat.model = model
         newChat.createdAt = Date()
         newChat.messages = messages
+        
+        return newChat
+    }
+    
+    public class func duplicate(_ chat: SingleChat) -> SingleChat {
+        let context = CoreDataStack.shared.context
+        let chatCount = chatCount
+        
+        // Create new SingleChat instance
+        let newChat = SingleChat(context: context)
+        newChat.id = UUID()
+        newChat.name = "Name\(chatCount + 1)" // Automatically set name based on chat count
+        newChat.model = chat.model
+        newChat.createdAt = Date()
+        newChat.messages = chat.messages
         
         return newChat
     }
