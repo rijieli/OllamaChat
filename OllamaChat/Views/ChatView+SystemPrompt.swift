@@ -12,7 +12,7 @@ extension ChatView {
     
     struct SystemEditorView: View {
         
-        @ObservedObject var viewModel: ViewModel
+        @ObservedObject var viewModel = ChatViewModel.shared
         
         @State var systemPrompt: String = ""
         
@@ -72,18 +72,17 @@ extension ChatView {
         }
         
         func updateSystem() {
-            if let idx = viewModel.messages.firstIndex(where: { $0.role == .system }) {
-                viewModel.updateMessage(at: idx, with: systemPrompt)
-            }
-            viewModel.showSystemConfig = false
+            viewModel.updateSystem(.init(role: .system, content: systemPrompt))
         }
     }
     
     struct MessageEditorView: View {
         
-        @ObservedObject var viewModel: ViewModel
+        @ObservedObject var viewModel = ChatViewModel.shared
         
         @State var info: String = ""
+        
+        @State var role: ChatMessageRole = .user
         
         @FocusState private var isPopupFocused: Bool
         
@@ -136,13 +135,15 @@ extension ChatView {
             }
             .frame(minWidth: 360, minHeight: 300, idealHeight: 300)
             .task {
-                info = viewModel.messages[viewModel.editingCellIndex!].content
+                let msg = viewModel.messages[viewModel.editingCellIndex!]
+                info = msg.content
+                role = msg.role
                 isPopupFocused = true
             }
         }
         
         func saveChange(update: Bool = false) {
-            viewModel.updateMessage(at: viewModel.editingCellIndex!, with: info)
+            viewModel.updateMessage(at: viewModel.editingCellIndex!, with: .init(role: role, content: info))
             if !update {
                 viewModel.resendUntil(viewModel.messages[viewModel.editingCellIndex!])
             }

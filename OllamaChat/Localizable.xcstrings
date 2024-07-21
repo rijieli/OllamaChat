@@ -4,6 +4,9 @@
     "%.3f GB" : {
 
     },
+    "%@" : {
+
+    },
     "%lld/ %lld MB" : {
       "localizations" : {
         "en" : {
@@ -43,6 +46,9 @@
     "Connected" : {
 
     },
+    "Delete" : {
+
+    },
     "Downloading %@" : {
       "localizations" : {
         "ar" : {
@@ -62,6 +68,9 @@
           }
         }
       }
+    },
+    "Enter your name" : {
+
     },
     "Error" : {
 
@@ -100,6 +109,7 @@
       }
     },
     "Manage Models" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -118,6 +128,9 @@
           }
         }
       }
+    },
+    "New Chat" : {
+
     },
     "New Name" : {
       "localizations" : {
@@ -147,6 +160,12 @@
       }
     },
     "Port:" : {
+
+    },
+    "Rename" : {
+
+    },
+    "Rename this chat" : {
 
     },
     "Request Timeout (in sec. Default 60):" : {
@@ -196,6 +215,9 @@
       }
     },
     "Update" : {
+
+    },
+    "Xcode will print whatever you type." : {
 
     }
   },

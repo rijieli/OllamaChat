@@ -6,13 +6,18 @@
 //
 
 import SwiftUI
+import AppKit
 
 @main
 struct OllamaChatApp: App {
+    
+    @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    
     var body: some Scene {
         let mainWindow = WindowGroup {
             ContentView()
                 .preferredColorScheme(.light)
+                .environment(\.managedObjectContext, CoreDataStack.shared.context)
           }
           #if os(macOS)      
           Settings {

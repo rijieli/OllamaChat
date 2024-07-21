@@ -30,8 +30,8 @@ struct ChatMessage: Identifiable, Encodable, Equatable, Hashable, Decodable, Cus
     var role: ChatMessageRole
     var content: String
     
-    init(role: ChatMessageRole, content: String) {
-        self.id = UUID().uuidString
+    init(id: String? = nil, role: ChatMessageRole, content: String) {
+        self.id = id ?? UUID().uuidString
         self.role = role
         self.content = content
     }
