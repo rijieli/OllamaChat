@@ -21,6 +21,10 @@ If you already install Ollama, now you can download **Ollama Chat**:
 
 [![Download OllamaChat](https://img.shields.io/badge/Download-OllamaChat-green?style=for-the-badge&logo=apple)](https://github.com/rijieli/OllamaChat/releases/latest/download/OllamaChat.dmg)
 
+<p align="center">
+    <img src="assets/images/Preview.jpeg" width="480">
+</p>
+
 ## Table of Content
 1. [Introduction](#introduction)
 2. [Changelog](CHANGELOG.md)
@@ -32,10 +36,9 @@ If you already install Ollama, now you can download **Ollama Chat**:
 8. [Contribution Hall of Fame](#contributors-hall-of-fame)
 
 ## Introduction
-A user-friendly interface for [Ollama AI](https://ollama.ai) created in Swift. This application is not directly affiliated with Ollama.ai. It allows you to chat seamlessly with Large Language models downloaded to your mac. 
+A user-friendly interface for [Ollama AI](https://ollama.ai) created in Swift. This application is not directly affiliated with Ollama.ai. It allows you to chat seamlessly with Large Language models downloaded to your mac.
 
 **This app requires Ollama to be installed and online to function.** Install Ollama: https://ollama.ai
-![Chat dialogue example](assets/images/LightMode1.png)
 
 
 ## Features
@@ -70,9 +73,9 @@ A user-friendly interface for [Ollama AI](https://ollama.ai) created in Swift. T
 
 ### 3. I am getting "Cannot Be Opened Because the Developer Cannot be Verified" error when trying to open the app
 - To fix this go to your macos `System Settings > Privacy and Security > Allow Applications downloaded from > App Store and Identified Developer` and you will find a button saying `Open Anyway`
-- This is completely normal. Open source applications are often not submitted to Apple for code review. You can read more about it [here](https://support.apple.com/en-gb/guide/mac-help/mh40616/mac). This does not mean that the application is not safe. In fact, this is the beauty of open source. You can verify it yourself. 
+- This is completely normal. Open source applications are often not submitted to Apple for code review. You can read more about it [here](https://support.apple.com/en-gb/guide/mac-help/mh40616/mac). This does not mean that the application is not safe. In fact, this is the beauty of open source. You can verify it yourself.
 
-### 4. I would like a new feature X 
+### 4. I would like a new feature X
 - Feel free to create a suggestion by creating a new issue
 - This is a passion project so it will not be perfect and since I am doing it on my own time, I will try my best to get to it as soon as possible.
 
@@ -81,7 +84,7 @@ A user-friendly interface for [Ollama AI](https://ollama.ai) created in Swift. T
 - This is a passion project so it will not be perfect and since I am doing it on my own time, I will try my best to get to it as soon as possible.
 
 ### 6. I would like to contribute to the project
-- Please do so! It is amazing when contributing to open-source projects. Create a pull-request and I will try to review it as soon as possible. 
+- Please do so! It is amazing when contributing to open-source projects. Create a pull-request and I will try to review it as soon as possible.
 
 ### 7. Are there any system requirements?
 - This is a very simple light-weight user interface. As long as you can run https://ollama.ai locally, then this application should work as well.
