@@ -17,10 +17,8 @@
         }
       }
     },
-    "A good starting model is llama2. Simply write the model name in the field above" : {
-
-    },
     "Add model:" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -31,6 +29,7 @@
       }
     },
     "Add Model:" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -40,6 +39,9 @@
         }
       }
     },
+    "Automatic apply to each chat." : {
+
+    },
     "Cancel" : {
 
     },
@@ -47,6 +49,9 @@
 
     },
     "Delete" : {
+
+    },
+    "Done" : {
 
     },
     "Downloading %@" : {
@@ -63,6 +68,7 @@
 
     },
     "Duplicate Model:" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -78,6 +84,9 @@
     "Error" : {
 
     },
+    "Find more models: [Models](https://ollama.com/library)" : {
+
+    },
     "General" : {
       "localizations" : {
         "ar" : {
@@ -88,7 +97,7 @@
         }
       }
     },
-    "Global System Prompt" : {
+    "Get Model:" : {
 
     },
     "Global System Prompt:" : {
@@ -122,6 +131,9 @@
         }
       }
     },
+    "Model name. e.g. llama3" : {
+
+    },
     "Model:" : {
       "localizations" : {
         "ar" : {
@@ -136,6 +148,7 @@
 
     },
     "New Name" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {
@@ -208,6 +221,7 @@
       }
     },
     "To find the model names to download, checkout: https://ollama.ai/library" : {
+      "extractionState" : "stale",
       "localizations" : {
         "ar" : {
           "stringUnit" : {

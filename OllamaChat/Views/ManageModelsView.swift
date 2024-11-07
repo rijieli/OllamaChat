@@ -19,6 +19,8 @@ struct ManageModelsView: View {
     @State private var completedSoFar: Double = 0
     @State private var globalSystemPrompt = AppSettings.globalSystem
     
+    @Environment(\.dismiss) var dismiss
+    
     @AppStorage("host") private var host = "http://127.0.0.1"
     @AppStorage("port") private var port = "11434"
     @AppStorage("timeoutRequest") private var timeoutRequest = "60"
@@ -37,10 +39,9 @@ struct ManageModelsView: View {
             }
             List(tags?.models ?? [], id: \.self){ model in
                 HStack{
-                    VStack(alignment: .leading){
-                        Text(model.name)
-                        Text("\(model.size / 1024 / 1024 / 1024, specifier: "%.3f") GB")
-                    }
+                    Text(model.name)
+                        .padding(.trailing, 30.0)
+                    Text("\(model.size / 1024.0 / 1024.0 / 1024.0, specifier: "%.3f") GB")
                     Spacer()
                     
                     Button{
@@ -53,37 +54,52 @@ struct ManageModelsView: View {
             }
             .frame(maxHeight: 450)
             
-            HStack{
-                Text("Duplicate Model:")
-                        .font(.headline)
-                Picker("Duplicate Model:", selection: $toDuplicate) {
-                    ForEach(tags?.models ?? [], id: \.self) {model in
-                        Text(model.name).tag(model.name)
+//            HStack{
+//                Text("Duplicate Model:")
+//                        .font(.headline)
+//                Picker("Duplicate Model:", selection: $toDuplicate) {
+//                    ForEach(tags?.models ?? [], id: \.self) {model in
+//                        Text(model.name).tag(model.name)
+//                    }
+//                }
+//                TextField("New Name", text: $newName)
+//                    .textFieldStyle(.roundedBorder)
+//                Button{
+//                    duplicateModel(source: toDuplicate, destination: newName)
+//                }label: {
+//                    Image(systemName: "doc.on.doc")
+//                        .frame(width: 20, height: 20, alignment: .center)
+//                }
+//            }
+            
+            VStack(alignment: .leading) {
+                HStack {
+                    VStack(alignment: .leading) {
+                        Text("Global System Prompt:")
+                            .font(.headline)
+                        Text("Automatic apply to each chat.")
+                            .font(.footnote)
+                    }
+                    Spacer()
+                    Button("Save"){
+                        AppSettings.globalSystem = globalSystemPrompt
                     }
                 }
-                TextField("New Name", text: $newName)
-                    .textFieldStyle(.roundedBorder)
-                Button{
-                    duplicateModel(source: toDuplicate, destination: newName)
-                }label: {
-                    Image(systemName: "doc.on.doc")
-                        .frame(width: 20, height: 20, alignment: .center)
-                }
-            }
-            
-            HStack{
-                Text("Global System Prompt:")
-                        .font(.headline)
-                TextField("Global System Prompt", text: $globalSystemPrompt)
-                    .textFieldStyle(.roundedBorder)
-                Button("Save"){
-                    AppSettings.globalSystem = globalSystemPrompt
-                }
+                TextEditor(text: $globalSystemPrompt)
+                    .disableAutoQuotes()
+                    .font(.body)
+                    .frame(height: 100)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 16)
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .strokeBorder(Color.black.opacity(0.1), lineWidth: 1)
+                    )
             }
             HStack{
-                Text("Add Model:")
+                Text("Get Model:")
                     .font(.headline)
-                TextField("Add model:", text: $modelName)
+                TextField("Model name. e.g. llama3", text: $modelName)
                     .textFieldStyle(.roundedBorder)
                 Button{
                     downloadModel(name: modelName)
@@ -99,36 +115,31 @@ struct ManageModelsView: View {
                     Text("\(Int(completedSoFar / 1024 / 1024 ))/ \(Int(totalSize / 1024 / 1024)) MB")
                 }
             }
-            VStack(alignment: .leading){
-                Text("To find the model names to download, checkout: https://ollama.ai/library")
-                    .textSelection(.enabled)
-                Text("A good starting model is llama2. Simply write the model name in the field above")
-            }
-        }
-        .padding()
-        .frame(minWidth: 400, idealWidth: 600, minHeight: 400, idealHeight: 800)
-        .task {
-            getTags()
-        }
-        .toolbar{
-            HStack{
+            Text("Find more models: [Models](https://ollama.com/library)")
+            
+            Color.black.opacity(0.1)
+                .frame(height: 0.5)
+                .frame(height: 16)
+                .maxWidth()
+            
+            HStack {
                 if(errorModel.showError){
-                        Button {
-                            self.showingErrorPopover.toggle()
-                        } label: {
-                            Label("Error", systemImage: "exclamationmark.triangle")
-                                .foregroundStyle(.red)
+                    Button {
+                        self.showingErrorPopover.toggle()
+                    } label: {
+                        Label("Error", systemImage: "exclamationmark.triangle")
+                            .foregroundStyle(.red)
+                    }
+                    .popover(isPresented: self.$showingErrorPopover) {
+                        VStack(alignment: .leading) {
+                            Text(self.errorModel.errorTitle)
+                                .font(.title2)
+                                .textSelection(.enabled)
+                            Text(self.errorModel.errorMessage)
+                                .textSelection(.enabled)
                         }
-                        .popover(isPresented: self.$showingErrorPopover) {
-                            VStack(alignment: .leading) {
-                                Text(self.errorModel.errorTitle)
-                                    .font(.title2)
-                                    .textSelection(.enabled)
-                                Text(self.errorModel.errorMessage)
-                                    .textSelection(.enabled)
-                            }
-                            .padding()
-                        }
+                        .padding()
+                    }
                 } else {
                     Text("Server:")
                         .fixedWidth()
@@ -142,7 +153,18 @@ struct ManageModelsView: View {
                     Image(systemName: "arrow.clockwise")
                         .frame(width: 20, height: 20, alignment: .center)
                 }
+                
+                Spacer()
+                
+                Button("Done") {
+                    dismiss()
+                }
             }
+        }
+        .padding()
+        .frame(minWidth: 400, idealWidth: 600, minHeight: 400, idealHeight: 800)
+        .task {
+            getTags()
         }
     }
     func getTags(){
