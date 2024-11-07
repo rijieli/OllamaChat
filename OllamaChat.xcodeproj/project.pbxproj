@@ -32,7 +32,6 @@
 		32D730C72AD3F77100DF8044 /* ChatBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32D730C62AD3F77100DF8044 /* ChatBubble.swift */; };
 		32D730C92AD5FB8200DF8044 /* ErrorModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32D730C82AD5FB8200DF8044 /* ErrorModel.swift */; };
 		32DCE6BB2ADB090500A24528 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32DCE6BA2ADB090500A24528 /* ContentView.swift */; };
-		64E569892B23CE4D00B87CD6 /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = 64E569882B23CE4D00B87CD6 /* MarkdownUI */; };
 		DB0AE5EC2C4CFBD500AC7CC5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0AE5EB2C4CFBD500AC7CC5 /* AppDelegate.swift */; };
 		DB0AE5EF2C4CFC1300AC7CC5 /* OllamaChat.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = DB0AE5ED2C4CFC1300AC7CC5 /* OllamaChat.xcdatamodeld */; };
 		DB0AE5F12C4CFCA400AC7CC5 /* SingleChat.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0AE5F02C4CFCA400AC7CC5 /* SingleChat.swift */; };
@@ -41,6 +40,7 @@
 		DB25C4072C00EFCC00A42484 /* TextEditor+.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB25C4062C00EFCC00A42484 /* TextEditor+.swift */; };
 		DB5B94DF2B7FB76600273FFA /* SwiftUIIntrospect in Frameworks */ = {isa = PBXBuildFile; productRef = DB5B94DE2B7FB76600273FFA /* SwiftUIIntrospect */; };
 		DB6D278F2B7DE9CA00318297 /* ChatView+SystemPrompt.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6D278E2B7DE9CA00318297 /* ChatView+SystemPrompt.swift */; };
+		DB9958C42CDC902B006740DC /* MarkdownTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9958C32CDC9026006740DC /* MarkdownTextView.swift */; };
 		DBB22C262C01A87C007E74CB /* VoidClosure.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB22C252C01A87C007E74CB /* VoidClosure.swift */; };
 		DBECB4D02B7DF3DB00C9F3C0 /* View+.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBECB4CF2B7DF3DB00C9F3C0 /* View+.swift */; };
 		DBECB4D22B7DFE8F00C9F3C0 /* View+Tracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBECB4D12B7DFE8F00C9F3C0 /* View+Tracking.swift */; };
@@ -105,6 +105,7 @@
 		DB0AE5F42C4D054400AC7CC5 /* ChatListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListView.swift; sourceTree = "<group>"; };
 		DB25C4062C00EFCC00A42484 /* TextEditor+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TextEditor+.swift"; sourceTree = "<group>"; };
 		DB6D278E2B7DE9CA00318297 /* ChatView+SystemPrompt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatView+SystemPrompt.swift"; sourceTree = "<group>"; };
+		DB9958C32CDC9026006740DC /* MarkdownTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownTextView.swift; sourceTree = "<group>"; };
 		DBB22C252C01A87C007E74CB /* VoidClosure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoidClosure.swift; sourceTree = "<group>"; };
 		DBECB4CF2B7DF3DB00C9F3C0 /* View+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+.swift"; sourceTree = "<group>"; };
 		DBECB4D12B7DFE8F00C9F3C0 /* View+Tracking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+Tracking.swift"; sourceTree = "<group>"; };
@@ -120,7 +121,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				DBF592C62B872B3E0085D1BF /* Hue in Frameworks */,
-				64E569892B23CE4D00B87CD6 /* MarkdownUI in Frameworks */,
 				DB5B94DF2B7FB76600273FFA /* SwiftUIIntrospect in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -234,6 +234,7 @@
 		32CDC01F2AD2B4BD00D4DA6B /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				32D730C62AD3F77100DF8044 /* ChatBubble.swift */,
 				32CDC02B2AD2DE7600D4DA6B /* MenuView.swift */,
 				32CDC02F2AD2DED600D4DA6B /* ChatView.swift */,
 				3271CD122ADAD23400B14DD2 /* SettingsView.swift */,
@@ -248,10 +249,10 @@
 		32CDC0262AD2B6E300D4DA6B /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				DB9958C32CDC9026006740DC /* MarkdownTextView.swift */,
 				32CDC0272AD2B70000D4DA6B /* NetworkErrors.swift */,
 				32CDC0292AD2DD9200D4DA6B /* Menu.swift */,
 				32CDC02D2AD2DEA500D4DA6B /* JSONParser.swift */,
-				32D730C62AD3F77100DF8044 /* ChatBubble.swift */,
 				3271CD102ADAC94500B14DD2 /* ErrorMessages.swift */,
 				DBECB4D52B7E03CD00C9F3C0 /* UserDefaultsBacked.swift */,
 				DBB22C252C01A87C007E74CB /* VoidClosure.swift */,
@@ -288,7 +289,6 @@
 			);
 			name = OllamaChat;
 			packageProductDependencies = (
-				64E569882B23CE4D00B87CD6 /* MarkdownUI */,
 				DB5B94DE2B7FB76600273FFA /* SwiftUIIntrospect */,
 				DBF592C52B872B3E0085D1BF /* Hue */,
 			);
@@ -366,7 +366,6 @@
 			);
 			mainGroup = 327B903A2AD17EA300A94F10;
 			packageReferences = (
-				64E569872B23CE4D00B87CD6 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
 				DB5B94DD2B7FB76600273FFA /* XCRemoteSwiftPackageReference "swiftui-introspect" */,
 				DBF592C42B872B3E0085D1BF /* XCRemoteSwiftPackageReference "Hue" */,
 			);
@@ -437,6 +436,7 @@
 				3271CD112ADAC94500B14DD2 /* ErrorMessages.swift in Sources */,
 				320EE92C2ADAE7DE00758FB9 /* ManageModelsView.swift in Sources */,
 				DB0AE5EF2C4CFC1300AC7CC5 /* OllamaChat.xcdatamodeld in Sources */,
+				DB9958C42CDC902B006740DC /* MarkdownTextView.swift in Sources */,
 				3271CD132ADAD23400B14DD2 /* SettingsView.swift in Sources */,
 				32CDC02A2AD2DD9200D4DA6B /* Menu.swift in Sources */,
 				32CDC0342AD2F93700D4DA6B /* Tags.swift in Sources */,
@@ -780,14 +780,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		64E569872B23CE4D00B87CD6 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/gonzalezreal/swift-markdown-ui";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.2.0;
-			};
-		};
 		DB5B94DD2B7FB76600273FFA /* XCRemoteSwiftPackageReference "swiftui-introspect" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/siteline/swiftui-introspect";
@@ -807,11 +799,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		64E569882B23CE4D00B87CD6 /* MarkdownUI */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 64E569872B23CE4D00B87CD6 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */;
-			productName = MarkdownUI;
-		};
 		DB5B94DE2B7FB76600273FFA /* SwiftUIIntrospect */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = DB5B94DD2B7FB76600273FFA /* XCRemoteSwiftPackageReference "swiftui-introspect" */;

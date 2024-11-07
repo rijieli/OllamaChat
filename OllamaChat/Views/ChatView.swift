@@ -5,7 +5,6 @@
 //  Created by Karim ElGhandour on 08.10.23.
 //
 
-import MarkdownUI
 import SwiftUI
 import SwiftUIIntrospect
 import Hue
@@ -33,28 +32,12 @@ struct ChatView: View {
                     ForEach(messages) { message in
                         let isUser = message.role == .user
                         ChatBubble(direction: isUser ? .right : .left, floatingButtonsAlignment: .bottomTrailing) {
-                            Markdown {
-                                .init(message.content.trimmingCharacters(in: .whitespacesAndNewlines))
-                            }
-                            .markdownTextStyle{
-                                isUser ? ForegroundColor(Color.white) : ForegroundColor(Color.black)
-                            }
-                            .markdownTextStyle(\.code) {
-                                FontFamilyVariant(.monospaced)
-                                BackgroundColor(.white.opacity(0.25))
-                            }
-                            .markdownBlockStyle(\.codeBlock) { configuration in
-                                configuration.label
-                                    .padding()
-                                    .markdownTextStyle {
-                                        FontFamilyVariant(.monospaced)
-                                    }
-                                    .background(Color.white.opacity(0.25))
-                            }
-                            .padding([.leading, .trailing], 8)
-                            .padding([.top, .bottom], 8)
-                            .textSelection(.enabled)
-                            .background(isUser ? Color.blue : Color(hex: "#EBEBEB"))
+                            MarkdownTextView(message: message.content)
+                                .foregroundStyle(isUser ? Color.white : .black)
+                                .padding([.leading, .trailing], 8)
+                                .padding([.top, .bottom], 8)
+                                .textSelection(.enabled)
+                                .background(isUser ? Color.blue : Color(hex: "#EBEBEB"))
                         } buttons: {
                             HStack(spacing: 4) {
                                 if isUser {
