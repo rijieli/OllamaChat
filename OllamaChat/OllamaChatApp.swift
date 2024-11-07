@@ -14,9 +14,6 @@ struct OllamaChatApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     
     var body: some Scene {
-        Settings {
-          SettingsView()
-        }
         WindowGroup {
             ContentView()
                 .preferredColorScheme(.light)
@@ -37,6 +34,10 @@ struct OllamaChatApp: App {
                 }
                 .keyboardShortcut("t", modifiers: [.command])
             }
+        }
+        
+        Settings {
+          SettingsView()
         }
     }
 }
