@@ -6,24 +6,26 @@
 //  Copyright © 2024 IdeasForm. All rights reserved.
 //
 
+import CoreData
 import Foundation
 import SwiftUI
-import CoreData
 
 struct ChatListView: View {
-    
+
     @Environment(\.managedObjectContext) private var viewContext
     @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \SingleChat.createdAt, ascending: false)],
+        sortDescriptors: [
+            NSSortDescriptor(keyPath: \SingleChat.createdAt, ascending: false)
+        ],
         animation: .default)
     private var items: FetchedResults<SingleChat>
-    
+
     @State var showRenameDialog = false
     @State private var newName: String = ""
     @State var renameItem: SingleChat? = nil
-    
+
     @ObservedObject var chatViewModel = ChatViewModel.shared
-    
+
     let formatter: DateFormatter = {
         let fmt = DateFormatter()
         fmt.dateStyle = .short
@@ -31,68 +33,50 @@ struct ChatListView: View {
         fmt.locale = Locale.current
         return fmt
     }()
-    
+
     var body: some View {
         VStack {
             ScrollView {
-                VStack(alignment: .leading) {
+                VStack(spacing: 8) {
                     ForEach(items) { item in
                         let isSelected = chatViewModel.currentChat?.id == item.id
-                        VStack {
-                            Text("\(item.name)")
-                                .font(.headline)
-                                .maxWidth(alignment: .leading)
-                            Text("\(formatter.string(from: item.createdAt))")
-                                .font(.subheadline)
-                                .maxWidth(alignment: .leading)
-                        }
-                        .padding(.vertical, 12)
-                        .padding(.horizontal, 16)
-                        .maxWidth()
-                        .foregroundStyle(isSelected ? Color.blue : Color.primary)
-                        .background(
-                            RoundedRectangle(cornerRadius: 12).fill(.background)
-                                .overlay {
-                                    if isSelected {
-                                        RoundedRectangle(cornerRadius: 12)
-                                            .strokeBorder(Color.blue, lineWidth: 2)
+                        cell(item: item, selected: isSelected)
+                            .onTapGesture {
+                                chatViewModel.loadChat(item)
+                            }
+                            .contextMenu {
+                                Button("Rename") {
+                                    renameItem = item
+                                    newName = item.name
+                                    showRenameDialog = true
+                                }
+                                Button("Duplicate") {
+                                    DispatchQueue.main.async {
+                                        let duplicated = SingleChat.duplicate(
+                                            item)
+                                        CoreDataStack.shared.saveContext()
+                                        chatViewModel.loadChat(duplicated)
                                     }
                                 }
-                        )
-                        .contentShape(.rect)
-                        .onTapGesture {
-                            chatViewModel.loadChat(item)
-                        }
-                        .contextMenu {
-                            Button("Rename") {
-                                renameItem = item
-                                newName = item.name
-                                showRenameDialog = true
-                            }
-                            Button("Duplicate") {
-                                DispatchQueue.main.async {
-                                    let duplicated = SingleChat.duplicate(item)
-                                    CoreDataStack.shared.saveContext()
-                                    chatViewModel.loadChat(duplicated)
+                                Button("Delete") {
+                                    DispatchQueue.main.async {
+                                        CoreDataStack.shared.context.delete(
+                                            item)
+                                        CoreDataStack.shared.saveContext()
+                                    }
+                                    chatViewModel.loadChat(nil)
                                 }
                             }
-                            Button("Delete") {
-                                DispatchQueue.main.async {
-                                    CoreDataStack.shared.context.delete(item)
-                                    CoreDataStack.shared.saveContext()
-                                }
-                                chatViewModel.loadChat(nil)
-                            }
-                        }
                     }
                 }
                 .padding(.horizontal, 12)
                 .padding(.vertical, 8)
             }
-            .frame(maxHeight: .infinity)
+            .maxFrame()
             VStack(spacing: 8) {
                 Button {
-                    let newChat = SingleChat.createNewSingleChat(messages: [], model: chatViewModel.model)
+                    let newChat = SingleChat.createNewSingleChat(
+                        messages: [], model: chatViewModel.model)
                     CoreDataStack.shared.saveContext()
                     chatViewModel.loadChat(newChat)
                 } label: {
@@ -109,23 +93,27 @@ struct ChatListView: View {
                             .fontWeight(.bold)
                             .frame(width: 32, height: 32)
                     }
-                    
+
                     if #available(macOS 14.0, *) {
                         SettingsLink {
                             gearLabel
                         }
-                    }
-                    else {
-                        Button(action: {
-                            if #available(macOS 13.0, *) {
-                                NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
-                            }
-                            else {
-                                NSApp.sendAction(Selector(("showPreferencesWindow:")), to: nil, from: nil)
-                            }
-                        }, label: {
-                            gearLabel
-                        })
+                    } else {
+                        Button(
+                            action: {
+                                if #available(macOS 13.0, *) {
+                                    NSApp.sendAction(
+                                        Selector(("showSettingsWindow:")),
+                                        to: nil, from: nil)
+                                } else {
+                                    NSApp.sendAction(
+                                        Selector(("showPreferencesWindow:")),
+                                        to: nil, from: nil)
+                                }
+                            },
+                            label: {
+                                gearLabel
+                            })
                     }
                     Spacer()
                 }
@@ -142,15 +130,45 @@ struct ChatListView: View {
                     CoreDataStack.shared.saveContext()
                 }
             }
-            Button("Cancel", role: .cancel) { }
+            Button("Cancel", role: .cancel) {}
         } message: {
             Text("Xcode will print whatever you type.")
         }
     }
-    
+
     var gearLabel: some View {
         Image(systemName: "gear")
             .fontWeight(.bold)
             .frame(width: 32, height: 32)
     }
+}
+
+extension ChatListView {
+
+    func cell(item: SingleChat, selected: Bool) -> some View {
+        VStack(spacing: 4) {
+            Text("\(item.name)")
+                .font(.headline)
+                .maxWidth(alignment: .leading)
+            Text("\(formatter.string(from: item.createdAt))")
+                .font(.subheadline)
+                .maxWidth(alignment: .leading)
+        }
+        .padding(.vertical, 12)
+        .padding(.horizontal, 16)
+        .maxWidth()
+        .foregroundStyle(selected ? Color.accentColor : Color.primary)
+        .background(
+            RoundedRectangle(cornerRadius: 8).fill(.background)
+                .overlay {
+                    RoundedRectangle(cornerRadius: 8)
+                        .strokeBorder(
+                            selected ? Color.accentColor : Color.black.opacity(0.1),
+                            lineWidth: selected ? 2 : 0.5
+                        )
+                }
+        )
+        .contentShape(.rect)
+    }
+
 }

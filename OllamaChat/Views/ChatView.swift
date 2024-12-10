@@ -156,8 +156,8 @@ struct ChatView: View {
             ToolbarItemGroup(placement: .automatic){
                 HStack {
                     Picker("Model:", selection: $viewModel.model) {
-                        ForEach(self.tags?.models ?? [], id: \.self) { model in
-                            Text(model.name).tag(model.name)
+                        ForEach(tags?.models ?? [], id: \.self) { model in
+                            Text(model.modelInfo.model).tag(model.name)
                         }
                     }
                 }
