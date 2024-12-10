@@ -7,6 +7,9 @@
     "%@" : {
 
     },
+    "%lld" : {
+
+    },
     "%lld/ %lld MB" : {
       "localizations" : {
         "en" : {
@@ -161,6 +164,9 @@
     "New Tab" : {
 
     },
+    "No chat selected" : {
+
+    },
     "No models downloaded locally. Add a model by typing the name in the field at the bottom of the page." : {
 
     },
@@ -191,6 +197,9 @@
 
     },
     "Save" : {
+
+    },
+    "Select a chat from the list or create a new one." : {
 
     },
     "Server Status: " : {

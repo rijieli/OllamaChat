@@ -109,3 +109,15 @@ extension View {
     }
 
 }
+
+extension View {
+    
+    public func ifGeometryGroup() -> some View {
+        if #available(macOS 14, *) {
+            return self.geometryGroup()
+        } else {
+            return self
+        }
+    }
+    
+}

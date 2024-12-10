@@ -76,60 +76,8 @@ struct ChatListView: View {
                 .padding(.vertical, 8)
             }
             .maxFrame()
-            VStack(spacing: 8) {
-                Button {
-                    let newChat = SingleChat.createNewSingleChat(
-                        messages: [],
-                        model: chatViewModel.model
-                    )
-                    CoreDataStack.shared.saveContext()
-                    chatViewModel.loadChat(newChat)
-                } label: {
-                    Label("New Chat", systemImage: "plus")
-                        .fontWeight(.bold)
-                        .frame(height: 32)
-                        .frame(maxWidth: .infinity)
-                }
-                HStack(spacing: 8) {
-                    Button {
-                        chatViewModel.showModelConfig = true
-                    } label: {
-                        Image(systemName: "cube")
-                            .fontWeight(.bold)
-                            .frame(width: 32, height: 32)
-                    }
 
-                    if #available(macOS 14.0, *) {
-                        SettingsLink {
-                            gearLabel
-                        }
-                    } else {
-                        Button(
-                            action: {
-                                if #available(macOS 13.0, *) {
-                                    NSApp.sendAction(
-                                        Selector(("showSettingsWindow:")),
-                                        to: nil,
-                                        from: nil
-                                    )
-                                } else {
-                                    NSApp.sendAction(
-                                        Selector(("showPreferencesWindow:")),
-                                        to: nil,
-                                        from: nil
-                                    )
-                                }
-                            },
-                            label: {
-                                gearLabel
-                            }
-                        )
-                    }
-                    Spacer()
-                }
-            }
-            .padding(.bottom, 16)
-            .padding(.horizontal, 12)
+            footerView
         }
         .animation(.smooth, value: chatViewModel.currentChat)
         .alert("Rename this chat", isPresented: $showRenameDialog) {
@@ -146,6 +94,58 @@ struct ChatListView: View {
         }
     }
 
+    var footerView: some View {
+        VStack(spacing: 8) {
+            Button {
+                chatViewModel.newChat()
+            } label: {
+                Label("New Chat", systemImage: "plus")
+                    .fontWeight(.bold)
+                    .frame(height: 32)
+                    .frame(maxWidth: .infinity)
+            }
+            HStack(spacing: 8) {
+                Button {
+                    chatViewModel.showModelConfig = true
+                } label: {
+                    Image(systemName: "cube")
+                        .fontWeight(.bold)
+                        .frame(width: 32, height: 32)
+                }
+
+                if #available(macOS 14.0, *) {
+                    SettingsLink {
+                        gearLabel
+                    }
+                } else {
+                    Button(
+                        action: {
+                            if #available(macOS 13.0, *) {
+                                NSApp.sendAction(
+                                    Selector(("showSettingsWindow:")),
+                                    to: nil,
+                                    from: nil
+                                )
+                            } else {
+                                NSApp.sendAction(
+                                    Selector(("showPreferencesWindow:")),
+                                    to: nil,
+                                    from: nil
+                                )
+                            }
+                        },
+                        label: {
+                            gearLabel
+                        }
+                    )
+                }
+                Spacer()
+            }
+        }
+        .padding(.bottom, 16)
+        .padding(.horizontal, 12)
+    }
+
     var gearLabel: some View {
         Image(systemName: "gear")
             .fontWeight(.bold)
@@ -160,14 +160,22 @@ extension ChatListView {
             Text("\(item.name)")
                 .font(.headline)
                 .maxWidth(alignment: .leading)
+                .foregroundStyle(selected ? Color.accentColor : Color.primary)
             Text("\(formatter.string(from: item.createdAt))")
                 .font(.subheadline)
                 .maxWidth(alignment: .leading)
+                .foregroundStyle(selected ? Color.accentColor : Color.secondary)
+        }
+        .overlay {
+            Text("\(item.messages.count)")
+                .font(.system(size: 13, weight: .regular))
+                .maxWidth(alignment: .trailing)
+                .foregroundStyle(selected ? Color.accentColor : Color.secondary)
         }
         .padding(.vertical, 12)
         .padding(.horizontal, 16)
         .maxWidth()
-        .foregroundStyle(selected ? Color.accentColor : Color.primary)
+        .lineLimit(1)
         .background(
             RoundedRectangle(cornerRadius: 8).fill(.background)
                 .overlay {
@@ -179,6 +187,7 @@ extension ChatListView {
                 }
         )
         .contentShape(.rect)
+        .ifGeometryGroup()
     }
 
 }
