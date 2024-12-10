@@ -42,6 +42,7 @@
 		DB7CA7AC2D0886C40039A624 /* ChatPlaceholderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7CA7AB2D0886C40039A624 /* ChatPlaceholderView.swift */; };
 		DB7CA7AF2D0887F70039A624 /* ChatView+MessageList.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7CA7AE2D0887EB0039A624 /* ChatView+MessageList.swift */; };
 		DB7CA7B12D0894EF0039A624 /* ChatView+MessageBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7CA7B02D0894E40039A624 /* ChatView+MessageBubble.swift */; };
+		DB7CA7B32D089A6E0039A624 /* ChatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7CA7B22D089A6E0039A624 /* ChatViewModel.swift */; };
 		DB9958C42CDC902B006740DC /* MarkdownTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9958C32CDC9026006740DC /* MarkdownTextView.swift */; };
 		DBB22C262C01A87C007E74CB /* VoidClosure.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB22C252C01A87C007E74CB /* VoidClosure.swift */; };
 		DBECB4D02B7DF3DB00C9F3C0 /* View+.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBECB4CF2B7DF3DB00C9F3C0 /* View+.swift */; };
@@ -109,6 +110,7 @@
 		DB7CA7AB2D0886C40039A624 /* ChatPlaceholderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatPlaceholderView.swift; sourceTree = "<group>"; };
 		DB7CA7AE2D0887EB0039A624 /* ChatView+MessageList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatView+MessageList.swift"; sourceTree = "<group>"; };
 		DB7CA7B02D0894E40039A624 /* ChatView+MessageBubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatView+MessageBubble.swift"; sourceTree = "<group>"; };
+		DB7CA7B22D089A6E0039A624 /* ChatViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewModel.swift; sourceTree = "<group>"; };
 		DB9958C32CDC9026006740DC /* MarkdownTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownTextView.swift; sourceTree = "<group>"; };
 		DBB22C252C01A87C007E74CB /* VoidClosure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoidClosure.swift; sourceTree = "<group>"; };
 		DBECB4CF2B7DF3DB00C9F3C0 /* View+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+.swift"; sourceTree = "<group>"; };
@@ -214,6 +216,7 @@
 		32CDC01D2AD2B4AB00D4DA6B /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				DB7CA7B22D089A6E0039A624 /* ChatViewModel.swift */,
 				32CDC0202AD2B50600D4DA6B /* MenuItem.swift */,
 				32CDC0222AD2B57400D4DA6B /* Prompt.swift */,
 				32CDC0242AD2B59700D4DA6B /* Response.swift */,
@@ -460,6 +463,7 @@
 				DBECB4D42B7E03AB00C9F3C0 /* AppSettings.swift in Sources */,
 				327B90472AD17EA300A94F10 /* OllamaChatApp.swift in Sources */,
 				32CDC0252AD2B59700D4DA6B /* Response.swift in Sources */,
+				DB7CA7B32D089A6E0039A624 /* ChatViewModel.swift in Sources */,
 				32CDC0282AD2B70000D4DA6B /* NetworkErrors.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

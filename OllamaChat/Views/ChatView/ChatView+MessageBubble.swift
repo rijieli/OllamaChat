@@ -40,7 +40,6 @@ extension ChatView {
                     }
                     if #available(macOS 14.4, *) {
                         bubbleButton("translate") {
-                            viewModel.textToTranslate = message.content
                             showTranslation = true
                         }
                     }
