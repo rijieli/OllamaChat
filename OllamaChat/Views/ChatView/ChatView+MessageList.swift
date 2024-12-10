@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import Translation
 
 extension ChatView {
     
@@ -20,43 +21,7 @@ extension ChatView {
                     let messages = viewModel.messages.filter { $0.role != .system }
                     ForEach(messages) { message in
                         let isUser = message.role == .user
-                        ChatBubble(
-                            direction: isUser ? .right : .left,
-                            floatingButtonsAlignment: .bottomTrailing
-                        ) {
-                            MarkdownTextView(message: message.content)
-                                .foregroundStyle(isUser ? Color.white : .black)
-                                .padding([.leading, .trailing], 8)
-                                .padding([.top, .bottom], 8)
-                                .textSelection(.enabled)
-                                .background(isUser ? Color.blue : Color(hex: "#EBEBEB"))
-                        } buttons: {
-                            HStack(spacing: 4) {
-                                if isUser {
-                                    bubbleButton("arrow.clockwise.circle.fill") {
-                                        viewModel.resendUntil(message)
-                                    }
-                                }
-                                bubbleButton("pencil.circle.fill") {
-                                    viewModel.editMessage(message)
-                                }
-                                bubbleButton("doc.on.doc.fill") {
-                                    let pasteboard = NSPasteboard.general
-                                    pasteboard.clearContents()  // Clears the pasteboard before writing
-                                    pasteboard.setString(message.content, forType: .string)
-                                }
-                            }
-                            .frame(height: 24)
-                            .frame(minWidth: 36)
-                            .padding(.horizontal, 3)
-                            .background {
-                                Capsule().fill(.background)
-                            }
-                            .overlay {
-                                Capsule().strokeBorder(Color.black.opacity(0.2), lineWidth: 1)
-                            }
-                            .offset(x: -4, y: -4)
-                        }
+                        MessageBubble(isUser: isUser, message: message)
                     }
 
                     Color.clear

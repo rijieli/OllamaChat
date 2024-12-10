@@ -122,21 +122,6 @@ struct ChatView: View {
             }
         }
     }
-
-    func bubbleButton(_ systemName: String, action: VoidClosureOptionl) -> some View {
-        Button {
-            action?()
-        } label: {
-            Image(systemName: systemName)
-                .resizable()
-                .scaledToFit()
-                .font(.system(size: 16, weight: .bold))
-                .padding(4)
-                .frame(width: 24, height: 24)
-                .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
-    }
 }
 
 class ChatViewModel: ObservableObject {
@@ -184,6 +169,8 @@ class ChatViewModel: ObservableObject {
     @Published var errorModel = ErrorModel(showError: false, errorTitle: "", errorMessage: "")
 
     var work: Task<Void, Never>?
+    
+    @Published var textToTranslate: String = ""
 
     @MainActor
     func send() {

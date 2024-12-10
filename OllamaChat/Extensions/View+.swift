@@ -111,7 +111,7 @@ extension View {
 }
 
 extension View {
-    
+
     public func ifGeometryGroup() -> some View {
         if #available(macOS 14, *) {
             return self.geometryGroup()
@@ -119,5 +119,25 @@ extension View {
             return self
         }
     }
-    
+
+}
+
+extension View {
+
+    public func ifTranslationPresentation(
+        isPresented: Binding<Bool>,
+        text: String,
+        arrowEdge: Edge = .top
+    ) -> some View {
+        if #available(macOS 14.4, *) {
+            return self.translationPresentation(
+                isPresented: isPresented,
+                text: text,
+                arrowEdge: arrowEdge
+            )
+        } else {
+            return self
+        }
+    }
+
 }
