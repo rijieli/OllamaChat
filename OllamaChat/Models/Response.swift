@@ -12,7 +12,7 @@ struct ResponseModel: Decodable, Hashable {
     let createdAt: String
     let response: String?
     let done: Bool
-    let message : ChatMessage
+    let message: ChatMessage
     let context: [Int]?
     let total_duration: Int?
     let load_duration: Int?

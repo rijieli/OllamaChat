@@ -9,15 +9,15 @@ import Foundation
 import SwiftUI
 
 extension ChatView {
-    
+
     struct SystemEditorView: View {
-        
+
         @ObservedObject var viewModel = ChatViewModel.shared
-        
+
         @State var systemPrompt: String = ""
-        
+
         @FocusState private var isPopupFocused: Bool
-        
+
         var body: some View {
             ZStack {
                 GeometryReader { proxy in
@@ -45,13 +45,13 @@ extension ChatView {
                                     .strokeBorder(Color.black.opacity(0.1), lineWidth: 1)
                             )
                             .background()
-                            
+
                             HStack {
                                 Button("Cancel") {
                                     isPopupFocused = false
                                     viewModel.showSystemConfig = false
                                 }
-                                
+
                                 Button("Save") {
                                     updateSystem()
                                 }
@@ -66,26 +66,27 @@ extension ChatView {
             }
             .frame(minWidth: 360, minHeight: 300, idealHeight: 300)
             .task {
-                systemPrompt = viewModel.messages.first(where: { $0.role == .system })?.content ?? ""
+                systemPrompt =
+                    viewModel.messages.first(where: { $0.role == .system })?.content ?? ""
                 isPopupFocused = true
             }
         }
-        
+
         func updateSystem() {
             viewModel.updateSystem(.init(role: .system, content: systemPrompt))
         }
     }
-    
+
     struct MessageEditorView: View {
-        
+
         @ObservedObject var viewModel = ChatViewModel.shared
-        
+
         @State var info: String = ""
-        
+
         @State var role: ChatMessageRole = .user
-        
+
         @FocusState private var isPopupFocused: Bool
-        
+
         var body: some View {
             ZStack {
                 GeometryReader { proxy in
@@ -107,19 +108,21 @@ extension ChatView {
                                     .strokeBorder(Color.black.opacity(0.1), lineWidth: 1)
                             )
                             .background()
-                            
+
                             HStack {
                                 Button("Cancel") {
                                     isPopupFocused = false
                                     viewModel.showEditingMessage = false
                                     viewModel.editingCellIndex = nil
                                 }
-                                
+
                                 Button("Update") {
                                     saveChange(update: true)
                                 }
-                                
-                                if let idx = viewModel.editingCellIndex, viewModel.messages[idx].role == .user {
+
+                                if let idx = viewModel.editingCellIndex,
+                                    viewModel.messages[idx].role == .user
+                                {
                                     Button("Save") {
                                         saveChange()
                                     }
@@ -141,9 +144,12 @@ extension ChatView {
                 isPopupFocused = true
             }
         }
-        
+
         func saveChange(update: Bool = false) {
-            viewModel.updateMessage(at: viewModel.editingCellIndex!, with: .init(role: role, content: info))
+            viewModel.updateMessage(
+                at: viewModel.editingCellIndex!,
+                with: .init(role: role, content: info)
+            )
             if !update {
                 viewModel.resendUntil(viewModel.messages[viewModel.editingCellIndex!])
             }

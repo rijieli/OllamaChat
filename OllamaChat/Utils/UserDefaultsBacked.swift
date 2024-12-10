@@ -12,10 +12,10 @@ import Foundation
     let key: String
     var storage: UserDefaults = .standard
     private let defaultValue: Value
-    
+
     var wrappedValue: Value {
         get {
-            let value = storage.value(forKey:key) as? Value
+            let value = storage.value(forKey: key) as? Value
             return value ?? defaultValue
         }
         set {
@@ -26,7 +26,7 @@ import Foundation
             }
         }
     }
-    
+
     init(wrappedValue defaultValue: Value, key: String, storage: UserDefaults = .standard) {
         self.defaultValue = defaultValue
         self.key = key
@@ -49,8 +49,8 @@ extension Optional: AnyOptional {
 }
 
 extension UserDefaults {
-//    static var vwShared: UserDefaults {
-//        let combined = UserDefaults(suiteName: kAppGroupSuiteName)!
-//        return combined
-//    }
+    //    static var vwShared: UserDefaults {
+    //        let combined = UserDefaults(suiteName: kAppGroupSuiteName)!
+    //        return combined
+    //    }
 }

@@ -5,22 +5,21 @@
 //  Created by Karim ElGhandour on 08.10.23.
 //
 
+import Hue
 import SwiftUI
 import SwiftUIIntrospect
-import Hue
 
 struct ChatView: View {
     let fontSize: CGFloat = 15
-    
-    @State private var tags: ModelGroup?
+
     @State private var showingErrorPopover: Bool = false
-    
+
     @ObservedObject var viewModel = ChatViewModel.shared
-    
+
     @FocusState private var promptFieldIsFocused: Bool
-    
+
     @Namespace var bottomID
-    
+
     var body: some View {
         VStack(spacing: 0) {
             ScrollViewReader { proxy in
@@ -31,7 +30,10 @@ struct ChatView: View {
                     let messages = viewModel.messages.filter { $0.role != .system }
                     ForEach(messages) { message in
                         let isUser = message.role == .user
-                        ChatBubble(direction: isUser ? .right : .left, floatingButtonsAlignment: .bottomTrailing) {
+                        ChatBubble(
+                            direction: isUser ? .right : .left,
+                            floatingButtonsAlignment: .bottomTrailing
+                        ) {
                             MarkdownTextView(message: message.content)
                                 .foregroundStyle(isUser ? Color.white : .black)
                                 .padding([.leading, .trailing], 8)
@@ -50,7 +52,7 @@ struct ChatView: View {
                                 }
                                 bubbleButton("doc.on.doc.fill") {
                                     let pasteboard = NSPasteboard.general
-                                    pasteboard.clearContents() // Clears the pasteboard before writing
+                                    pasteboard.clearContents()  // Clears the pasteboard before writing
                                     pasteboard.setString(message.content, forType: .string)
                                 }
                             }
@@ -66,12 +68,12 @@ struct ChatView: View {
                             .offset(x: -4, y: -4)
                         }
                     }
-                    
+
                     Color.clear
                         .maxWidth()
                         .frame(height: 40)
                         .id(bottomID)
-                    
+
                 }
                 .maxFrame()
                 //.defaultScrollAnchor(.bottom)
@@ -83,11 +85,11 @@ struct ChatView: View {
                             }
                             .transition(.opacity)
                         }
-                        
+
                         actionButton("gearshape.fill") {
                             viewModel.showSystemConfig = true
                         }
-                        
+
                         actionButton("trash.fill") {
                             viewModel.resetChat()
                         }
@@ -102,7 +104,7 @@ struct ChatView: View {
                     proxy.scrollTo(bottomID)
                 }
             }
-            
+
             ZStack {
                 TextEditor(text: $viewModel.current.content)
                     .disableAutoQuotes()
@@ -145,7 +147,7 @@ struct ChatView: View {
             .padding(.bottom, 12)
             .maxFrame()
             .frame(height: 160)
-            
+
         }
         .frame(minWidth: 400, idealWidth: 700, minHeight: 600, idealHeight: 800)
         .background(Color(NSColor.controlBackgroundColor))
@@ -153,10 +155,10 @@ struct ChatView: View {
             self.getTags()
         }
         .toolbar {
-            ToolbarItemGroup(placement: .automatic){
+            ToolbarItemGroup(placement: .automatic) {
                 HStack {
                     Picker("Model:", selection: $viewModel.model) {
-                        ForEach(tags?.models ?? [], id: \.self) { model in
+                        ForEach(viewModel.tags.models, id: \.self) { model in
                             Text(model.modelInfo.model).tag(model.name)
                         }
                     }
@@ -178,7 +180,6 @@ struct ChatView: View {
                         }
                         .padding()
                     }
-                    
                 } else {
                     Text("Server:")
                     Label("Connected", systemImage: "circle.fill")
@@ -202,7 +203,7 @@ struct ChatView: View {
             MessageEditorView(viewModel: viewModel)
         }
     }
-    
+
     func actionButton(_ sfName: String, action: (() -> Void)?) -> some View {
         Button {
             action?()
@@ -215,22 +216,21 @@ struct ChatView: View {
         }
         .buttonStyle(.plain)
     }
-    
+
     func getTags() {
         Task {
             do {
                 viewModel.disabledButton = false
                 viewModel.waitingResponse = false
                 viewModel.errorModel.showError = false
-                self.tags = try await getLocalModels(host: "\(viewModel.host):\(viewModel.port)", timeoutRequest: viewModel.timeoutRequest, timeoutResource: viewModel.timeoutResource)
-                if(self.tags != nil){
-                    if(self.tags!.models.count > 0){
-                        viewModel.model = self.tags!.models[0].name
-                    }else{
-                        viewModel.model = ""
-                        viewModel.errorModel = noModelsError(error: nil)
-                    }
-                }else{
+                viewModel.tags = try await getLocalModels(
+                    host: "\(viewModel.host):\(viewModel.port)",
+                    timeoutRequest: viewModel.timeoutRequest,
+                    timeoutResource: viewModel.timeoutResource
+                )
+                if viewModel.tags.models.count > 0 {
+                    viewModel.model = viewModel.tags.models[0].name
+                } else {
                     viewModel.model = ""
                     viewModel.errorModel = noModelsError(error: nil)
                 }
@@ -247,7 +247,7 @@ struct ChatView: View {
             }
         }
     }
-    
+
     func bubbleButton(_ systemName: String, action: VoidClosureOptionl) -> some View {
         Button {
             action?()
@@ -265,9 +265,9 @@ struct ChatView: View {
 }
 
 class ChatViewModel: ObservableObject {
-    
+
     static let shared = ChatViewModel()
-    
+
     private init() {
         let lastChat = SingleChat.fetchLastCreated()
         if let lastChat {
@@ -279,98 +279,103 @@ class ChatViewModel: ObservableObject {
             model = ""
         }
     }
-    
+
+    @Published var tags = ModelGroup(models: [])
+
     @AppStorage("host") var host = "http://127.0.0.1"
     @AppStorage("port") var port = "11434"
     @AppStorage("timeoutRequest") var timeoutRequest = "60"
     @AppStorage("timeoutResource") var timeoutResource = "604800"
-    
+
     @Published var showSystemConfig = false
-    
+
     @Published var showEditingMessage = false
-    
+
     var editingCellIndex: Int? = nil
-    
+
     @Published var currentChat: SingleChat? = nil
-    
+
     @Published var showModelConfig = false
-    
+
     @Published var model: String
-    
+
     @Published var current = ChatMessage(role: .user, content: "")
-    
+
     @Published var messages: [ChatMessage]
-    
+
     @Published var waitingResponse: Bool = false
     @Published var disabledButton: Bool = true
-    
+
     @Published var errorModel = ErrorModel(showError: false, errorTitle: "", errorMessage: "")
-    
+
     var work: Task<Void, Never>?
-    
+
     @MainActor
     func send() {
         work = Task {
             do {
                 self.errorModel.showError = false
                 waitingResponse = true
-                
+
                 if messages.isEmpty {
                     messages.append(.globalSystem)
                 }
-                
+
                 if !current.content.isEmpty {
                     self.messages.append(current)
                 }
-                
+
                 current = .init(role: .user, content: "")
-                
+
                 let chatHistory = ChatModel(
                     model: model,
                     messages: messages
                 )
-                
+
                 let endpoint = "\(host):\(port)" + "/api/chat"
-                
+
                 guard let url = URL(string: endpoint) else {
                     throw NetError.invalidURL(error: nil)
                 }
-                
+
                 var request = URLRequest(url: url)
                 request.httpMethod = "POST"
                 request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-                
+
                 let encoder = JSONEncoder()
                 encoder.keyEncodingStrategy = .convertToSnakeCase
                 request.httpBody = try encoder.encode(chatHistory)
-                
+
                 print("Sending request \(chatHistory)")
-                
+
                 let data: URLSession.AsyncBytes
                 let response: URLResponse
-                
+
                 do {
                     let sessionConfig = URLSessionConfiguration.default
                     sessionConfig.timeoutIntervalForRequest = Double(timeoutRequest) ?? 60
                     sessionConfig.timeoutIntervalForResource = Double(timeoutResource) ?? 604800
-                    (data, response) = try await URLSession(configuration: sessionConfig).bytes(for: request)
+                    (data, response) = try await URLSession(configuration: sessionConfig).bytes(
+                        for: request
+                    )
                 } catch {
                     throw NetError.unreachable(error: error)
                 }
-                
+
                 guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
                     throw NetError.invalidResponse(error: nil)
                 }
-                
+
                 self.messages.append(.init(role: .assistant, content: ""))
                 for try await line in data.lines {
                     let decoder = JSONDecoder()
                     decoder.keyDecodingStrategy = .convertFromSnakeCase
                     let data = line.data(using: .utf8)!
                     let decoded = try! decoder.decode(ResponseModel.self, from: data)
-                    self.messages[self.messages.index(before: self.messages.endIndex)].content += decoded.message.content
+                    self.messages[self.messages.index(before: self.messages.endIndex)].content +=
+                        decoded.message.content
                 }
-                
+
                 waitingResponse = false
                 current.content = ""
                 if let currentChat {
@@ -397,17 +402,17 @@ class ChatViewModel: ObservableObject {
             }
         }
     }
-    
+
     func resetChat() {
         waitingResponse = false
         work?.cancel()
         messages = [.globalSystem]
         saveDataToDatabase()
     }
-    
+
     @MainActor
     func resendUntil(_ message: ChatMessage) {
-        guard let idx = messages.firstIndex(where: { $0.id == message.id}) else { return }
+        guard let idx = messages.firstIndex(where: { $0.id == message.id }) else { return }
         waitingResponse = false
         work?.cancel()
         if idx < messages.endIndex {
@@ -418,22 +423,22 @@ class ChatViewModel: ObservableObject {
             send()
         }
     }
-    
+
     func editMessage(_ message: ChatMessage) {
-        guard let idx = messages.firstIndex(where: { $0.id == message.id}) else { return }
+        guard let idx = messages.firstIndex(where: { $0.id == message.id }) else { return }
         editingCellIndex = idx
         showEditingMessage = true
     }
-    
+
     func updateMessage(at index: Int, with newMessage: ChatMessage) {
         // Ensure the index is within bounds
         guard messages.indices.contains(index) else { return }
-        
+
         // Update the content of the message
         messages[index] = newMessage
         saveDataToDatabase()
     }
-    
+
     func updateSystem(_ newSystem: ChatMessage) {
         if let idx = messages.firstIndex(where: { $0.role == .system }) {
             messages[idx] = newSystem
@@ -443,7 +448,7 @@ class ChatViewModel: ObservableObject {
         saveDataToDatabase()
         showSystemConfig = false
     }
-    
+
     func saveDataToDatabase() {
         if let chat = currentChat {
             chat.messages = messages
@@ -451,7 +456,7 @@ class ChatViewModel: ObservableObject {
             CoreDataStack.shared.saveContext()
         }
     }
-    
+
     func loadChat(_ chat: SingleChat?) {
         if let chat {
             messages = chat.messages

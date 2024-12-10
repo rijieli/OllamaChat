@@ -6,12 +6,12 @@
 //  Copyright © 2024 IdeasForm. All rights reserved.
 //
 
-import Foundation
 import CoreData
+import Foundation
 
 class CoreDataStack {
     static let shared = CoreDataStack()
-    
+
     lazy var persistentContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "OllamaChat")
         container.loadPersistentStores { storeDescription, error in
@@ -21,11 +21,11 @@ class CoreDataStack {
         }
         return container
     }()
-    
+
     var context: NSManagedObjectContext {
         return persistentContainer.viewContext
     }
-    
+
     func saveContext() {
         let context = persistentContainer.viewContext
         if context.hasChanges {

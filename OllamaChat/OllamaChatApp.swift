@@ -5,14 +5,14 @@
 //  Created by Karim ElGhandour on 07.10.23.
 //
 
-import SwiftUI
 import AppKit
+import SwiftUI
 
 @main
 struct OllamaChatApp: App {
-    
+
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
-    
+
     var body: some Scene {
         WindowGroup {
             ContentView()
@@ -22,10 +22,12 @@ struct OllamaChatApp: App {
             CommandGroup(after: .newItem) {
                 Button(action: {
                     if let currentWindow = NSApp.keyWindow,
-                       let windowController = currentWindow.windowController {
+                        let windowController = currentWindow.windowController
+                    {
                         windowController.newWindowForTab(nil)
                         if let newWindow = NSApp.keyWindow,
-                           currentWindow != newWindow {
+                            currentWindow != newWindow
+                        {
                             currentWindow.addTabbedWindow(newWindow, ordered: .above)
                         }
                     }
@@ -35,9 +37,9 @@ struct OllamaChatApp: App {
                 .keyboardShortcut("t", modifiers: [.command])
             }
         }
-        
+
         Settings {
-          SettingsView()
+            SettingsView()
         }
     }
 }

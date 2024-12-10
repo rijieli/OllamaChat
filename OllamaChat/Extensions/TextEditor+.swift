@@ -11,12 +11,12 @@ import SwiftUI
 import SwiftUIIntrospect
 
 extension TextEditor {
-    
+
     func disableAutoQuotes() -> some View {
         self.introspect(.textEditor, on: .macOS(.v14, .v13)) { nsTextView in
             nsTextView.isAutomaticQuoteSubstitutionEnabled = false
             nsTextView.isAutomaticDashSubstitutionEnabled = false
         }
     }
-    
+
 }

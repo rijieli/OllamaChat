@@ -10,7 +10,7 @@ import SwiftUI
 
 struct MarkdownTextView: View {
     let message: String
-    
+
     var body: some View {
         let content = LocalizedStringKey(message.trimmingCharacters(in: .whitespacesAndNewlines))
         Text(content)

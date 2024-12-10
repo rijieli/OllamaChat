@@ -8,15 +8,20 @@
 import SwiftUI
 
 struct ChatBubble<Content: View, FloatingButtons: View>: View {
-    
+
     @State var hovered = false
-    
+
     let direction: ChatBubbleShape.Direction
     let floatingButtonsAlignment: Alignment
     let content: Content
     let buttons: FloatingButtons
-    
-    init(direction: ChatBubbleShape.Direction, floatingButtonsAlignment: Alignment = .bottomTrailing, @ViewBuilder content: () -> Content, @ViewBuilder buttons: () -> FloatingButtons) {
+
+    init(
+        direction: ChatBubbleShape.Direction,
+        floatingButtonsAlignment: Alignment = .bottomTrailing,
+        @ViewBuilder content: () -> Content,
+        @ViewBuilder buttons: () -> FloatingButtons
+    ) {
         self.content = content()
         self.direction = direction
         self.buttons = buttons()

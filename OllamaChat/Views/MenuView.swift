@@ -17,13 +17,13 @@ struct MenuView: View {
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 20)
-                    
+
                     Text(option.title)
                 }
                 .padding(.bottom)
             }
         }
-        
+
         Spacer()
     }
 }

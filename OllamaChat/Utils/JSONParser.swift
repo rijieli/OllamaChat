@@ -8,10 +8,12 @@
 import Foundation
 
 class JSONParser {
-    class func JSONObjectsWithData(data: Data, options opt: JSONSerialization.ReadingOptions = []) throws -> Data {
+    class func JSONObjectsWithData(data: Data, options opt: JSONSerialization.ReadingOptions = [])
+        throws -> Data
+    {
         let nonEmptyLines = String(data: data, encoding: String.Encoding.utf8)!
-              .components(separatedBy: "\n").filter{ !$0.isEmpty }
-        let string =   "[" + nonEmptyLines.joined(separator: ",")  + "]"
+            .components(separatedBy: "\n").filter { !$0.isEmpty }
+        let string = "[" + nonEmptyLines.joined(separator: ",") + "]"
         let data = string.data(using: String.Encoding.utf8)!
         return data
     }

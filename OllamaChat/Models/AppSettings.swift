@@ -8,8 +8,8 @@
 import Foundation
 
 class AppSettings {
-    
+
     @UserDefaultsBacked(key: "AppSettings.GlobalSystem")
     static var globalSystem = ""
-    
+
 }

@@ -8,11 +8,11 @@
 import SwiftUI
 
 struct SettingsView: View {
-    
+
     private enum Tabs: Hashable {
-            case general, models
-        }
-    
+        case general, models
+    }
+
     var body: some View {
         TabView {
             GeneralSettingsView()
@@ -31,8 +31,8 @@ struct GeneralSettingsView: View {
     @AppStorage("timeoutResource") private var timeoutResource = "604800"
     var body: some View {
         Form {
-            VStack{
-                HStack{
+            VStack {
+                HStack {
                     TextField("Host IP:", text: $host)
                     TextField("Port:", text: $port)
                         .onChange(of: port) { _ in
@@ -49,7 +49,7 @@ struct GeneralSettingsView: View {
                             self.timeoutRequest = filtered
                         }
                     }
-                
+
                 TextField("Resources Timeout (in sec. Default: 604800):", text: $timeoutResource)
                     .onChange(of: timeoutResource) { _ in
                         let filtered = timeoutResource.filter { "0123456789".contains($0) }

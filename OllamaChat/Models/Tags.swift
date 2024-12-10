@@ -16,7 +16,7 @@ struct LanguageModel: Decodable, Hashable {
     let modifiedAt: String
     let size: Double
     let digest: String
-    
+
     var modelInfo: (provider: String?, model: String, scale: String?) {
         var model = name
         let provider: String?
@@ -26,7 +26,7 @@ struct LanguageModel: Decodable, Hashable {
         } else {
             provider = nil
         }
-        
+
         let scale: String?
         if let index = model.lastIndex(of: ":") {
             scale = String(model[(model.index(after: index))...]).uppercased()

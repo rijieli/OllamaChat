@@ -17,7 +17,8 @@ struct ChatListView: View {
         sortDescriptors: [
             NSSortDescriptor(keyPath: \SingleChat.createdAt, ascending: false)
         ],
-        animation: .default)
+        animation: .default
+    )
     private var items: FetchedResults<SingleChat>
 
     @State var showRenameDialog = false
@@ -53,7 +54,8 @@ struct ChatListView: View {
                                 Button("Duplicate") {
                                     DispatchQueue.main.async {
                                         let duplicated = SingleChat.duplicate(
-                                            item)
+                                            item
+                                        )
                                         CoreDataStack.shared.saveContext()
                                         chatViewModel.loadChat(duplicated)
                                     }
@@ -61,7 +63,8 @@ struct ChatListView: View {
                                 Button("Delete") {
                                     DispatchQueue.main.async {
                                         CoreDataStack.shared.context.delete(
-                                            item)
+                                            item
+                                        )
                                         CoreDataStack.shared.saveContext()
                                     }
                                     chatViewModel.loadChat(nil)
@@ -76,7 +79,9 @@ struct ChatListView: View {
             VStack(spacing: 8) {
                 Button {
                     let newChat = SingleChat.createNewSingleChat(
-                        messages: [], model: chatViewModel.model)
+                        messages: [],
+                        model: chatViewModel.model
+                    )
                     CoreDataStack.shared.saveContext()
                     chatViewModel.loadChat(newChat)
                 } label: {
@@ -104,16 +109,21 @@ struct ChatListView: View {
                                 if #available(macOS 13.0, *) {
                                     NSApp.sendAction(
                                         Selector(("showSettingsWindow:")),
-                                        to: nil, from: nil)
+                                        to: nil,
+                                        from: nil
+                                    )
                                 } else {
                                     NSApp.sendAction(
                                         Selector(("showPreferencesWindow:")),
-                                        to: nil, from: nil)
+                                        to: nil,
+                                        from: nil
+                                    )
                                 }
                             },
                             label: {
                                 gearLabel
-                            })
+                            }
+                        )
                     }
                     Spacer()
                 }

@@ -6,13 +6,13 @@
 //
 
 import Foundation
-import SwiftUI
 import Hue
+import SwiftUI
 
 extension Color {
-    
+
     init(hex: String) {
         self.init(nsColor: .init(hex: hex))
     }
-    
+
 }
