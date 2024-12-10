@@ -72,7 +72,7 @@ extension SingleChat {
         // Create new SingleChat instance
         let newChat = SingleChat(context: context)
         newChat.id = UUID()
-        newChat.name = "Name\(chatCount + 1)"  // Automatically set name based on chat count
+        newChat.name = "Chat \(chatCount + 1)"  // Automatically set name based on chat count
         newChat.model = model
         newChat.createdAt = Date()
         newChat.messages = messages
