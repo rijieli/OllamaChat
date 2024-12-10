@@ -1,8 +1,8 @@
-#!/bin/bash
+#!/bin/zsh
 
 # Check if the folder name is provided
 if [ -z "$1" ]; then
-  FOLDER_PATH="Product/"
+  FOLDER_PATH="Archives/"
 else
   FOLDER_PATH=$1
 fi
