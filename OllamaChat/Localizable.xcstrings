@@ -20,42 +20,55 @@
         }
       }
     },
-    "Add model:" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "اضافة نموذج "
-          }
-        }
-      }
-    },
-    "Add Model:" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "اضافة نموذج "
-          }
-        }
-      }
-    },
     "Automatic apply to each chat." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自动应用到每个新的对话"
+          }
+        }
+      }
     },
     "Cancel" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取消"
+          }
+        }
+      }
     },
     "Connected" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已连接"
+          }
+        }
+      }
     },
     "Delete" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "删除"
+          }
+        }
+      }
     },
     "Done" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "完成"
+          }
+        }
+      }
     },
     "Downloading %@" : {
       "localizations" : {
@@ -64,31 +77,54 @@
             "state" : "translated",
             "value" : "تنزيل %@"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下载 %@"
+          }
         }
       }
     },
     "Duplicate" : {
-
-    },
-    "Duplicate Model:" : {
-      "extractionState" : "stale",
       "localizations" : {
-        "ar" : {
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "نسخ نموذج "
+            "value" : "创建副本"
           }
         }
       }
     },
     "Enter your name" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "输入新的名称"
+          }
+        }
+      }
     },
     "Error" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "错误"
+          }
+        }
+      }
     },
     "Find more models: [Models](https://ollama.com/library)" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "寻找更多模型: [Ollama Library](https://ollama.com/library)"
+          }
+        }
+      }
     },
     "General" : {
       "localizations" : {
@@ -97,45 +133,64 @@
             "state" : "translated",
             "value" : "العام"
           }
-        }
-      }
-    },
-    "Get Model:" : {
-
-    },
-    "Global System Prompt:" : {
-
-    },
-    "Host IP:" : {
-
-    },
-    "Local Models:" : {
-
-    },
-    "Local Models: " : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "ar" : {
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "النماذج المتاحة محليا "
+            "value" : "通用"
           }
         }
       }
     },
-    "Manage Models" : {
-      "extractionState" : "stale",
+    "Get Model:" : {
       "localizations" : {
-        "ar" : {
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ادارة النماذج"
+            "value" : "获取模型："
+          }
+        }
+      }
+    },
+    "Global System Prompt:" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "全局系统 Prompt："
+          }
+        }
+      }
+    },
+    "Host IP:" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "服务 IP："
+          }
+        }
+      }
+    },
+    "Local Models:" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "本地模型："
           }
         }
       }
     },
     "Model name. e.g. llama3" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模型名称，例如 llama3"
+          }
+        }
+      }
     },
     "Model:" : {
       "localizations" : {
@@ -144,51 +199,87 @@
             "state" : "translated",
             "value" : "النموذج"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模型："
+          }
         }
       }
     },
     "New Chat" : {
-
-    },
-    "New Name" : {
-      "extractionState" : "stale",
       "localizations" : {
-        "ar" : {
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "الاسم الجديد"
+            "value" : "新的对话"
           }
         }
       }
     },
     "New Tab" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新的标签"
+          }
+        }
+      }
     },
     "No chat selected" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未选中任何对话"
+          }
+        }
+      }
     },
     "No models downloaded locally. Add a model by typing the name in the field at the bottom of the page." : {
 
     },
-    "Online" : {
-      "extractionState" : "stale",
+    "Please select a chat from the list or create a new one" : {
       "localizations" : {
-        "ar" : {
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "متصل"
+            "value" : "从列表选择或创建一个新的对话"
           }
         }
       }
     },
     "Port:" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "端口："
+          }
+        }
+      }
     },
     "Rename" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重命名"
+          }
+        }
+      }
     },
     "Rename this chat" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重命名当前对话"
+          }
+        }
+      }
     },
     "Request Timeout (in sec. Default 60):" : {
 
@@ -197,18 +288,11 @@
 
     },
     "Save" : {
-
-    },
-    "Select a chat from the list or create a new one." : {
-
-    },
-    "Server Status: " : {
-      "extractionState" : "stale",
       "localizations" : {
-        "ar" : {
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "حالة الاتصال"
+            "value" : "保存"
           }
         }
       }
@@ -217,7 +301,14 @@
 
     },
     "System" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "系统"
+          }
+        }
+      }
     },
     "This is the start of your chat" : {
       "localizations" : {
@@ -226,25 +317,24 @@
             "state" : "translated",
             "value" : "هذه بداية المحادثة"
           }
-        }
-      }
-    },
-    "To find the model names to download, checkout: https://ollama.ai/library" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "ar" : {
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "للعثور على أسماء النماذج المراد تنزيلها، قم بالبحث: https://ollama.ai/library"
+            "value" : "对话由此开始"
           }
         }
       }
     },
     "Update" : {
-
-    },
-    "Xcode will print whatever you type." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "更新"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

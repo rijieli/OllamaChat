@@ -39,6 +39,7 @@
 		DB25C4072C00EFCC00A42484 /* TextEditor+.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB25C4062C00EFCC00A42484 /* TextEditor+.swift */; };
 		DB5B94DF2B7FB76600273FFA /* SwiftUIIntrospect in Frameworks */ = {isa = PBXBuildFile; productRef = DB5B94DE2B7FB76600273FFA /* SwiftUIIntrospect */; };
 		DB6D278F2B7DE9CA00318297 /* ChatView+SystemPrompt.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6D278E2B7DE9CA00318297 /* ChatView+SystemPrompt.swift */; };
+		DB6E36792D0965B8005B565B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = DB6E36772D0965B8005B565B /* InfoPlist.strings */; };
 		DB7CA7AC2D0886C40039A624 /* ChatPlaceholderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7CA7AB2D0886C40039A624 /* ChatPlaceholderView.swift */; };
 		DB7CA7AF2D0887F70039A624 /* ChatView+MessageList.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7CA7AE2D0887EB0039A624 /* ChatView+MessageList.swift */; };
 		DB7CA7B12D0894EF0039A624 /* ChatView+MessageBubble.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7CA7B02D0894E40039A624 /* ChatView+MessageBubble.swift */; };
@@ -107,6 +108,9 @@
 		DB0AE5F42C4D054400AC7CC5 /* ChatListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListView.swift; sourceTree = "<group>"; };
 		DB25C4062C00EFCC00A42484 /* TextEditor+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TextEditor+.swift"; sourceTree = "<group>"; };
 		DB6D278E2B7DE9CA00318297 /* ChatView+SystemPrompt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatView+SystemPrompt.swift"; sourceTree = "<group>"; };
+		DB6E36782D0965B8005B565B /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		DB6E367A2D096601005B565B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		DB6E367B2D0968F7005B565B /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		DB7CA7AB2D0886C40039A624 /* ChatPlaceholderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatPlaceholderView.swift; sourceTree = "<group>"; };
 		DB7CA7AE2D0887EB0039A624 /* ChatView+MessageList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatView+MessageList.swift"; sourceTree = "<group>"; };
 		DB7CA7B02D0894E40039A624 /* ChatView+MessageBubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatView+MessageBubble.swift"; sourceTree = "<group>"; };
@@ -171,6 +175,7 @@
 		327B90452AD17EA300A94F10 /* OllamaChat */ = {
 			isa = PBXGroup;
 			children = (
+				DB6E367A2D096601005B565B /* Info.plist */,
 				DBECB4CE2B7DF3C900C9F3C0 /* Extensions */,
 				32CDC0262AD2B6E300D4DA6B /* Utils */,
 				32CDC01F2AD2B4BD00D4DA6B /* Views */,
@@ -183,6 +188,7 @@
 				32405D8A2ADB181A00EAAC10 /* Localizable.xcstrings */,
 				DB0AE5EB2C4CFBD500AC7CC5 /* AppDelegate.swift */,
 				DB0AE5ED2C4CFC1300AC7CC5 /* OllamaChat.xcdatamodeld */,
+				DB6E36772D0965B8005B565B /* InfoPlist.strings */,
 			);
 			path = OllamaChat;
 			sourceTree = "<group>";
@@ -380,6 +386,7 @@
 			knownRegions = (
 				en,
 				Base,
+				"zh-Hans",
 			);
 			mainGroup = 327B903A2AD17EA300A94F10;
 			packageReferences = (
@@ -403,6 +410,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				327B904E2AD17EA400A94F10 /* Preview Assets.xcassets in Resources */,
+				DB6E36792D0965B8005B565B /* InfoPlist.strings in Resources */,
 				327B904B2AD17EA400A94F10 /* Assets.xcassets in Resources */,
 				32405D8B2ADB181A00EAAC10 /* Localizable.xcstrings in Resources */,
 			);
@@ -501,12 +509,25 @@
 		};
 /* End PBXTargetDependency section */
 
+/* Begin PBXVariantGroup section */
+		DB6E36772D0965B8005B565B /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				DB6E36782D0965B8005B565B /* en */,
+				DB6E367B2D0968F7005B565B /* zh-Hans */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
 /* Begin XCBuildConfiguration section */
 		327B90662AD17EA400A94F10 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -559,12 +580,13 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.4;
+				MARKETING_VERSION = 1.4.1;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -574,6 +596,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -620,11 +643,12 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.4;
+				MARKETING_VERSION = 1.4.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 			};
 			name = Release;
 		};
@@ -644,9 +668,10 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = OllamaChat/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Ollama Chat";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Ideas Form";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -675,9 +700,10 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = OllamaChat/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Ollama Chat";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Ideas Form";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",

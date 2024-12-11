@@ -89,8 +89,6 @@ struct ChatListView: View {
                 }
             }
             Button("Cancel", role: .cancel) {}
-        } message: {
-            Text("Xcode will print whatever you type.")
         }
     }
 

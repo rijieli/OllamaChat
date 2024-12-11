@@ -22,7 +22,7 @@ struct ChatPlaceholderView: View {
                     .foregroundColor(.secondary)
                 Text("No chat selected")
                     .font(.title)
-                Text("Select a chat from the list or create a new one.")
+                Text("Please select a chat from the list or create a new one")
             }
 
             Button("New Chat") {

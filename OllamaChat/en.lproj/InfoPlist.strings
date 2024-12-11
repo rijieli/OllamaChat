@@ -1,0 +1,11 @@
+/* 
+  InfoPlist.strings
+  OllamaChat
+
+  Created by Roger on 2024/12/11.
+  Copyright © 2024 IdeasForm. All rights reserved.
+*/
+
+"CFBundleName" = "Ollama Chat";
+"CFBundleDisplayName" = "Ollama Chat";
+"NSHumanReadableCopyright" = "Ideas Form";
