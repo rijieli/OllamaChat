@@ -297,9 +297,6 @@
         }
       }
     },
-    "Server:" : {
-
-    },
     "System" : {
       "localizations" : {
         "zh-Hans" : {
@@ -335,6 +332,9 @@
           }
         }
       }
+    },
+    "Voice Gender:" : {
+
     }
   },
   "version" : "1.0"

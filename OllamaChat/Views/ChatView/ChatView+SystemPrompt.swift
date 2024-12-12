@@ -97,7 +97,7 @@ extension ChatView {
                                     .disableAutoQuotes()
                                     .font(.body)
                                     .onSubmit {
-                                        saveChange()
+                                        saveChange(resendMessage: true)
                                     }
                                     .focused(self.$isPopupFocused)
                                     .padding(.horizontal, 12)
@@ -116,15 +116,15 @@ extension ChatView {
                                     viewModel.editingCellIndex = nil
                                 }
 
-                                Button("Update") {
-                                    saveChange(update: true)
+                                Button("Save") {
+                                    saveChange(resendMessage: false)
                                 }
 
                                 if let idx = viewModel.editingCellIndex,
                                     viewModel.messages[idx].role == .user
                                 {
-                                    Button("Save") {
-                                        saveChange()
+                                    Button("Update") {
+                                        saveChange(resendMessage: true)
                                     }
                                 }
                             }
@@ -145,12 +145,12 @@ extension ChatView {
             }
         }
 
-        func saveChange(update: Bool = false) {
+        func saveChange(resendMessage: Bool) {
             viewModel.updateMessage(
                 at: viewModel.editingCellIndex!,
                 with: .init(role: role, content: info)
             )
-            if !update {
+            if resendMessage {
                 viewModel.resendUntil(viewModel.messages[viewModel.editingCellIndex!])
             }
             viewModel.editingCellIndex = nil

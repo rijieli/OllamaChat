@@ -56,7 +56,6 @@ struct ChatView: View {
                         .padding()
                     }
                 } else {
-                    Text("Server:")
                     Label("Connected", systemImage: "circle.fill")
                         .foregroundStyle(.green)
                 }

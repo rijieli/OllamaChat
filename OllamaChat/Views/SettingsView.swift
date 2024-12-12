@@ -5,6 +5,7 @@
 //  Created by Karim ElGhandour on 14.10.23.
 //
 
+import AVFoundation
 import SwiftUI
 
 struct SettingsView: View {
@@ -29,6 +30,9 @@ struct GeneralSettingsView: View {
     @AppStorage("port") private var port = "11434"
     @AppStorage("timeoutRequest") private var timeoutRequest = "60"
     @AppStorage("timeoutResource") private var timeoutResource = "604800"
+
+    @State private var voiceGenderPreference = TextSpeechCenter.shared.voiceGenderPreference
+
     var body: some View {
         Form {
             VStack {
@@ -57,9 +61,20 @@ struct GeneralSettingsView: View {
                             self.timeoutResource = filtered
                         }
                     }
+                Picker("Voice Gender:", selection: $voiceGenderPreference) {
+                    ForEach(
+                        [AVSpeechSynthesisVoiceGender.unspecified, .female, .male],
+                        id: \.rawValue
+                    ) { model in
+                        Text(model.title).tag(model)
+                    }
+                }
+                .onChange(of: voiceGenderPreference) { newValue in
+                    TextSpeechCenter.shared.voiceGenderPreference = newValue
+                }
             }
         }
         .padding()
-        .frame(width: 550, height: 130)
+        .frame(width: 550)
     }
 }

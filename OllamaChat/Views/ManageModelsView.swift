@@ -149,8 +149,6 @@ struct ManageModelsView: View {
                         .padding()
                     }
                 } else {
-                    Text("Server:")
-                        .fixedWidth()
                     Label("Connected", systemImage: "circle.fill")
                         .foregroundStyle(.green)
                         .fixedWidth()
