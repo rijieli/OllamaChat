@@ -34,11 +34,16 @@ extension ChatView {
                 //.defaultScrollAnchor(.bottom)
                 .overlay(alignment: .bottom) {
                     HStack {
+                        if speechCenter.isSpeaking {
+                            actionButton("speaker.slash.fill") {
+                                speechCenter.stopImmediate()
+                            }
+                        }
+                        
                         if viewModel.waitingResponse {
                             actionButton("stop.fill") {
                                 viewModel.work?.cancel()
                             }
-                            .transition(.opacity)
                         }
 
                         actionButton("gearshape.fill") {
@@ -53,6 +58,7 @@ extension ChatView {
                     .padding(.trailing, 12)
                     .frame(maxWidth: .infinity, alignment: .trailing)
                     .animation(.smooth, value: viewModel.waitingResponse)
+                    .animation(.smooth, value: speechCenter.isSpeaking)
                     .padding(.bottom, 8)
                 }
                 .onChange(of: viewModel.messages) { _ in
@@ -102,8 +108,20 @@ extension ChatView {
             .padding(.bottom, 12)
             .maxFrame()
             .frame(height: 160)
-
         }
     }
     
+    private func actionButton(_ sfName: String, action: (() -> Void)?) -> some View {
+        Button {
+            action?()
+        } label: {
+            Image(systemName: sfName)
+                .frame(width: 20, height: 20, alignment: .center)
+                .frame(width: 40, height: 32)
+                .foregroundStyle(.white)
+                .background(Capsule().fill(Color.blue))
+        }
+        .buttonStyle(.noAnimationStyle)
+        .transition(.opacity)
+    }
 }

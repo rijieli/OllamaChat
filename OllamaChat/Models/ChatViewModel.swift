@@ -226,6 +226,7 @@ class ChatViewModel: ObservableObject {
             messages = [.globalSystem]
             currentChat = nil
         }
+        TextSpeechCenter.shared.stopImmediate()
     }
 
     func newChat() {

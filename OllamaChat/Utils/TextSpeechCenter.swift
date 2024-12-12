@@ -9,7 +9,7 @@
 import AVFoundation
 import NaturalLanguage
 
-public class TextSpeechCenter {
+public class TextSpeechCenter: NSObject, ObservableObject {
 
     enum Constant {
         static let genderPreferenceKey = "VoiceGenderPreference"
@@ -35,13 +35,19 @@ public class TextSpeechCenter {
     }
 
     private let synthesizer = AVSpeechSynthesizer()
+    
+    @Published var isSpeaking = false
+    
     private var preloaded = false
     private let preloadQueue = DispatchQueue(
         label: "com.ideasform.ollamachat.speechpreload",
         attributes: .concurrent
     )
 
-    private init() {}
+    private override init() {
+        super.init()
+        synthesizer.delegate = self
+    }
 
     public func start() {
         _ = synthesizer
@@ -74,6 +80,8 @@ public class TextSpeechCenter {
 
     public func read(_ str: String) {
         stopImmediate()
+        isSpeaking = true
+        
         guard let language = detectLanguage(of: str) else {
             let utterance = AVSpeechUtterance(string: str)
             synthesizer.speak(utterance)
@@ -105,6 +113,15 @@ public class TextSpeechCenter {
 
     func stopImmediate() {
         synthesizer.stopSpeaking(at: .immediate)
+    }
+}
+
+extension TextSpeechCenter: AVSpeechSynthesizerDelegate {
+    public func speechSynthesizer(
+        _ synthesizer: AVSpeechSynthesizer,
+        didFinish utterance: AVSpeechUtterance
+    ) {
+        isSpeaking = false
     }
 }
 

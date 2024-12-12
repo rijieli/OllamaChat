@@ -15,6 +15,7 @@ struct ChatView: View {
     @State private var showingErrorPopover: Bool = false
 
     @ObservedObject var viewModel = ChatViewModel.shared
+    @ObservedObject var speechCenter = TextSpeechCenter.shared
 
     @FocusState var promptFieldIsFocused: Bool
 
@@ -76,19 +77,6 @@ struct ChatView: View {
         .sheet(isPresented: $viewModel.showEditingMessage) {
             MessageEditorView(viewModel: viewModel)
         }
-    }
-
-    func actionButton(_ sfName: String, action: (() -> Void)?) -> some View {
-        Button {
-            action?()
-        } label: {
-            Image(systemName: sfName)
-                .frame(width: 20, height: 20, alignment: .center)
-                .frame(width: 40, height: 32)
-                .foregroundStyle(.white)
-                .background(Capsule().fill(Color.blue))
-        }
-        .buttonStyle(.plain)
     }
 
     func getTags() {
