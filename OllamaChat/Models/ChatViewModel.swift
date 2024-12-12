@@ -163,13 +163,6 @@ class ChatViewModel: ObservableObject {
         }
     }
 
-    func resetChat() {
-        waitingResponse = false
-        work?.cancel()
-        messages = [.globalSystem]
-        saveDataToDatabase()
-    }
-
     @MainActor
     func resendUntil(_ message: ChatMessage) {
         guard let idx = messages.firstIndex(where: { $0.id == message.id }) else { return }

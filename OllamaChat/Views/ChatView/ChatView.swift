@@ -22,8 +22,9 @@ struct ChatView: View {
     @Namespace var bottomID
 
     var body: some View {
-        ZStack {
+        VStack(spacing: 0) {
             messagesList
+            messageInput
         }
         .frame(minWidth: 400, idealWidth: 700, minHeight: 600, idealHeight: 800)
         .background(Color(NSColor.controlBackgroundColor))
@@ -32,13 +33,8 @@ struct ChatView: View {
         }
         .toolbar {
             ToolbarItemGroup(placement: .automatic) {
-                HStack {
-                    Picker("Model:", selection: $viewModel.model) {
-                        ForEach(viewModel.tags.models, id: \.self) { model in
-                            Text(model.modelInfo.model).tag(model.name)
-                        }
-                    }
-                }
+                modelPicker()
+                    
                 if viewModel.errorModel.showError {
                     Button {
                         self.showingErrorPopover.toggle()

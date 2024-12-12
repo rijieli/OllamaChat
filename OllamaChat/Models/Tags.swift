@@ -16,6 +16,8 @@ struct LanguageModel: Decodable, Hashable {
     let modifiedAt: String
     let size: Double
     let digest: String
+    
+    static let emptyModel = LanguageModel(name: "", modifiedAt: "", size: 0, digest: "")
 
     var modelInfo: (provider: String?, model: String, scale: String?) {
         var model = name

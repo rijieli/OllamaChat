@@ -23,12 +23,16 @@ extension ChatView {
                 GeometryReader { proxy in
                     ZStack {
                         VStack(spacing: 12) {
-                            Text("System")
-                                .font(.title)
-                                .fontWeight(.bold)
-                                .padding(.leading, 12)
-                                .maxWidth(alignment: .leading)
-                                .padding(.bottom, 4)
+                            VStack(spacing: 4) {
+                                Text("System Prompt")
+                                    .font(.system(size: 18, weight: .bold))
+                                    .maxWidth(alignment: .leading)
+                                Text("This text will be sent at the start of the chat, which is also referred to as the Role System.")
+                                    .font(.system(size: 12))
+                                    .maxWidth(alignment: .leading)
+                                    .foregroundStyle(.secondary)
+                            }
+                            .padding(.leading, 8)
                             ZStack {
                                 TextEditor(text: $systemPrompt)
                                     .disableAutoQuotes()
@@ -59,7 +63,9 @@ extension ChatView {
                             .frame(height: 32)
                             .maxWidth(alignment: .trailing)
                         }
-                        .padding(12)
+                        .padding(.horizontal, 12)
+                        .padding(.top, 16)
+                        .padding(.bottom, 12)
                     }
                     .maxFrame()
                 }

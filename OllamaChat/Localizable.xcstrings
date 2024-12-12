@@ -2,13 +2,34 @@
   "sourceLanguage" : "en",
   "strings" : {
     "%.3f GB" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%.3f GB"
+          }
+        }
+      }
     },
     "%@" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@"
+          }
+        }
+      }
     },
     "%lld" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld"
+          }
+        }
+      }
     },
     "%lld/ %lld MB" : {
       "localizations" : {
@@ -17,8 +38,17 @@
             "state" : "new",
             "value" : "%1$lld/ %2$lld MB"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld/ %2$lld MB"
+          }
         }
       }
+    },
+    "⌘ + Return" : {
+
     },
     "Automatic apply to each chat." : {
       "localizations" : {
@@ -297,12 +327,12 @@
         }
       }
     },
-    "System" : {
+    "System Prompt" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "系统"
+            "value" : "系统 Prompt"
           }
         }
       }
@@ -323,6 +353,16 @@
         }
       }
     },
+    "This text will be sent at the start of the chat, which is also referred to as the Role System." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "这条信息将被附加在对话最开始作为 Role System 发送"
+          }
+        }
+      }
+    },
     "Update" : {
       "localizations" : {
         "zh-Hans" : {
@@ -334,7 +374,14 @@
       }
     },
     "Voice Gender:" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "语音类型偏好："
+          }
+        }
+      }
     }
   },
   "version" : "1.0"
