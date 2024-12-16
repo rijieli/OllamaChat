@@ -73,7 +73,22 @@ public class TextSpeechCenter: NSObject, ObservableObject {
             dict[langCode]?.append(voice)
         }
         dict.forEach { (key, value) in
-            dict[key] = value.sorted { $0.quality.rawValue > $1.quality.rawValue }
+            dict[key] = value.sorted { lhs, rhs in
+                // 1. Prioritize Quality
+                if lhs.quality != rhs.quality {
+                    return lhs.quality.rawValue > rhs.quality.rawValue
+                }
+                
+                // 2. If quality is the same, prioritize Siri
+                let lhsIsSiri = lhs.identifier.contains("siri")
+                let rhsIsSiri = rhs.identifier.contains("siri")
+                if lhsIsSiri != rhsIsSiri { //if one is siri and the other is not
+                    return lhsIsSiri //if lhs is siri return true meaning lhs should go first
+                }
+                
+                // 3. If quality and Siri status are the same, sort alphabetically
+                return lhs.identifier < rhs.identifier // Corrected to ascending order
+            }
         }
         return dict
     }()
@@ -81,15 +96,11 @@ public class TextSpeechCenter: NSObject, ObservableObject {
     public func read(_ str: String) {
         stopImmediate()
         isSpeaking = true
-        
-        guard let language = detectLanguage(of: str) else {
-            let utterance = AVSpeechUtterance(string: str)
-            synthesizer.speak(utterance)
-            return
-        }
         let utterance = AVSpeechUtterance(string: str)
-        let matchedVoice = getVoice(language: language)
-        utterance.voice = matchedVoice
+        if let language = detectLanguage(of: str) {
+            let matchedVoice = getVoice(language: language)
+            utterance.voice = matchedVoice
+        }
         synthesizer.speak(utterance)
     }
 
