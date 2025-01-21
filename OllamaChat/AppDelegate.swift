@@ -7,14 +7,23 @@
 //
 
 import Foundation
+#if os(macOS)
 import AppKit
+#else
+import UIKit
+#endif
 import SwiftUI
 
+#if os(macOS)
 class AppDelegate: NSObject, NSApplicationDelegate {
-
-    
     func applicationWillTerminate(_ notification: Notification) {
         CoreDataStack.shared.saveContext()
     }
-    
 }
+#else
+class AppDelegate: NSObject, UIApplicationDelegate {
+    func applicationDidEnterBackground(_ application: UIApplication) {
+        CoreDataStack.shared.saveContext()
+    }
+}
+#endif

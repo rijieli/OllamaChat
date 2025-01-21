@@ -5,6 +5,7 @@
 //  Created by Roger on 2024/2/15.
 //
 
+#if os(macOS)
 import AppKit
 import Foundation
 import SwiftUI
@@ -71,3 +72,4 @@ class TrackingNSHostingView<Content>: NSHostingView<Content> where Content: View
         self.onMove(self.convert(event.locationInWindow, from: nil))
     }
 }
+#endif

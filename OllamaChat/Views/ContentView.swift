@@ -12,6 +12,7 @@ struct ContentView: View {
     @ObservedObject var viewModel: ChatViewModel = .shared
     
     var body: some View {
+        #if os(macOS)
         NavigationSplitView {
             ChatListView()
         } detail: {
@@ -21,5 +22,14 @@ struct ContentView: View {
                 ChatView()
             }
         }
+        #else
+        NavigationStack {
+            ZStack {
+                ChatListView()
+                    .maxFrame()
+            }
+            .navigationTitle("Chats")
+        }
+        #endif
     }
 }

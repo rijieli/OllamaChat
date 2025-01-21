@@ -50,9 +50,14 @@ extension ChatView {
                         viewModel.editMessage(message)
                     }
                     bubbleButton("doc.on.doc.fill") {
+                        #if os(macOS)
                         let pasteboard = NSPasteboard.general
                         pasteboard.clearContents()  // Clears the pasteboard before writing
                         pasteboard.setString(message.content, forType: .string)
+                        #else
+                        let pasteboard = UIPasteboard.general
+                        pasteboard.string = message.content
+                        #endif
                     }
                 }
                 .frame(height: 24)

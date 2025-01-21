@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 
+#if os(macOS)
 extension View {
     func whenHovered(_ mouseIsInside: @escaping (Bool) -> Void) -> some View {
         modifier(MouseInsideModifier(mouseIsInside))
@@ -84,3 +85,4 @@ struct MouseInsideModifier: ViewModifier {
         }
     }
 }
+#endif

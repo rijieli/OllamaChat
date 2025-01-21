@@ -5,22 +5,33 @@
 //  Created by Karim ElGhandour on 07.10.23.
 //
 
+#if os(macOS)
 import AppKit
+#else
+import UIKit
+#endif
 import SwiftUI
 
 @main
 struct OllamaChatApp: App {
 
-    @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+        #if os(macOS)
+            @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+        #else
+            @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+        #endif
+    
 
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .preferredColorScheme(.light)
                 .environment(\.managedObjectContext, CoreDataStack.shared.context)
-        }.commands {
+        }
+        .commands {
             CommandGroup(after: .newItem) {
                 Button(action: {
+                    #if os(macOS)
                     if let currentWindow = NSApp.keyWindow,
                         let windowController = currentWindow.windowController
                     {
@@ -31,15 +42,18 @@ struct OllamaChatApp: App {
                             currentWindow.addTabbedWindow(newWindow, ordered: .above)
                         }
                     }
+                    #endif
                 }) {
                     Text("New Tab")
                 }
                 .keyboardShortcut("t", modifiers: [.command])
             }
         }
-
+        
+        #if os(macOS)
         Settings {
             SettingsView()
         }
+        #endif
     }
 }

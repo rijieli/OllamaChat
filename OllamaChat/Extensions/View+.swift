@@ -129,7 +129,7 @@ extension View {
         text: String,
         arrowEdge: Edge = .top
     ) -> some View {
-        if #available(macOS 14.4, *) {
+        if #available(macOS 14.4, iOS 17.4, *) {
             return self.translationPresentation(
                 isPresented: isPresented,
                 text: text,

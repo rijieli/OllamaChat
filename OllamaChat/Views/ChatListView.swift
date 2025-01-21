@@ -111,6 +111,7 @@ struct ChatListView: View {
                         .frame(width: 32, height: 32)
                 }
 
+#if os(macOS)
                 if #available(macOS 14.0, *) {
                     SettingsLink {
                         gearLabel
@@ -118,6 +119,7 @@ struct ChatListView: View {
                 } else {
                     Button(
                         action: {
+                            
                             if #available(macOS 13.0, *) {
                                 NSApp.sendAction(
                                     Selector(("showSettingsWindow:")),
@@ -137,6 +139,7 @@ struct ChatListView: View {
                         }
                     )
                 }
+#endif
                 Spacer()
             }
         }
