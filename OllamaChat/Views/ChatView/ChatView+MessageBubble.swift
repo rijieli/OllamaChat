@@ -31,34 +31,15 @@ extension ChatView {
                     .textSelection(.enabled)
                     .background(isUser ? Color.blue : Color(hex: "#EBEBEB"))
                     .ifTranslationPresentation(isPresented: $showTranslation, text: message.content)
+                    #if os(iOS)
+                    .contentShape(.contextMenuPreview, .rect(cornerRadius: 8))
+                    .contextMenu {
+                        contextButtons()
+                    }
+                    #endif
             } buttons: {
                 HStack(spacing: 0) {
-                    if isUser {
-                        bubbleButton("arrow.clockwise.circle.fill") {
-                            viewModel.resendUntil(message)
-                        }
-                    }
-                    bubbleButton("speaker.wave.2.bubble.left") {
-                        TextSpeechCenter.shared.read(message.content)
-                    }
-                    if #available(macOS 14.4, *) {
-                        bubbleButton("translate") {
-                            showTranslation = true
-                        }
-                    }
-                    bubbleButton("pencil.circle.fill") {
-                        viewModel.editMessage(message)
-                    }
-                    bubbleButton("doc.on.doc.fill") {
-                        #if os(macOS)
-                        let pasteboard = NSPasteboard.general
-                        pasteboard.clearContents()  // Clears the pasteboard before writing
-                        pasteboard.setString(message.content, forType: .string)
-                        #else
-                        let pasteboard = UIPasteboard.general
-                        pasteboard.string = message.content
-                        #endif
-                    }
+                    contextButtons()
                 }
                 .frame(height: 24)
                 .frame(minWidth: 36)
@@ -72,11 +53,42 @@ extension ChatView {
                 .offset(x: -4, y: -4)
             }
         }
+        
+        @ViewBuilder
+        func contextButtons() -> some View {
+            if isUser {
+                bubbleButton("Retry" , "arrow.clockwise.circle.fill") {
+                    viewModel.resendUntil(message)
+                }
+            }
+            bubbleButton("Read", "speaker.wave.2.bubble.left") {
+                TextSpeechCenter.shared.read(message.content)
+            }
+            if #available(macOS 14.4, iOS 17.4, *) {
+                bubbleButton("Translate", "translate") {
+                    showTranslation = true
+                }
+            }
+            bubbleButton("Edit", "pencil.circle.fill") {
+                viewModel.editMessage(message)
+            }
+            bubbleButton("Copy", "doc.on.doc.fill") {
+                #if os(macOS)
+                let pasteboard = NSPasteboard.general
+                pasteboard.clearContents()  // Clears the pasteboard before writing
+                pasteboard.setString(message.content, forType: .string)
+                #else
+                let pasteboard = UIPasteboard.general
+                pasteboard.string = message.content
+                #endif
+            }
+        }
 
-        func bubbleButton(_ systemName: String, action: VoidClosureOptionl) -> some View {
+        func bubbleButton(_ title: String, _ systemName: String, action: VoidClosureOptionl) -> some View {
             Button {
                 action?()
             } label: {
+                #if os(macOS)
                 Image(systemName: systemName)
                     .resizable()
                     .scaledToFit()
@@ -84,6 +96,9 @@ extension ChatView {
                     .padding(4)
                     .frame(width: 24, height: 24)
                     .contentShape(Rectangle())
+                #else
+                Label(title, systemImage: systemName)
+                #endif
             }
             .buttonStyle(.noAnimationStyle)
         }

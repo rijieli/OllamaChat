@@ -23,16 +23,14 @@ extension ChatView {
                     MessageBubble(isUser: isUser, message: message)
                 }
 
-                Color.clear
-                    .maxWidth()
-                    .frame(height: 40)
+                Color.clear.frame(height: 1)
                     .id(bottomID)
 
             }
             .maxFrame()
             //.defaultScrollAnchor(.bottom)
             .overlay(alignment: .bottom) {
-                HStack {
+                HStack(spacing: 8) {
                     if speechCenter.isSpeaking {
                         actionButton("speaker.slash.fill") {
                             speechCenter.stopImmediate()
@@ -48,18 +46,33 @@ extension ChatView {
                     actionButton("gearshape.fill") {
                         viewModel.showSystemConfig = true
                     }
+                    
+                    if CurrentOS.isiOS, sendButtonVisible {
+                        actionButton("arrow.up") {
+                            viewModel.send()
+                        }
+                    }
                 }
                 .frame(height: 40)
-                .padding(.trailing, 12)
+                .clipped()
                 .frame(maxWidth: .infinity, alignment: .trailing)
-                .animation(.smooth, value: viewModel.waitingResponse)
-                .animation(.smooth, value: speechCenter.isSpeaking)
+                .animation(.default, value: viewModel.waitingResponse)
+                .animation(.default, value: speechCenter.isSpeaking)
+                .animation(.default, value: sendButtonVisible)
                 .padding(.bottom, 8)
+                .padding(.trailing, 12)
             }
             .onChange(of: viewModel.messages) { _ in
-                proxy.scrollTo(bottomID)
+                proxy.scrollTo(bottomID, anchor: .bottom)
+            }
+            .onAppear {
+                proxy.scrollTo(bottomID, anchor: .bottom)
             }
         }
+    }
+    
+    var buttonHeight: CGFloat {
+        CurrentOS.isiOS ? 36 : 32
     }
     
     private func actionButton(_ sfName: String, action: (() -> Void)?) -> some View {
@@ -68,7 +81,7 @@ extension ChatView {
         } label: {
             Image(systemName: sfName)
                 .frame(width: 20, height: 20, alignment: .center)
-                .frame(width: 40, height: 32)
+                .frame(width: 40, height: buttonHeight)
                 .foregroundStyle(.white)
                 .background(Capsule().fill(Color.blue))
         }

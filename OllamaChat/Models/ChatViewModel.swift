@@ -13,7 +13,12 @@ class ChatViewModel: ObservableObject {
     static let shared = ChatViewModel()
 
     private init() {
-        let lastChat = SingleChat.fetchLastCreated()
+        let lastChat: SingleChat?
+        #if os(macOS)
+        lastChat = SingleChat.fetchLastCreated()
+        #else
+        lastChat = nil
+        #endif
         if let lastChat {
             messages = lastChat.messages
             model = lastChat.model
@@ -40,6 +45,8 @@ class ChatViewModel: ObservableObject {
     @Published var currentChat: SingleChat? = nil
 
     @Published var showModelConfig = false
+    
+    @Published var showSettingsView = false
 
     @Published var model: String
 

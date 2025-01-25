@@ -83,6 +83,12 @@
         }
       }
     },
+    "Current Local IPv4:" : {
+
+    },
+    "Current Local IPv6:" : {
+
+    },
     "Delete" : {
       "localizations" : {
         "zh-Hans" : {
@@ -195,6 +201,9 @@
         }
       }
     },
+    "Host IP" : {
+
+    },
     "Host IP:" : {
       "localizations" : {
         "zh-Hans" : {
@@ -274,6 +283,9 @@
     "No models downloaded locally. Add a model by typing the name in the field at the bottom of the page." : {
 
     },
+    "Ollama Service Config" : {
+
+    },
     "Please select a chat from the list or create a new one" : {
       "localizations" : {
         "zh-Hans" : {
@@ -283,6 +295,9 @@
           }
         }
       }
+    },
+    "Port" : {
+
     },
     "Port:" : {
       "localizations" : {
@@ -314,7 +329,13 @@
         }
       }
     },
+    "Request Timeout" : {
+
+    },
     "Request Timeout (in sec. Default 60):" : {
+
+    },
+    "Resources Timeout" : {
 
     },
     "Resources Timeout (in sec. Default: 604800):" : {
@@ -329,6 +350,9 @@
           }
         }
       }
+    },
+    "Settings" : {
+
     },
     "System Prompt" : {
       "localizations" : {

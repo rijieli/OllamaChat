@@ -28,7 +28,7 @@ extension ChatView {
                 .opacity(viewModel.waitingResponse ? 0 : 1)
                 .overlay(alignment: .trailing) {
                     ZStack {
-                        if sendButtonVisible {
+                        if CurrentOS.ismacOS && sendButtonVisible {
                             Button {
                                 viewModel.send()
                             } label: {
@@ -58,11 +58,11 @@ extension ChatView {
         .maxFrame()
         .frame(height: 160)
     }
-    
-    private var sendButtonVisible: Bool {
+
+    var sendButtonVisible: Bool {
         guard !viewModel.disabledButton else { return false }
         guard !viewModel.waitingResponse else { return false }
-        return viewModel.current.content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false
+        return viewModel.current.content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            == false
     }
-
 }

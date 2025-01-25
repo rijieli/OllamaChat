@@ -10,7 +10,21 @@ import CoreData
 import Foundation
 import SwiftUI
 
+private let timeFormatter: DateFormatter = {
+    let fmt = DateFormatter()
+    fmt.dateStyle = .short
+    fmt.timeStyle = .short
+    fmt.locale = Locale.current
+    return fmt
+}()
+
 struct ChatListView: View {
+    
+    #if os(macOS)
+    let cornerRadius: CGFloat = 8
+    #else
+    let cornerRadius: CGFloat = 16
+    #endif
 
     @Environment(\.managedObjectContext) private var viewContext
     @FetchRequest(
@@ -27,16 +41,8 @@ struct ChatListView: View {
 
     @ObservedObject var chatViewModel = ChatViewModel.shared
 
-    let formatter: DateFormatter = {
-        let fmt = DateFormatter()
-        fmt.dateStyle = .short
-        fmt.timeStyle = .short
-        fmt.locale = Locale.current
-        return fmt
-    }()
-
     var body: some View {
-        VStack {
+        VStack(spacing: 0) {
             ScrollView {
                 VStack(spacing: 8) {
                     ForEach(items) { item in
@@ -90,9 +96,37 @@ struct ChatListView: View {
             }
             Button("Cancel", role: .cancel) {}
         }
+        .sheet(isPresented: $chatViewModel.showSystemConfig) {
+            SystemEditorView(viewModel: chatViewModel)
+            #if os(iOS)
+            .presentationDetents([.medium, .large])
+            #endif
+        }
+        .sheet(isPresented: $chatViewModel.showEditingMessage) {
+            MessageEditorView(viewModel: chatViewModel)
+            #if os(iOS)
+            .presentationDetents([.medium, .large])
+            #endif
+        }
+        #if os(macOS)
+        .sheet(isPresented: $chatViewModel.showModelConfig) {
+            ManageModelsView()
+        }
+        .sheet(isPresented: $chatViewModel.showSettingsView) {
+            SettingsView()
+        }
+        #else
+        .sheet(isPresented: $chatViewModel.showSettingsView) {
+            SettingsiOSView()
+        }
+        .navigationDestination(item: $chatViewModel.currentChat) { _ in
+            ChatView()
+        }
+        #endif
     }
 
     var footerView: some View {
+#if os(macOS)
         VStack(spacing: 8) {
             Button {
                 chatViewModel.newChat()
@@ -110,8 +144,7 @@ struct ChatListView: View {
                         .fontWeight(.bold)
                         .frame(width: 32, height: 32)
                 }
-
-#if os(macOS)
+                
                 if #available(macOS 14.0, *) {
                     SettingsLink {
                         gearLabel
@@ -139,18 +172,39 @@ struct ChatListView: View {
                         }
                     )
                 }
-#endif
+                
                 Spacer()
             }
+            
         }
+        .font(.system(size: 20, weight: .bold))
         .padding(.bottom, 16)
         .padding(.horizontal, 12)
+        #else
+        HStack(spacing: 16) {
+            Button{
+                chatViewModel.showSettingsView = true
+            } label: {
+                gearLabel
+            }
+            
+            Spacer()
+            
+            Button {
+                chatViewModel.newChat()
+            } label: {
+                Image(systemName: "plus")
+                    .frame(width: 32, height: 32)
+            }
+        }
+        .font(.system(size: 20, weight: .semibold))
+        .padding(.horizontal, 16)
+        .frame(height: 44)
+        #endif
     }
 
     var gearLabel: some View {
-        Image(systemName: "gear")
-            .fontWeight(.bold)
-            .frame(width: 32, height: 32)
+        Image(systemName: "gear").frame(width: 32, height: 32)
     }
 }
 
@@ -162,7 +216,7 @@ extension ChatListView {
                 .font(.headline)
                 .maxWidth(alignment: .leading)
                 .foregroundStyle(selected ? Color.accentColor : Color.primary)
-            Text("\(formatter.string(from: item.createdAt))")
+            Text("\(timeFormatter.string(from: item.createdAt))")
                 .font(.subheadline)
                 .maxWidth(alignment: .leading)
                 .foregroundStyle(selected ? Color.accentColor : Color.secondary)
@@ -178,16 +232,25 @@ extension ChatListView {
         .maxWidth()
         .lineLimit(1)
         .background(
-            RoundedRectangle(cornerRadius: 8).fill(.background)
+            RoundedRectangle(cornerRadius: cornerRadius).fill(.background)
                 .overlay {
-                    RoundedRectangle(cornerRadius: 8)
+                    #if os(macOS)
+                    RoundedRectangle(cornerRadius: cornerRadius)
                         .strokeBorder(
                             selected ? Color.accentColor : Color.black.opacity(0.1),
                             lineWidth: selected ? 2 : 0.5
                         )
+                    #else
+                    RoundedRectangle(cornerRadius: cornerRadius)
+                        .strokeBorder(
+                            selected ? Color.accentColor : Color.black.opacity(0.1),
+                            lineWidth: 1
+                        )
+                    #endif
                 }
         )
         .contentShape(.rect)
+        .contentShape(.contextMenuPreview, RoundedRectangle(cornerRadius: cornerRadius))
         .ifGeometryGroup()
     }
 

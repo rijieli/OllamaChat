@@ -8,28 +8,25 @@
 import SwiftUI
 
 struct ContentView: View {
-    
+
     @ObservedObject var viewModel: ChatViewModel = .shared
-    
+
     var body: some View {
         #if os(macOS)
-        NavigationSplitView {
-            ChatListView()
-        } detail: {
-            if viewModel.currentChat == nil {
-                ChatPlaceholderView()
-            } else {
-                ChatView()
-            }
-        }
-        #else
-        NavigationStack {
-            ZStack {
+            NavigationSplitView {
                 ChatListView()
-                    .maxFrame()
+            } detail: {
+                if viewModel.currentChat == nil {
+                    ChatPlaceholderView()
+                } else {
+                    ChatView()
+                }
             }
-            .navigationTitle("Chats")
-        }
+        #else
+            NavigationStack {
+                ChatListView()
+                    .navigationTitle("Chats")
+            }
         #endif
     }
 }

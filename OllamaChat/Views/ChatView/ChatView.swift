@@ -64,15 +64,6 @@ struct ChatView: View {
                 }
             }
         }
-        .sheet(isPresented: $viewModel.showSystemConfig) {
-            SystemEditorView(viewModel: viewModel)
-        }
-        .sheet(isPresented: $viewModel.showModelConfig) {
-            ManageModelsView()
-        }
-        .sheet(isPresented: $viewModel.showEditingMessage) {
-            MessageEditorView(viewModel: viewModel)
-        }
     }
 
     func getTags() {

@@ -113,7 +113,7 @@ extension View {
 extension View {
 
     public func ifGeometryGroup() -> some View {
-        if #available(macOS 14, *) {
+        if #available(macOS 14, iOS 17.0, *) {
             return self.geometryGroup()
         } else {
             return self

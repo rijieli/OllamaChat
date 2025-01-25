@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+#if os(macOS)
 struct ManageModelsView: View {
     @State private var tags: ModelGroup?
     @State private var errorModel: ErrorModel = ErrorModel(
@@ -31,7 +32,7 @@ struct ManageModelsView: View {
     @AppStorage("timeoutResource") private var timeoutResource = "604800"
 
     var body: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 8) {
             Text("Local Models:")
                 .font(.headline)
             if tags?.models.count == 0 {
@@ -59,24 +60,6 @@ struct ManageModelsView: View {
                 }
             }
             .frame(maxHeight: 450)
-
-            //            HStack{
-            //                Text("Duplicate Model:")
-            //                        .font(.headline)
-            //                Picker("Duplicate Model:", selection: $toDuplicate) {
-            //                    ForEach(tags?.models ?? [], id: \.self) {model in
-            //                        Text(model.name).tag(model.name)
-            //                    }
-            //                }
-            //                TextField("New Name", text: $newName)
-            //                    .textFieldStyle(.roundedBorder)
-            //                Button{
-            //                    duplicateModel(source: toDuplicate, destination: newName)
-            //                }label: {
-            //                    Image(systemName: "doc.on.doc")
-            //                        .frame(width: 20, height: 20, alignment: .center)
-            //                }
-            //            }
 
             VStack(alignment: .leading) {
                 HStack {
@@ -303,3 +286,4 @@ struct ManageModelsView: View {
         }
     }
 }
+#endif

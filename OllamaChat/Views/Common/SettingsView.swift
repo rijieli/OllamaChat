@@ -5,6 +5,7 @@
 //  Created by Karim ElGhandour on 14.10.23.
 //
 
+#if os(macOS)
 import AVFoundation
 import SwiftUI
 
@@ -78,3 +79,4 @@ struct GeneralSettingsView: View {
         .frame(width: 550)
     }
 }
+#endif
