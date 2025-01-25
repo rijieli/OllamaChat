@@ -7,7 +7,7 @@
 		<key>UIImageName</key>
 		<string></string>
 	</dict>
-    <key>NSLocalNetworkUsageDescription</key>
-    <string>This app needs access to the local network to function properly</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>This app needs access to the local network to function properly</string>
 </dict>
 </plist>

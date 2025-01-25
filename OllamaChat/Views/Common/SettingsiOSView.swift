@@ -6,6 +6,7 @@
 //  Copyright © 2025 IdeasForm. All rights reserved.
 //
 
+#if os(iOS)
 import SwiftUI
 import UIKit
 
@@ -126,3 +127,4 @@ private struct NumericTextField: View {
         }
     }
 }
+#endif

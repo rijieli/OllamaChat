@@ -250,7 +250,9 @@ extension ChatListView {
                 }
         )
         .contentShape(.rect)
+        #if os(iOS)
         .contentShape(.contextMenuPreview, RoundedRectangle(cornerRadius: cornerRadius))
+        #endif
         .ifGeometryGroup()
     }
 

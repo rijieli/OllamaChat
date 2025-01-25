@@ -35,6 +35,8 @@
 		DB0AE5F32C4CFCD300AC7CC5 /* CoreDataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0AE5F22C4CFCD300AC7CC5 /* CoreDataStack.swift */; };
 		DB0AE5F52C4D054400AC7CC5 /* ChatListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0AE5F42C4D054400AC7CC5 /* ChatListView.swift */; };
 		DB1ED4D12D4515C60072A659 /* UIApplication+.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1ED4D02D4515C20072A659 /* UIApplication+.swift */; };
+		DB1ED4D42D4528FD0072A659 /* NetworkAddresses.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1ED4D32D4528FD0072A659 /* NetworkAddresses.swift */; };
+		DB1ED4D62D45291D0072A659 /* CurrentOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1ED4D52D45291D0072A659 /* CurrentOS.swift */; };
 		DB25C4072C00EFCC00A42484 /* TextEditor+.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB25C4062C00EFCC00A42484 /* TextEditor+.swift */; };
 		DB5B94DF2B7FB76600273FFA /* SwiftUIIntrospect in Frameworks */ = {isa = PBXBuildFile; productRef = DB5B94DE2B7FB76600273FFA /* SwiftUIIntrospect */; };
 		DB7CA7AC2D0886C40039A624 /* ChatView+PlaceholderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB7CA7AB2D0886C40039A624 /* ChatView+PlaceholderView.swift */; };
@@ -107,6 +109,8 @@
 		DB0AE5F22C4CFCD300AC7CC5 /* CoreDataStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataStack.swift; sourceTree = "<group>"; };
 		DB0AE5F42C4D054400AC7CC5 /* ChatListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListView.swift; sourceTree = "<group>"; };
 		DB1ED4D02D4515C20072A659 /* UIApplication+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+.swift"; sourceTree = "<group>"; };
+		DB1ED4D32D4528FD0072A659 /* NetworkAddresses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkAddresses.swift; sourceTree = "<group>"; };
+		DB1ED4D52D45291D0072A659 /* CurrentOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentOS.swift; sourceTree = "<group>"; };
 		DB25C4062C00EFCC00A42484 /* TextEditor+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TextEditor+.swift"; sourceTree = "<group>"; };
 		DB7CA7AB2D0886C40039A624 /* ChatView+PlaceholderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatView+PlaceholderView.swift"; sourceTree = "<group>"; };
 		DB7CA7AE2D0887EB0039A624 /* ChatView+MessageList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatView+MessageList.swift"; sourceTree = "<group>"; };
@@ -134,6 +138,11 @@
 			membershipExceptions = (
 				Info.plist,
 			);
+			platformFiltersByRelativePath = {
+				"Launch Screen.storyboard" = (
+					ios,
+				);
+			};
 			target = 327B90422AD17EA300A94F10 /* OllamaChat */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -267,6 +276,8 @@
 		32CDC0262AD2B6E300D4DA6B /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				DB1ED4D52D45291D0072A659 /* CurrentOS.swift */,
+				DB1ED4D32D4528FD0072A659 /* NetworkAddresses.swift */,
 				DB94F0F92D0B3467000B399B /* IFLogger.swift */,
 				DB94F0EF2D0B2D57000B399B /* TextSpeechCenter.swift */,
 				DB9958C32CDC9026006740DC /* MarkdownTextView.swift */,
@@ -318,6 +329,7 @@
 				327B903F2AD17EA300A94F10 /* Sources */,
 				327B90402AD17EA300A94F10 /* Frameworks */,
 				327B90412AD17EA300A94F10 /* Resources */,
+				DB1ED4D22D4522B00072A659 /* Build Number */,
 			);
 			buildRules = (
 			);
@@ -447,6 +459,28 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		DB1ED4D22D4522B00072A659 /* Build Number */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Build Number";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "git=`sh /etc/profile; which git`\nbuildNumber=$($git rev-list --count HEAD)\nif [ \"$CONFIGURATION\" = \"Release\" ]; then\n    /usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"${TARGET_BUILD_DIR}/${INFOPLIST_PATH}\"\nfi\necho \"Build Number ${buildNumber} ${TARGET_BUILD_DIR}/${INFOPLIST_PATH}\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		327B903F2AD17EA300A94F10 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -457,6 +491,7 @@
 				DB7CA7B12D0894EF0039A624 /* ChatView+MessageBubble.swift in Sources */,
 				32CDC0322AD2DF4200D4DA6B /* ChatController.swift in Sources */,
 				DB0AE5F52C4D054400AC7CC5 /* ChatListView.swift in Sources */,
+				DB1ED4D42D4528FD0072A659 /* NetworkAddresses.swift in Sources */,
 				DB1ED4D12D4515C60072A659 /* UIApplication+.swift in Sources */,
 				DB94F0FC2D0B386B000B399B /* AVSpeechSynthesisVoiceGender+.swift in Sources */,
 				DB0AE5EC2C4CFBD500AC7CC5 /* AppDelegate.swift in Sources */,
@@ -487,6 +522,7 @@
 				32CDC0342AD2F93700D4DA6B /* Tags.swift in Sources */,
 				DB7CA7AC2D0886C40039A624 /* ChatView+PlaceholderView.swift in Sources */,
 				32DCE6BB2ADB090500A24528 /* ContentView.swift in Sources */,
+				DB1ED4D62D45291D0072A659 /* CurrentOS.swift in Sources */,
 				DBECB4D42B7E03AB00C9F3C0 /* AppSettings.swift in Sources */,
 				327B90472AD17EA300A94F10 /* OllamaChatApp.swift in Sources */,
 				32CDC0252AD2B59700D4DA6B /* Response.swift in Sources */,
@@ -571,7 +607,6 @@
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -640,7 +675,6 @@
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -670,6 +704,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"OllamaChat/Resources/Preview Content\"";
 				DEVELOPMENT_TEAM = 2BLN6SHK5S;
@@ -680,7 +715,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "Ollama Chat";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Ideas Form";
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "This app needs access to the local network to function properly";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -708,6 +743,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"OllamaChat/Resources/Preview Content\"";
 				DEVELOPMENT_TEAM = 2BLN6SHK5S;
@@ -718,7 +754,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "Ollama Chat";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Ideas Form";
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "This app needs access to the local network to function properly";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
