@@ -22,6 +22,7 @@ struct ContentView: View {
                     ChatView()
                 }
             }
+            .navigationTitle(viewModel.currentChat?.name ?? "Ollama Chat")
         #else
             NavigationStack {
                 ChatListView()

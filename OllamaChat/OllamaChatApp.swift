@@ -28,6 +28,9 @@ struct OllamaChatApp: App {
                 ContentView()
                     .preferredColorScheme(.light)
                     .environment(\.managedObjectContext, CoreDataStack.shared.context)
+                #if DEBUG
+                    .environment(\.locale, .enUS)
+                #endif
             }
             .commands {
                 CommandGroup(after: .newItem) {

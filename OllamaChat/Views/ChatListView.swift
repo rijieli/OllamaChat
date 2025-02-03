@@ -131,6 +131,7 @@ struct ChatListView: View {
                 HStack(spacing: 4) {
                     Image(systemName: "plus")
                     Text("New Chat")
+                        .font(.system(size: 14, weight: .semibold))
                 }
                 .frame(height: 32)
                 .maxWidth()
