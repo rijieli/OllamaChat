@@ -85,7 +85,7 @@ struct SettingsiOSView: View {
                                 .padding(.vertical, 16)
                                 .background(
                                     RoundedRectangle(cornerRadius: 12)
-                                        .strokeBorder(Color.black.opacity(0.1), lineWidth: 1)
+                                        .strokeBorder(Color.ocDividerColor, lineWidth: 1)
                                 )
                         }
                     }

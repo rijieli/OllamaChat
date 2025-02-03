@@ -224,13 +224,13 @@ extension ChatListView {
                     #if os(macOS)
                     RoundedRectangle(cornerRadius: cornerRadius)
                         .strokeBorder(
-                            selected ? Color.accentColor : Color.black.opacity(0.1),
+                            selected ? Color.accentColor : Color.ocDividerColor,
                             lineWidth: selected ? 2 : 0.5
                         )
                     #else
                     RoundedRectangle(cornerRadius: cornerRadius)
                         .strokeBorder(
-                            selected ? Color.accentColor : Color.black.opacity(0.1),
+                            selected ? Color.accentColor : Color.ocDividerColor,
                             lineWidth: 1
                         )
                     #endif

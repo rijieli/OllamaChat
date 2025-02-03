@@ -47,7 +47,7 @@ extension ChatView {
                         viewModel.showSystemConfig = true
                     }
                     
-                    if CurrentOS.isiOS, sendButtonVisible {
+                    if CurrentOS.isiOS, allowSubmitNewMessage {
                         actionButton("arrow.up") {
                             viewModel.send()
                         }
@@ -59,7 +59,7 @@ extension ChatView {
                 .frame(maxWidth: .infinity, alignment: .trailing)
                 .animation(.default, value: viewModel.waitingResponse)
                 .animation(.default, value: speechCenter.isSpeaking)
-                .animation(.default, value: sendButtonVisible)
+                .animation(.default, value: allowSubmitNewMessage)
                 .padding(.bottom, 8)
                 .padding(.trailing, 12)
             }

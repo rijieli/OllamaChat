@@ -25,7 +25,7 @@ extension MarkdownUI.Theme {
         var theme = Self.basic
         return theme
             .text {
-                ForegroundColor(Color.black)
+                ForegroundColor(Color.ocAssistantBubbleForeground)
                 BackgroundColor(nil)
                 FontSize(13)
             }

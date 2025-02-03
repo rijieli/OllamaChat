@@ -28,7 +28,7 @@ extension ChatView {
                     .padding([.leading, .trailing], 8)
                     .padding([.top, .bottom], 8)
                     .textSelection(.enabled)
-                    .background(isUser ? Color.blue : Color(hex: "#EBEBEB"))
+                    .background(isUser ? Color.blue : Color.ocAssistantBubbleBackground)
                     .ifTranslationPresentation(isPresented: $showTranslation, text: message.content)
                     #if os(iOS)
                     .contentShape(.contextMenuPreview, .rect(cornerRadius: 8))
@@ -47,7 +47,7 @@ extension ChatView {
                     Capsule().fill(.background)
                 }
                 .overlay {
-                    Capsule().strokeBorder(Color.black.opacity(0.2), lineWidth: 1)
+                    Capsule().strokeBorder(Color.ocDividerColor, lineWidth: 1)
                 }
                 .offset(x: -4, y: -4)
             }

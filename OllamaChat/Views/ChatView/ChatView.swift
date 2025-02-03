@@ -27,7 +27,7 @@ struct ChatView: View {
             messageInput
         }
         .frame(minWidth: 400, idealWidth: 700, minHeight: 600, idealHeight: 800)
-        .background(Color.white)
+        .background(Color.ocPrimaryBackground)
         .task {
             self.getTags()
         }

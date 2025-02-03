@@ -26,7 +26,6 @@ struct OllamaChatApp: App {
         #if os(macOS)
             WindowGroup {
                 ContentView()
-                    .preferredColorScheme(.light)
                     .environment(\.managedObjectContext, CoreDataStack.shared.context)
                 #if DEBUG
                     .environment(\.locale, .enUS)
@@ -58,7 +57,6 @@ struct OllamaChatApp: App {
         #else
             WindowGroup {
                 ContentView()
-                    .preferredColorScheme(.light)
                     .environment(\.managedObjectContext, CoreDataStack.shared.context)
             }
         #endif

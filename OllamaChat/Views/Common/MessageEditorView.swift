@@ -36,7 +36,7 @@ struct MessageEditorView: View {
                         }
                         .background(
                             RoundedRectangle(cornerRadius: 8)
-                                .strokeBorder(Color.black.opacity(0.1), lineWidth: 1)
+                                .strokeBorder(Color.ocDividerColor, lineWidth: 1)
                         )
                         .background()
 

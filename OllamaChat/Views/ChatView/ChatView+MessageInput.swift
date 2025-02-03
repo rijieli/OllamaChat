@@ -16,16 +16,14 @@ extension ChatView {
                 .disableAutoQuotes()
                 .font(.body)
                 .onSubmit {
-                    !viewModel.current.content.isEmpty ? viewModel.send() : nil
+                    allowSubmitNewMessage ? viewModel.send() : nil
                 }
-                .disabled(viewModel.waitingResponse)
+                .disabled(!allowSubmitNewMessage)
                 .focused($promptFieldIsFocused)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 16)
-                .opacity(viewModel.waitingResponse ? 0 : 1)
+                .modifier(BorderDecoratedStyleModifier())
                 .overlay(alignment: .trailing) {
                     ZStack {
-                        if CurrentOS.ismacOS && sendButtonVisible {
+                        if CurrentOS.ismacOS && allowSubmitNewMessage {
                             Button {
                                 viewModel.send()
                             } label: {
@@ -44,19 +42,15 @@ extension ChatView {
                     }
                     .frame(width: 40 + 12, height: 40, alignment: .leading)
                 }
-                .animation(.smooth(duration: 0.3), value: sendButtonVisible)
+                .animation(.smooth(duration: 0.3), value: allowSubmitNewMessage)
         }
-        .background(
-            RoundedRectangle(cornerRadius: 8)
-                .strokeBorder(Color.black.opacity(0.2), lineWidth: 1)
-        )
         .padding(.horizontal, 12)
         .padding(.bottom, 12)
         .maxFrame()
         .frame(height: 160)
     }
 
-    var sendButtonVisible: Bool {
+    var allowSubmitNewMessage: Bool {
         guard !viewModel.current.content.isEmpty else { return false }
         guard !viewModel.waitingResponse else { return false }
         return viewModel.current.content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty

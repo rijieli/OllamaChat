@@ -68,7 +68,7 @@ import SwiftUI
                 .listStyle(.plain)
                 .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
                 .frame(height: 100)
-                .modifier(TextBackgroundModifier(paddingV: 8))
+                .modifier(BorderDecoratedStyleModifier(paddingV: 8))
 
                 VStack(alignment: .leading) {
                     HStack {
@@ -87,7 +87,7 @@ import SwiftUI
                         .disableAutoQuotes()
                         .font(.body)
                         .frame(height: 100)
-                        .modifier(TextBackgroundModifier())
+                        .modifier(BorderDecoratedStyleModifier())
                 }
                 HStack {
                     Text("Get Model:")
