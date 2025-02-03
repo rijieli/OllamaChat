@@ -43,7 +43,7 @@ struct SettingsiOSView: View {
                                 }
                             }
                             
-                            NumericTextField(title: "Port", text: $chatViewModel.port)
+                            NumericTextField(title: "Port:", text: $chatViewModel.port)
                             NumericTextField(
                                 title: "Request Timeout",
                                 text: $chatViewModel.timeoutRequest

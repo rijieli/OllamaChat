@@ -23,7 +23,7 @@ extension ChatView {
                     MessageBubble(isUser: isUser, message: message)
                 }
 
-                Color.clear.frame(height: 1)
+                Color.clear.frame(height: 40)
                     .id(bottomID)
 
             }
@@ -54,6 +54,7 @@ extension ChatView {
                     }
                 }
                 .frame(height: 40)
+                .maxWidth(alignment: .trailing)
                 .clipped()
                 .frame(maxWidth: .infinity, alignment: .trailing)
                 .animation(.default, value: viewModel.waitingResponse)
