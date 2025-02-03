@@ -25,11 +25,13 @@ import SwiftUI
         @State private var globalSystemPrompt = AppSettings.globalSystem
 
         @Environment(\.dismiss) var dismiss
-
-        @AppStorage("host") private var host = "http://127.0.0.1"
-        @AppStorage("port") private var port = "11434"
-        @AppStorage("timeoutRequest") private var timeoutRequest = "60"
-        @AppStorage("timeoutResource") private var timeoutResource = "604800"
+        
+        @ObservedObject var chatViewModel = ChatViewModel.shared
+        
+        var host: String { chatViewModel.host }
+        var port: String { chatViewModel.port }
+        var timeoutRequest: String { chatViewModel.timeoutRequest }
+        var timeoutResource: String { chatViewModel.timeoutResource }
         
         @State private var modelToDelete: LanguageModel?
         @State private var showModelDeletionAlert = false
