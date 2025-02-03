@@ -40,6 +40,16 @@
     "⌘ + Return" : {
 
     },
+    "Are you sure you want to delete the model?" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "确认删除当前模型吗？"
+          }
+        }
+      }
+    },
     "Automatic apply to each chat." : {
       "localizations" : {
         "zh-Hans" : {
@@ -349,7 +359,14 @@
       }
     },
     "Settings" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "设置"
+          }
+        }
+      }
     },
     "System Prompt" : {
       "localizations" : {

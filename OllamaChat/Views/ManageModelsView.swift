@@ -30,6 +30,9 @@ import SwiftUI
         @AppStorage("port") private var port = "11434"
         @AppStorage("timeoutRequest") private var timeoutRequest = "60"
         @AppStorage("timeoutResource") private var timeoutResource = "604800"
+        
+        @State private var modelToDelete: LanguageModel?
+        @State private var showModelDeletionAlert = false
 
         var body: some View {
             VStack(alignment: .leading, spacing: 8) {
@@ -52,7 +55,8 @@ import SwiftUI
                         Text(model.fileSize)
                             .padding(.trailing, 10)
                         Button {
-                            removeModel(name: model.name)
+                            modelToDelete = model
+                            showModelDeletionAlert = true
                         } label: {
                             Image(systemName: "trash")
                                 .frame(width: 20, height: 20, alignment: .center)
@@ -147,6 +151,15 @@ import SwiftUI
             }
             .maxWidth()
             .padding(16)
+            .alert("Are you sure you want to delete the model?", isPresented: $showModelDeletionAlert) {
+                Button("Cancel", role: .cancel) {
+                    modelToDelete = nil
+                }
+                Button("Delete", role: .destructive) {
+                    removeModel(name: modelName)
+                    modelToDelete = nil
+                }
+            }
         }
 
         func getTags() {
