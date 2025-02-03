@@ -5,7 +5,7 @@
     <img src="assets/images/OllamaSwift.svg" width="128">
 </p>
 
-A user-friendly interface for [Ollama](https://ollama.ai) created in Swift. This application is not directly affiliated with Ollama.ai.
+A user-friendly interface for [Ollama](https://ollama.ai) created in SwiftUI.
 
 This project is a fork of [@kghandour](https://github.com/kghandour)'s [Ollama-SwiftUI](https://github.com/kghandour/Ollama-SwiftUI) with extra features:
 
@@ -15,7 +15,7 @@ This project is a fork of [@kghandour](https://github.com/kghandour)'s [Ollama-S
 - Access to chat history
 - Compatibility with macOS 13
 
-**This app requires Ollama to be installed and running to function.** Install Ollama: https://ollama.ai
+**This app requires [Ollama](https://ollama.ai) to be installed and running to function.**
 
 If you already have Ollama installed, you can now download **Ollama Chat**:
 
@@ -37,7 +37,7 @@ If you already have Ollama installed, you can now download **Ollama Chat**:
 
 ## Frequently Asked Questions:
 ### 1. I am getting a "Server is unreachable" error
-- You need to download and install https://Ollama.ai, and it must be running in the background for this interface to work.
+- You need to download and install https://ollama.ai, and it must be running in the background for this interface to work.
 
 ### 2. How to change the target IP and port?
 - You can modify the IP address and port in the settings. Ollama Chat > Preferences
