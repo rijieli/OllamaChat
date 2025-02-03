@@ -11,6 +11,12 @@ struct ModelGroup: Decodable, Hashable {
     let models: [LanguageModel]
 }
 
+struct ModelDisplayInfo {
+    let provider: String?
+    let modelName: String
+    let modelScale: String?
+}
+
 struct LanguageModel: Decodable, Hashable {
     let name: String
     let modifiedAt: String
@@ -19,7 +25,7 @@ struct LanguageModel: Decodable, Hashable {
     
     static let emptyModel = LanguageModel(name: "", modifiedAt: "", size: 0, digest: "")
 
-    var modelInfo: (provider: String?, model: String, scale: String?) {
+    var modelInfo: ModelDisplayInfo {
         var model = name
         let provider: String?
         if let index = model.firstIndex(of: "/") {
@@ -36,10 +42,14 @@ struct LanguageModel: Decodable, Hashable {
         } else {
             scale = nil
         }
-        return (
+        return ModelDisplayInfo(
             provider: provider,
-            model: model.capitalized,
-            scale: scale
+            modelName: model.capitalized,
+            modelScale: scale
         )
+    }
+    
+    var fileSize: String {
+        fileSizeFormatter.string(fromByteCount: Int64(size))
     }
 }

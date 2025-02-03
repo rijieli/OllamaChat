@@ -6,6 +6,8 @@
 //  Copyright © 2025 IdeasForm. All rights reserved.
 //
 
+let isMacOS = CurrentOS.ismacOS
+let isiOS = CurrentOS.isiOS
 
 enum CurrentOS {
     case iOS

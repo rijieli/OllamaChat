@@ -22,7 +22,13 @@ struct SettingsView: View {
                     Label("General", systemImage: "gear")
                 }
                 .tag(Tabs.general)
+            ManageModelsView()
+                .tabItem {
+                    Label("Models", systemImage: "cube")
+                }
+                .tag(Tabs.models)
         }
+        .frame(width: 600)
     }
 }
 
@@ -76,7 +82,6 @@ struct GeneralSettingsView: View {
             }
         }
         .padding()
-        .frame(width: 550)
     }
 }
 #endif

@@ -109,9 +109,6 @@ struct ChatListView: View {
             #endif
         }
         #if os(macOS)
-        .sheet(isPresented: $chatViewModel.showModelConfig) {
-            ManageModelsView()
-        }
         .sheet(isPresented: $chatViewModel.showSettingsView) {
             SettingsView()
         }
@@ -126,58 +123,45 @@ struct ChatListView: View {
     }
 
     var footerView: some View {
-#if os(macOS)
-        VStack(spacing: 8) {
+        #if os(macOS)
+        HStack(spacing: 8) {
             Button {
                 chatViewModel.newChat()
             } label: {
                 Label("New Chat", systemImage: "plus")
-                    .fontWeight(.bold)
                     .frame(height: 32)
                     .frame(maxWidth: .infinity)
             }
-            HStack(spacing: 8) {
-                Button {
-                    chatViewModel.showModelConfig = true
-                } label: {
-                    Image(systemName: "cube")
-                        .fontWeight(.bold)
-                        .frame(width: 32, height: 32)
+            .maxWidth()
+            
+            if #available(macOS 14.0, *) {
+                SettingsLink {
+                    gearLabel
                 }
-                
-                if #available(macOS 14.0, *) {
-                    SettingsLink {
+            } else {
+                Button(
+                    action: {
+                        if #available(macOS 13.0, *) {
+                            NSApp.sendAction(
+                                Selector(("showSettingsWindow:")),
+                                to: nil,
+                                from: nil
+                            )
+                        } else {
+                            NSApp.sendAction(
+                                Selector(("showPreferencesWindow:")),
+                                to: nil,
+                                from: nil
+                            )
+                        }
+                    },
+                    label: {
                         gearLabel
                     }
-                } else {
-                    Button(
-                        action: {
-                            
-                            if #available(macOS 13.0, *) {
-                                NSApp.sendAction(
-                                    Selector(("showSettingsWindow:")),
-                                    to: nil,
-                                    from: nil
-                                )
-                            } else {
-                                NSApp.sendAction(
-                                    Selector(("showPreferencesWindow:")),
-                                    to: nil,
-                                    from: nil
-                                )
-                            }
-                        },
-                        label: {
-                            gearLabel
-                        }
-                    )
-                }
-                
-                Spacer()
+                )
             }
-            
         }
-        .font(.system(size: 20, weight: .bold))
+        .font(.system(size: 15, weight: .semibold))
         .padding(.bottom, 16)
         .padding(.horizontal, 12)
         #else

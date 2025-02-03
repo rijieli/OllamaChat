@@ -28,7 +28,7 @@ struct SettingsiOSView: View {
                         VStack(alignment: .leading, spacing: 8) {
                             Text("Ollama Service Config")
                                 .font(.headline)
-                            NumericTextField(title: "Host IP", text: $chatViewModel.host)
+                            NumericTextField(title: "Host IP:", text: $chatViewModel.host)
                             
                             if let localIP {
                                 VStack(spacing: 2) {

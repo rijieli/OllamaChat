@@ -16,13 +16,10 @@ extension ChatView {
                 .disableAutoQuotes()
                 .font(.body)
                 .onSubmit {
-                    !viewModel.disabledButton ? viewModel.send() : nil
+                    !viewModel.current.content.isEmpty ? viewModel.send() : nil
                 }
                 .disabled(viewModel.waitingResponse)
                 .focused($promptFieldIsFocused)
-                .onChange(of: viewModel.current.content) { _ in
-                    viewModel.disabledButton = viewModel.current.content.isEmpty
-                }
                 .padding(.horizontal, 12)
                 .padding(.vertical, 16)
                 .opacity(viewModel.waitingResponse ? 0 : 1)
@@ -60,7 +57,7 @@ extension ChatView {
     }
 
     var sendButtonVisible: Bool {
-        guard !viewModel.disabledButton else { return false }
+        guard !viewModel.current.content.isEmpty else { return false }
         guard !viewModel.waitingResponse else { return false }
         return viewModel.current.content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
             == false

@@ -69,7 +69,6 @@ struct ChatView: View {
     func getTags() {
         Task {
             do {
-                viewModel.disabledButton = false
                 viewModel.waitingResponse = false
                 viewModel.errorModel.showError = false
                 viewModel.tags = try await getLocalModels(

@@ -13,9 +13,10 @@ extension ChatView {
     func modelPicker() -> some View {
         Picker("Model:", selection: modelBinding) {
             ForEach(viewModel.tags.models, id: \.self) { model in
-                Text(model.modelInfo.model).tag(model)
+                Text(model.modelInfo.modelName).tag(model)
             }
         }
+        .pickerStyle(.menu)
     }
 
     private var modelBinding: Binding<LanguageModel> {

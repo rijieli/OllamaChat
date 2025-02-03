@@ -1,16 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "%.3f GB" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%.3f GB"
-          }
-        }
-      }
-    },
     "%@" : {
       "localizations" : {
         "zh-Hans" : {
@@ -201,9 +191,6 @@
         }
       }
     },
-    "Host IP" : {
-
-    },
     "Host IP:" : {
       "localizations" : {
         "zh-Hans" : {
@@ -246,6 +233,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "模型："
+          }
+        }
+      }
+    },
+    "Models" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模型设置"
           }
         }
       }

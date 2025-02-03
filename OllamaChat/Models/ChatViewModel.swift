@@ -43,8 +43,6 @@ class ChatViewModel: ObservableObject {
     var editingCellIndex: Int? = nil
 
     @Published var currentChat: SingleChat? = nil
-
-    @Published var showModelConfig = false
     
     @Published var showSettingsView = false
 
@@ -55,7 +53,6 @@ class ChatViewModel: ObservableObject {
     @Published var messages: [ChatMessage]
 
     @Published var waitingResponse: Bool = false
-    @Published var disabledButton: Bool = true
 
     @Published var errorModel = ErrorModel(showError: false, errorTitle: "", errorMessage: "")
 
