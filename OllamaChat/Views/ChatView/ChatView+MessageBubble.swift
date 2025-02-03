@@ -24,8 +24,7 @@ extension ChatView {
                 direction: isUser ? .right : .left,
                 floatingButtonsAlignment: .bottomTrailing
             ) {
-                MarkdownTextView(message: message.content)
-                    .foregroundStyle(isUser ? Color.white : .black)
+                MarkdownTextView(message: message.content, isUser: isUser)
                     .padding([.leading, .trailing], 8)
                     .padding([.top, .bottom], 8)
                     .textSelection(.enabled)
