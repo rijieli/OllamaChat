@@ -20,4 +20,8 @@ extension Locale {
     static var isEn: Bool {
         Locale.preferredLanguages.first?.hasPrefix("en") == true
     }
+    
+    static var enUS: Locale {
+        Locale(identifier: "en_US")
+    }
 }

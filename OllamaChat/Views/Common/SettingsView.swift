@@ -71,6 +71,7 @@ struct GeneralSettingsView: View {
                             chatViewModel.timeoutResource = filtered
                         }
                     }
+                #if DEBUG
                 Picker("Voice Gender:", selection: $voiceGenderPreference) {
                     ForEach(
                         [AVSpeechSynthesisVoiceGender.unspecified, .female, .male],
@@ -82,6 +83,7 @@ struct GeneralSettingsView: View {
                 .onChange(of: voiceGenderPreference) { newValue in
                     TextSpeechCenter.shared.voiceGenderPreference = newValue
                 }
+                #endif
             }
         }
         .padding()

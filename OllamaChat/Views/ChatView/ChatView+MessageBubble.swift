@@ -60,9 +60,11 @@ extension ChatView {
                     viewModel.resendUntil(message)
                 }
             }
+            #if DEBUG
             bubbleButton("Read", "speaker.wave.2.bubble.left") {
                 TextSpeechCenter.shared.read(message.content)
             }
+            #endif
             if #available(macOS 14.4, iOS 17.4, *) {
                 bubbleButton("Translate", "translate") {
                     showTranslation = true

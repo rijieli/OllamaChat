@@ -128,11 +128,13 @@ struct ChatListView: View {
             Button {
                 chatViewModel.newChat()
             } label: {
-                Label("New Chat", systemImage: "plus")
-                    .frame(height: 32)
-                    .frame(maxWidth: .infinity)
+                HStack(spacing: 4) {
+                    Image(systemName: "plus")
+                    Text("New Chat")
+                }
+                .frame(height: 32)
+                .maxWidth()
             }
-            .maxWidth()
             
             if #available(macOS 14.0, *) {
                 SettingsLink {
@@ -161,7 +163,7 @@ struct ChatListView: View {
                 )
             }
         }
-        .font(.system(size: 15, weight: .semibold))
+        .font(.system(size: 14, weight: .bold))
         .padding(.bottom, 16)
         .padding(.horizontal, 12)
         #else
