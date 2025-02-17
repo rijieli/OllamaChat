@@ -47,6 +47,7 @@ extension ChatView {
         }
         .padding(.horizontal, 12)
         .padding(.bottom, 12)
+        .padding(.top, 8)
         .maxFrame()
         .frame(height: 160)
     }

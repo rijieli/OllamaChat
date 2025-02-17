@@ -60,7 +60,7 @@ extension ChatView {
                 .animation(.default, value: viewModel.waitingResponse)
                 .animation(.default, value: speechCenter.isSpeaking)
                 .animation(.default, value: allowSubmitNewMessage)
-                .padding(.bottom, 8)
+                .padding(.bottom, 0)
                 .padding(.trailing, 12)
             }
             .onChange(of: viewModel.messages) { _ in
