@@ -18,6 +18,10 @@ import SwiftUI
 class AppDelegate: NSObject {
     #if os(macOS)
     var updaterController: SPUStandardUpdaterController?
+    
+    @objc func checkForUpdates() {
+        updaterController?.checkForUpdates(nil)
+    }
     #endif
 }
 

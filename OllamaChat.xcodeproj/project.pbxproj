@@ -7,16 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		32405D8B2ADB181A00EAAC10 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 32405D8A2ADB181A00EAAC10 /* Localizable.xcstrings */; };
-		327B90472AD17EA300A94F10 /* OllamaChatApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 327B90462AD17EA300A94F10 /* OllamaChatApp.swift */; };
-		327B904B2AD17EA400A94F10 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 327B904A2AD17EA400A94F10 /* Assets.xcassets */; };
 		327B90592AD17EA400A94F10 /* Ollama_SwiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 327B90582AD17EA400A94F10 /* Ollama_SwiftTests.swift */; };
 		327B90632AD17EA400A94F10 /* Ollama_SwiftUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 327B90622AD17EA400A94F10 /* Ollama_SwiftUITests.swift */; };
 		327B90652AD17EA400A94F10 /* Ollama_SwiftUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 327B90642AD17EA400A94F10 /* Ollama_SwiftUITestsLaunchTests.swift */; };
 		32CDC01C2AD1F6C700D4DA6B /* NDJsonParser_SwiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32CDC01B2AD1F6C700D4DA6B /* NDJsonParser_SwiftTests.swift */; };
 		DB093D8C2D50E6A200EFD525 /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = DB093D8B2D50E6A200EFD525 /* MarkdownUI */; };
-		DB0AE5EC2C4CFBD500AC7CC5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0AE5EB2C4CFBD500AC7CC5 /* AppDelegate.swift */; };
-		DB0AE5EF2C4CFC1300AC7CC5 /* OllamaChat.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = DB0AE5ED2C4CFC1300AC7CC5 /* OllamaChat.xcdatamodeld */; };
 		DB59E7072D630519002A99E1 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = DB59E7062D630519002A99E1 /* Sparkle */; };
 		DB5B94DF2B7FB76600273FFA /* SwiftUIIntrospect in Frameworks */ = {isa = PBXBuildFile; productRef = DB5B94DE2B7FB76600273FFA /* SwiftUIIntrospect */; };
 		DBF592C62B872B3E0085D1BF /* Hue in Frameworks */ = {isa = PBXBuildFile; productRef = DBF592C52B872B3E0085D1BF /* Hue */; };
@@ -40,28 +35,23 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		32405D8A2ADB181A00EAAC10 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		327B90432AD17EA300A94F10 /* OllamaChat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OllamaChat.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		327B90462AD17EA300A94F10 /* OllamaChatApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OllamaChatApp.swift; sourceTree = "<group>"; };
-		327B904A2AD17EA400A94F10 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		327B90542AD17EA400A94F10 /* OllamaChatTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OllamaChatTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		327B90582AD17EA400A94F10 /* Ollama_SwiftTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ollama_SwiftTests.swift; sourceTree = "<group>"; };
 		327B905E2AD17EA400A94F10 /* OllamaChatUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OllamaChatUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		327B90622AD17EA400A94F10 /* Ollama_SwiftUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ollama_SwiftUITests.swift; sourceTree = "<group>"; };
 		327B90642AD17EA400A94F10 /* Ollama_SwiftUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ollama_SwiftUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		32CDC01B2AD1F6C700D4DA6B /* NDJsonParser_SwiftTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NDJsonParser_SwiftTests.swift; sourceTree = "<group>"; };
-		DB0AE5EB2C4CFBD500AC7CC5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		DB0AE5EE2C4CFC1300AC7CC5 /* OllamaChat.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = OllamaChat.xcdatamodel; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		DB94F0F52D0B2E3A000B399B /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		DB59E78A2D630D5D002A99E1 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Info.plist,
+				Resources/Info.plist,
 			);
 			platformFiltersByRelativePath = {
-				"Launch Screen.storyboard" = (
+				"Resources/Launch Screen.storyboard" = (
 					ios,
 				);
 			};
@@ -70,12 +60,7 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		DB093D262D50CD7200EFD525 /* Controllers */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Controllers; sourceTree = "<group>"; };
-		DB093D322D50CD7500EFD525 /* Models */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Models; sourceTree = "<group>"; };
-		DB093D4C2D50CD7900EFD525 /* Views */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Views; sourceTree = "<group>"; };
-		DB093D662D50CD8600EFD525 /* Utils */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Utils; sourceTree = "<group>"; };
-		DB093D7A2D50CD8A00EFD525 /* Extensions */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Extensions; sourceTree = "<group>"; };
-		DB94F0F42D0B2E2C000B399B /* Resources */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (DB94F0F52D0B2E3A000B399B /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Resources; sourceTree = "<group>"; };
+		DB59E74F2D630D5D002A99E1 /* OllamaChat */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (DB59E78A2D630D5D002A99E1 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = OllamaChat; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -110,7 +95,7 @@
 		327B903A2AD17EA300A94F10 = {
 			isa = PBXGroup;
 			children = (
-				327B90452AD17EA300A94F10 /* OllamaChat */,
+				DB59E74F2D630D5D002A99E1 /* OllamaChat */,
 				327B90572AD17EA400A94F10 /* Ollama SwiftTests */,
 				327B90612AD17EA400A94F10 /* Ollama SwiftUITests */,
 				DB093D8A2D50E6A200EFD525 /* Frameworks */,
@@ -126,24 +111,6 @@
 				327B905E2AD17EA400A94F10 /* OllamaChatUITests.xctest */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		327B90452AD17EA300A94F10 /* OllamaChat */ = {
-			isa = PBXGroup;
-			children = (
-				DB94F0F42D0B2E2C000B399B /* Resources */,
-				DB093D7A2D50CD8A00EFD525 /* Extensions */,
-				DB093D662D50CD8600EFD525 /* Utils */,
-				DB093D4C2D50CD7900EFD525 /* Views */,
-				DB093D262D50CD7200EFD525 /* Controllers */,
-				DB093D322D50CD7500EFD525 /* Models */,
-				327B90462AD17EA300A94F10 /* OllamaChatApp.swift */,
-				DB0AE5EB2C4CFBD500AC7CC5 /* AppDelegate.swift */,
-				327B904A2AD17EA400A94F10 /* Assets.xcassets */,
-				32405D8A2ADB181A00EAAC10 /* Localizable.xcstrings */,
-				DB0AE5ED2C4CFC1300AC7CC5 /* OllamaChat.xcdatamodeld */,
-			);
-			path = OllamaChat;
 			sourceTree = "<group>";
 		};
 		327B90572AD17EA400A94F10 /* Ollama SwiftTests */ = {
@@ -188,12 +155,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				DB093D262D50CD7200EFD525 /* Controllers */,
-				DB093D322D50CD7500EFD525 /* Models */,
-				DB093D4C2D50CD7900EFD525 /* Views */,
-				DB093D662D50CD8600EFD525 /* Utils */,
-				DB093D7A2D50CD8A00EFD525 /* Extensions */,
-				DB94F0F42D0B2E2C000B399B /* Resources */,
+				DB59E74F2D630D5D002A99E1 /* OllamaChat */,
 			);
 			name = OllamaChat;
 			packageProductDependencies = (
@@ -298,8 +260,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				327B904B2AD17EA400A94F10 /* Assets.xcassets in Resources */,
-				32405D8B2ADB181A00EAAC10 /* Localizable.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -346,9 +306,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DB0AE5EC2C4CFBD500AC7CC5 /* AppDelegate.swift in Sources */,
-				DB0AE5EF2C4CFC1300AC7CC5 /* OllamaChat.xcdatamodeld in Sources */,
-				327B90472AD17EA300A94F10 /* OllamaChatApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -754,20 +711,6 @@
 			productName = Hue;
 		};
 /* End XCSwiftPackageProductDependency section */
-
-/* Begin XCVersionGroup section */
-		DB0AE5ED2C4CFC1300AC7CC5 /* OllamaChat.xcdatamodeld */ = {
-			isa = XCVersionGroup;
-			children = (
-				DB0AE5EE2C4CFC1300AC7CC5 /* OllamaChat.xcdatamodel */,
-			);
-			currentVersion = DB0AE5EE2C4CFC1300AC7CC5 /* OllamaChat.xcdatamodel */;
-			name = OllamaChat.xcdatamodeld;
-			path = /Users/roger/Workspace/OllamaChat/OllamaChat/OllamaChat.xcdatamodeld;
-			sourceTree = "<group>";
-			versionGroupType = wrapper.xcdatamodel;
-		};
-/* End XCVersionGroup section */
 	};
 	rootObject = 327B903B2AD17EA300A94F10 /* Project object */;
 }

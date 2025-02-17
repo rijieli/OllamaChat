@@ -32,24 +32,7 @@ struct OllamaChatApp: App {
                 #endif
             }
             .commands {
-                CommandGroup(after: .newItem) {
-                    Button(action: {
-
-                        if let currentWindow = NSApp.keyWindow,
-                            let windowController = currentWindow.windowController
-                        {
-                            windowController.newWindowForTab(nil)
-                            if let newWindow = NSApp.keyWindow,
-                                currentWindow != newWindow
-                            {
-                                currentWindow.addTabbedWindow(newWindow, ordered: .above)
-                            }
-                        }
-                    }) {
-                        Text("New Tab")
-                    }
-                    .keyboardShortcut("t", modifiers: [.command])
-                }
+                Menus()
             }
             Settings {
                 SettingsView()
