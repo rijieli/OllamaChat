@@ -4,25 +4,22 @@
         <title>OllamaChat</title>
         <link>https://github.com/rijieli/OllamaChat/releases</link>
         <description>Latest updates for OllamaChat</description>
-        <language>en</language>
         <item>
-            <title>Version 1.5.1</title>
-            <sparkle:version>71</sparkle:version>
-            <sparkle:shortVersionString>1.5.1</sparkle:shortVersionString>
-            <sparkle:minimumSystemVersion>13.0</sparkle:minimumSystemVersion>
+            <title>Version 1.5.2</title>
+            <sparkle:version>75</sparkle:version>
+            <sparkle:shortVersionString>1.5.2</sparkle:shortVersionString>
             <enclosure
-                url="https://github.com/rijieli/OllamaChat/releases/download/1.5.1/OllamaChat.dmg"
-                sparkle:version="71"
-                sparkle:shortVersionString="1.5.1"
+                url="https://github.com/rijieli/OllamaChat/releases/download/1.5.2/OllamaChat.dmg"
+                sparkle:version="75"
+                sparkle:shortVersionString="1.5.2"
                 type="application/octet-stream"
-                sparkle:edSignature="wEiUM1VWgtrTFgZxoNHU/KH+0Ig8pNwd6Ik7azyW0OT+7B1f1E9QfYmllln9tjT5WFd/hjjX0hTmz/ydC9WFAg=="
-                length="2317414"
+                sparkle:edSignature="TLa1/CawuDkxX67m6PA2JEfgEo4UxZpOVcM0lEMeXyrTF+6foLc3xlwD09FDqw3t1PDAlhAO3dpKXRayWj3QCA=="
+                length="2319212"
             />
             <description><![CDATA[
-                <h2>Changes in version 1.5.1:</h2>
+                <h2>Changes in version 1.5.2:</h2>
                 <ul>
-                    <li>Optimize: Model name display</li>
-                    <li>Fix: Input area locked</li>
+                    <li>UI refinement</li>
                 </ul>
             ]]></description>
         </item>
