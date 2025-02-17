@@ -138,7 +138,6 @@ class ChatViewModel: ObservableObject {
                 }
 
                 waitingResponse = false
-                current.content = ""
                 if let currentChat {
                     currentChat.messages = messages
                     currentChat.model = filterdModel
@@ -160,7 +159,6 @@ class ChatViewModel: ObservableObject {
                 errorModel = unreachableError(error: error)
             } catch let error as URLError where error.code == .cancelled {
                 waitingResponse = false
-                current.content = ""
             } catch {
                 self.errorModel = genericError(error: error)
             }

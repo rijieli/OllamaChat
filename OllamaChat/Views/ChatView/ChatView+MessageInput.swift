@@ -18,7 +18,7 @@ extension ChatView {
                 .onSubmit {
                     allowSubmitNewMessage ? viewModel.send() : nil
                 }
-                .disabled(!allowSubmitNewMessage)
+                .disabled(viewModel.waitingResponse)
                 .focused($promptFieldIsFocused)
                 .modifier(BorderDecoratedStyleModifier())
                 .overlay(alignment: .trailing) {
@@ -26,6 +26,7 @@ extension ChatView {
                         if CurrentOS.ismacOS && allowSubmitNewMessage {
                             Button {
                                 viewModel.send()
+                                promptFieldIsFocused = false
                             } label: {
                                 Image(systemName: "arrow.up.circle.fill")
                                     .font(.system(size: 24))
