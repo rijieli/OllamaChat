@@ -78,7 +78,12 @@ func getLocalModels(host: String, timeoutRequest: String, timeoutResource: Strin
     }
     do {
         let decoder = JSONDecoder()
-        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        #if DEBUG
+        // print raw string
+        let jsonString = String(data: data, encoding: .utf8)
+        print("\n" + (jsonString ?? "") + "\n")
+        #endif
+        
         let decoded = try decoder.decode(ModelGroup.self, from: data)
         return decoded
     } catch {

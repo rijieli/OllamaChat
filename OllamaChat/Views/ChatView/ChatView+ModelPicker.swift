@@ -13,10 +13,41 @@ extension ChatView {
     func modelPicker() -> some View {
         Picker("Model:", selection: modelBinding) {
             ForEach(viewModel.tags.models, id: \.self) { model in
-                Text(model.modelInfo.modelName).tag(model)
+                Text(model.modelInfo.modelName)
+                    .tag(model)
+                    .help(modelHelpText(for: model))
             }
         }
         .pickerStyle(.menu)
+    }
+
+    private func modelHelpText(for model: LanguageModel) -> String {
+        var help = [String]()
+        
+        // Basic info
+        if let provider = model.modelInfo.provider {
+            help.append("Provider: \(provider)")
+        }
+        help.append("Size: \(model.fileSize)")
+        
+        // Model details
+        if !model.details.family.isEmpty {
+            help.append("Family: \(model.details.family)")
+        }
+        if !model.details.parentModel.isEmpty {
+            help.append("Base Model: \(model.details.parentModel)")
+        }
+        if !model.details.format.isEmpty {
+            help.append("Format: \(model.details.format)")
+        }
+        if !model.details.quantizationLevel.isEmpty {
+            help.append("Quantization: \(model.details.quantizationLevel)")
+        }
+        
+        // Source info
+        help.append("Source: \(model.modelInfo.source)")
+        
+        return help.joined(separator: "\n")
     }
 
     private var modelBinding: Binding<LanguageModel> {
