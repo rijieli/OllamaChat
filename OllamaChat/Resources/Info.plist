@@ -9,5 +9,11 @@
 		<key>UIImageName</key>
 		<string></string>
 	</dict>
+	<key>SUFeedURL</key>
+	<string>https://raw.githubusercontent.com/rijieli/OllamaChat/main/appcast.xml</string>
+	<key>SUPublicEDKey</key>
+	<string>bl+ywgFHQZOR+j76JtQTIlI90TZiBwKbcMkn7VfEQQ0=</string>
+	<key>SUEnableAutomaticChecks</key>
+	<true/>
 </dict>
 </plist>

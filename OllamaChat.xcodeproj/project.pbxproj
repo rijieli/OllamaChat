@@ -17,6 +17,7 @@
 		DB093D8C2D50E6A200EFD525 /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = DB093D8B2D50E6A200EFD525 /* MarkdownUI */; };
 		DB0AE5EC2C4CFBD500AC7CC5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB0AE5EB2C4CFBD500AC7CC5 /* AppDelegate.swift */; };
 		DB0AE5EF2C4CFC1300AC7CC5 /* OllamaChat.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = DB0AE5ED2C4CFC1300AC7CC5 /* OllamaChat.xcdatamodeld */; };
+		DB59E7072D630519002A99E1 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = DB59E7062D630519002A99E1 /* Sparkle */; };
 		DB5B94DF2B7FB76600273FFA /* SwiftUIIntrospect in Frameworks */ = {isa = PBXBuildFile; productRef = DB5B94DE2B7FB76600273FFA /* SwiftUIIntrospect */; };
 		DBF592C62B872B3E0085D1BF /* Hue in Frameworks */ = {isa = PBXBuildFile; productRef = DBF592C52B872B3E0085D1BF /* Hue */; };
 /* End PBXBuildFile section */
@@ -83,6 +84,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DB093D8C2D50E6A200EFD525 /* MarkdownUI in Frameworks */,
+				DB59E7072D630519002A99E1 /* Sparkle in Frameworks */,
 				DBF592C62B872B3E0085D1BF /* Hue in Frameworks */,
 				DB5B94DF2B7FB76600273FFA /* SwiftUIIntrospect in Frameworks */,
 			);
@@ -198,6 +200,7 @@
 				DB5B94DE2B7FB76600273FFA /* SwiftUIIntrospect */,
 				DBF592C52B872B3E0085D1BF /* Hue */,
 				DB093D8B2D50E6A200EFD525 /* MarkdownUI */,
+				DB59E7062D630519002A99E1 /* Sparkle */,
 			);
 			productName = "Ollama Swift";
 			productReference = 327B90432AD17EA300A94F10 /* OllamaChat.app */;
@@ -277,6 +280,7 @@
 				DB5B94DD2B7FB76600273FFA /* XCRemoteSwiftPackageReference "swiftui-introspect" */,
 				DBF592C42B872B3E0085D1BF /* XCRemoteSwiftPackageReference "Hue" */,
 				DB093D892D50E63200EFD525 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
+				DB59E7052D630519002A99E1 /* XCRemoteSwiftPackageReference "Sparkle" */,
 			);
 			productRefGroup = 327B90442AD17EA300A94F10 /* Products */;
 			projectDirPath = "";
@@ -702,6 +706,14 @@
 				minimumVersion = 2.4.1;
 			};
 		};
+		DB59E7052D630519002A99E1 /* XCRemoteSwiftPackageReference "Sparkle" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sparkle-project/Sparkle";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.6.4;
+			};
+		};
 		DB5B94DD2B7FB76600273FFA /* XCRemoteSwiftPackageReference "swiftui-introspect" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/siteline/swiftui-introspect";
@@ -725,6 +737,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = DB093D892D50E63200EFD525 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */;
 			productName = MarkdownUI;
+		};
+		DB59E7062D630519002A99E1 /* Sparkle */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DB59E7052D630519002A99E1 /* XCRemoteSwiftPackageReference "Sparkle" */;
+			productName = Sparkle;
 		};
 		DB5B94DE2B7FB76600273FFA /* SwiftUIIntrospect */ = {
 			isa = XCSwiftPackageProductDependency;
