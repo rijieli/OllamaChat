@@ -16,6 +16,11 @@ struct PromptModel: Encodable {
 struct ChatModel: Encodable {
     var model: String
     var messages: [ChatMessage]
+    let options: OptionsModel = OptionsModel(temperature: 0.6)
+}
+
+struct OptionsModel: Encodable {
+    let temperature: Double
 }
 
 enum ChatMessageRole: String, Codable {

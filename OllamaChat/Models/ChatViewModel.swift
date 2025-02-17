@@ -104,8 +104,8 @@ class ChatViewModel: ObservableObject {
                 request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
                 let encoder = JSONEncoder()
-                encoder.keyEncodingStrategy = .convertToSnakeCase
-                request.httpBody = try encoder.encode(chatHistory)
+                let httpBody = try encoder.encode(chatHistory)
+                request.httpBody = httpBody
 
                 print("[Sending] <\(chatHistory.model)> \(messages.last?.content.count ?? 0)")
 
