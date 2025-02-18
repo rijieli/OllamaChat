@@ -1,6 +1,9 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "" : {
+
+    },
     "%@" : {
       "localizations" : {
         "zh-Hans" : {
@@ -38,7 +41,24 @@
       }
     },
     "⌘ + Return" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⌘ + 回车键"
+          }
+        }
+      }
+    },
+    "Advanced Settings" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "进阶设置"
+          }
+        }
+      }
     },
     "Are you sure you want to delete the model?" : {
       "localizations" : {
@@ -60,12 +80,32 @@
         }
       }
     },
+    "Basic Settings" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "基本设置"
+          }
+        }
+      }
+    },
     "Cancel" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "取消"
+          }
+        }
+      }
+    },
+    "Chat Options" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "对话选项"
           }
         }
       }
@@ -93,6 +133,16 @@
         }
       }
     },
+    "Context Window" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上下文大小"
+          }
+        }
+      }
+    },
     "Current Local IPv4:" : {
 
     },
@@ -105,6 +155,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "删除"
+          }
+        }
+      }
+    },
+    "Disabled" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "禁用"
           }
         }
       }
@@ -164,6 +224,9 @@
           }
         }
       }
+    },
+    "Eta (%.2f)" : {
+
     },
     "Find more models: [Models](https://ollama.com/library)" : {
       "localizations" : {
@@ -227,6 +290,42 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "本地模型："
+          }
+        }
+      }
+    },
+    "Max tokens to predict" : {
+
+    },
+    "Min P (%.2f)" : {
+
+    },
+    "Mirostat 1.0" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mirostat 1.0"
+          }
+        }
+      }
+    },
+    "Mirostat 2.0" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mirostat 2.0"
+          }
+        }
+      }
+    },
+    "Mirostat Mode" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mirostat 采样"
           }
         }
       }
@@ -333,11 +432,27 @@
         }
       }
     },
+    "Repeat Last N" : {
+
+    },
+    "Repeat Penalty (%.2f)" : {
+
+    },
     "Request Timeout" : {
 
     },
     "Request Timeout (in sec. Default 60):" : {
 
+    },
+    "Reset to Default" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重置"
+          }
+        }
+      }
     },
     "Resources Timeout" : {
 
@@ -375,6 +490,12 @@
         }
       }
     },
+    "Tau (%.2f)" : {
+
+    },
+    "Temperature (%.2f)" : {
+
+    },
     "This is the start of your chat" : {
       "localizations" : {
         "ar" : {
@@ -401,12 +522,28 @@
         }
       }
     },
+    "Top K (%lld)" : {
+
+    },
+    "Top P (%.2f)" : {
+
+    },
     "Update" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "更新"
+          }
+        }
+      }
+    },
+    "View Parameters Documentation" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "查看参数文档"
           }
         }
       }

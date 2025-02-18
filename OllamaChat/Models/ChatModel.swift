@@ -1,9 +1,11 @@
 //
-//  Prompt.swift
-//  Ollama Swift
+//  PromptModel.swift
+//  OllamaChat
 //
-//  Created by Karim ElGhandour on 08.10.23.
+//  Created by Roger on 2025/2/18.
+//  Copyright © 2025 IdeasForm. All rights reserved.
 //
+
 
 import Foundation
 
@@ -16,11 +18,35 @@ struct PromptModel: Encodable {
 struct ChatModel: Encodable {
     var model: String
     var messages: [ChatMessage]
-    let options: OptionsModel = OptionsModel(temperature: 0.6)
+    let options: ChatOptions
 }
 
-struct OptionsModel: Encodable {
+struct ChatOptions: Encodable {
     let temperature: Double
+    let topP: Double
+    let topK: Int
+    let minP: Double
+    let numPredict: Int
+    let repeatLastN: Int
+    let repeatPenalty: Double
+    let seed: Int
+    let numCtx: Int
+    let mirostat: Int
+    let mirostatEta: Double
+    let mirostatTau: Double
+    
+    enum CodingKeys: String, CodingKey {
+        case temperature, seed
+        case numCtx = "num_ctx"
+        case topP = "top_p"
+        case topK = "top_k"
+        case minP = "min_p"
+        case numPredict = "num_predict"
+        case repeatLastN = "repeat_last_n"
+        case repeatPenalty = "repeat_penalty"
+        case mirostat, mirostatEta = "mirostat_eta"
+        case mirostatTau = "mirostat_tau"
+    }
 }
 
 enum ChatMessageRole: String, Codable {

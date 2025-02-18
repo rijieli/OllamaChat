@@ -44,7 +44,7 @@ struct ChatListView: View {
     var body: some View {
         VStack(spacing: 0) {
             ScrollView {
-                VStack(spacing: 8) {
+                LazyVStack(spacing: 8) {
                     ForEach(items) { item in
                         let isSelected = chatViewModel.currentChat?.id == item.id
                         cell(item: item, selected: isSelected)

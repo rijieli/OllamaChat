@@ -35,6 +35,20 @@ class ChatViewModel: ObservableObject {
     @AppStorage("port") var port = "11434"
     @AppStorage("timeoutRequest") var timeoutRequest = "60"
     @AppStorage("timeoutResource") var timeoutResource = "604800"
+    
+    @AppStorage("ChatOptions.mirostat") var mirostat = 0
+    @AppStorage("ChatOptions.mirostatEta") var mirostatEta = 0.1
+    @AppStorage("ChatOptions.mirostatTau") var mirostatTau = 5.0
+    @AppStorage("ChatOptions.numCtx") var numCtx = 2048
+    @AppStorage("ChatOptions.repeatLastN") var repeatLastN = 64
+    @AppStorage("ChatOptions.repeatPenalty") var repeatPenalty = 1.1
+    @AppStorage("ChatOptions.temperature") var temperature = 0.6
+    @AppStorage("ChatOptions.seed") var seed = 0
+    @AppStorage("ChatOptions.numPredict") var numPredict = -1
+    @AppStorage("ChatOptions.topK") var topK = 40
+    @AppStorage("ChatOptions.topP") var topP = 0.9
+    @AppStorage("ChatOptions.minP") var minP = 0.0
+
 
     @Published var showSystemConfig = false
 
@@ -90,7 +104,8 @@ class ChatViewModel: ObservableObject {
 
                 let chatHistory = ChatModel(
                     model: filterdModel,
-                    messages: messages
+                    messages: messages,
+                    options: chatOptions
                 )
 
                 let endpoint = "\(host):\(port)" + "/api/chat"
