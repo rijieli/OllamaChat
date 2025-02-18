@@ -5,21 +5,21 @@
         <link>https://github.com/rijieli/OllamaChat/releases</link>
         <description>Latest updates for OllamaChat</description>
         <item>
-            <title>Version 1.5.2</title>
-            <sparkle:version>75</sparkle:version>
-            <sparkle:shortVersionString>1.5.2</sparkle:shortVersionString>
+            <title>Version 1.5.3</title>
+            <sparkle:version>80</sparkle:version>
+            <sparkle:shortVersionString>1.5.3</sparkle:shortVersionString>
             <enclosure
-                url="https://github.com/rijieli/OllamaChat/releases/download/1.5.2/OllamaChat.dmg"
-                sparkle:version="75"
-                sparkle:shortVersionString="1.5.2"
+                url="https://github.com/rijieli/OllamaChat/releases/download/1.5.3/OllamaChat.dmg"
+                sparkle:version="80"
+                sparkle:shortVersionString="1.5.3"
                 type="application/octet-stream"
-                sparkle:edSignature="TLa1/CawuDkxX67m6PA2JEfgEo4UxZpOVcM0lEMeXyrTF+6foLc3xlwD09FDqw3t1PDAlhAO3dpKXRayWj3QCA=="
-                length="2319212"
+                sparkle:edSignature="oYds1LF3qlXc/Fcv8Lca9hhxsnWfFj3GnyW92PAj/UvyD8Jmmv+g1Ow12zK3tsonFOAZXIwrICZPmB7JoWCzBQ=="
+                length="2347271"
             />
             <description><![CDATA[
-                <h2>Changes in version 1.5.2:</h2>
+                <h2>Changes in version 1.5.3:</h2>
                 <ul>
-                    <li>UI refinement</li>
+                    <li>Add Ollama paramters config in settings page</li>
                 </ul>
             ]]></description>
         </item>
