@@ -168,7 +168,6 @@ import SwiftUI
             Task {
                 do {
                     tags = try await getLocalModels(
-                        host: "\(self.host):\(self.port)",
                         timeoutRequest: self.timeoutRequest,
                         timeoutResource: self.timeoutResource
                     )
@@ -203,7 +202,7 @@ import SwiftUI
                 do {
                     showProgress = true
 
-                    let endpoint = "\(host):\(port)" + "/api/pull"
+                    let endpoint = APIEndPoint + "pull"
 
                     guard let url = URL(string: endpoint) else {
                         throw NetError.invalidURL(error: nil)
@@ -256,7 +255,7 @@ import SwiftUI
         func removeModel(name: String) {
             Task {
                 do {
-                    try await deleteModel(host: "\(host):\(port)", name: name)
+                    try await deleteModel(name: name)
                     getTags()
                 } catch NetError.invalidURL(let error) {
                     errorModel = invalidURLError(error: error)

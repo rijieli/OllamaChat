@@ -7,9 +7,9 @@
 
 import Foundation
 
-func deleteModel(host: String, name: String) async throws {
+func deleteModel(name: String) async throws {
     print("Sending request")
-    let endpoint = host + "/api/delete"
+    let endpoint = APIEndPoint + "delete"
 
     guard let url = URL(string: endpoint) else {
         throw NetError.invalidURL(error: nil)
@@ -38,7 +38,7 @@ func deleteModel(host: String, name: String) async throws {
 
 func copyModel(host: String, source: String, destination: String) async throws {
     print("Sending request")
-    let endpoint = host + "/api/copy"
+    let endpoint = APIEndPoint + "copy"
 
     guard let url = URL(string: endpoint) else {
         throw NetError.invalidURL(error: nil)

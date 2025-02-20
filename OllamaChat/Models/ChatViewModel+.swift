@@ -38,4 +38,8 @@ extension ChatViewModel {
         topP = 0.9
         minP = 0.0
     }
+    
+    var apiEndPoint: String {
+        return host + (port.isEmpty ? "" : ":" + port) + "/api/"
+    }
 }

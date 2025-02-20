@@ -108,7 +108,7 @@ class ChatViewModel: ObservableObject {
                     options: chatOptions
                 )
 
-                let endpoint = "\(host):\(port)" + "/api/chat"
+                let endpoint = APIEndPoint + "chat"
 
                 guard let url = URL(string: endpoint) else {
                     throw NetError.invalidURL(error: nil)

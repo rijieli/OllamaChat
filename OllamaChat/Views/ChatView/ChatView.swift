@@ -72,7 +72,6 @@ struct ChatView: View {
                 viewModel.waitingResponse = false
                 viewModel.errorModel.showError = false
                 viewModel.tags = try await getLocalModels(
-                    host: "\(viewModel.host):\(viewModel.port)",
                     timeoutRequest: viewModel.timeoutRequest,
                     timeoutResource: viewModel.timeoutResource
                 )
