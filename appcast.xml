@@ -5,21 +5,21 @@
         <link>https://github.com/rijieli/OllamaChat/releases</link>
         <description>Latest updates for OllamaChat</description>
         <item>
-            <title>Version 1.5.3</title>
-            <sparkle:version>80</sparkle:version>
-            <sparkle:shortVersionString>1.5.3</sparkle:shortVersionString>
+            <title>Version 1.5.4</title>
+            <sparkle:version>85</sparkle:version>
+            <sparkle:shortVersionString>1.5.4</sparkle:shortVersionString>
             <enclosure
-                url="https://github.com/rijieli/OllamaChat/releases/download/1.5.3/OllamaChat.dmg"
-                sparkle:version="80"
-                sparkle:shortVersionString="1.5.3"
+                url="https://github.com/rijieli/OllamaChat/releases/download/1.5.4/OllamaChat.dmg"
+                sparkle:version="85"
+                sparkle:shortVersionString="1.5.4"
                 type="application/octet-stream"
-                sparkle:edSignature="oYds1LF3qlXc/Fcv8Lca9hhxsnWfFj3GnyW92PAj/UvyD8Jmmv+g1Ow12zK3tsonFOAZXIwrICZPmB7JoWCzBQ=="
-                length="2347271"
+                sparkle:edSignature="W90R9I8hUg6vqXqki9rWlJzzmMqHROO7rdwleQY6ih5sDC/GEyjt3yNN4U2N9ucB68pnNskwDWmy/nNObKSaCA=="
+                length="2366589"
             />
             <description><![CDATA[
-                <h2>Changes in version 1.5.3:</h2>
+                <h2>Changes in version 1.5.4:</h2>
                 <ul>
-                    <li>Add Ollama paramters config in settings page</li>
+                    <li>Add basic support for Ollama hosts that use a URL format.</li>
                 </ul>
             ]]></description>
         </item>
