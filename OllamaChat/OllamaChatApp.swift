@@ -27,9 +27,6 @@ struct OllamaChatApp: App {
             WindowGroup {
                 ContentView()
                     .environment(\.managedObjectContext, CoreDataStack.shared.context)
-                #if DEBUG
-                    .environment(\.locale, .enUS)
-                #endif
             }
             .commands {
                 Menus()

@@ -284,6 +284,26 @@
         }
       }
     },
+    "Host:" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "服务："
+          }
+        }
+      }
+    },
+    "If you are using a web URL as the host, you can try removing the port. If you are running Ollama locally, try using http://127.0.0.1 and set the port to 11434." : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "如果你使用网页链接作为服务，请尝试删除端口参数。如果你在本地运行大模型，尝试设置服务为 http://127.0.0.1 并设置端口为 11434。"
+          }
+        }
+      }
+    },
     "Local Models:" : {
       "localizations" : {
         "zh-Hans" : {
@@ -389,8 +409,25 @@
     "No models downloaded locally. Add a model by typing the name in the field at the bottom of the page." : {
 
     },
+    "Ollama Service" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ollama 服务设置"
+          }
+        }
+      }
+    },
     "Ollama Service Config" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ollama 服务设置"
+          }
+        }
+      }
     },
     "Please select a chat from the list or create a new one" : {
       "localizations" : {
@@ -408,6 +445,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "端口："
+          }
+        }
+      }
+    },
+    "Port(optional):" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "端口（可选）："
           }
         }
       }
@@ -441,8 +488,15 @@
     "Request Timeout" : {
 
     },
-    "Request Timeout (in sec. Default 60):" : {
-
+    "Request Timeout (Default 60s):" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请求超时时长（默认60秒）："
+          }
+        }
+      }
     },
     "Reset to Default" : {
       "localizations" : {
@@ -455,9 +509,6 @@
       }
     },
     "Resources Timeout" : {
-
-    },
-    "Resources Timeout (in sec. Default: 604800):" : {
 
     },
     "Save" : {
@@ -480,6 +531,16 @@
         }
       }
     },
+    "Speech Settings" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "语音设置"
+          }
+        }
+      }
+    },
     "System Prompt" : {
       "localizations" : {
         "zh-Hans" : {
@@ -495,6 +556,16 @@
     },
     "Temperature (%.2f)" : {
 
+    },
+    "Test Connection" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "测试连接"
+          }
+        }
+      }
     },
     "This is the start of your chat" : {
       "localizations" : {

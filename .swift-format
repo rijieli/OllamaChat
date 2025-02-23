@@ -9,5 +9,6 @@
     "lineBreakBeforeControlFlowKeywords": false,
     "lineBreakBeforeEachArgument": true,
     "lineBreakBetweenDeclarationAttributes": false,
-    "indentBlankLines": true
+    "indentBlankLines": true,
+    "indentConditionalCompilationBlocks": false,
 }

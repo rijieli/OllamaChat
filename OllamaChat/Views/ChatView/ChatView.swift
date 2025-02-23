@@ -29,12 +29,12 @@ struct ChatView: View {
         .frame(minWidth: 400, idealWidth: 700, minHeight: 600, idealHeight: 800)
         .background(Color.ocPrimaryBackground)
         .task {
-            self.getTags()
+            await getTags()
         }
         .toolbar {
             ToolbarItemGroup(placement: .automatic) {
                 modelPicker()
-                    
+
                 if viewModel.errorModel.showError {
                     Button {
                         self.showingErrorPopover.toggle()
@@ -57,7 +57,9 @@ struct ChatView: View {
                         .foregroundStyle(.green)
                 }
                 Button {
-                    self.getTags()
+                    Task {
+                        await getTags()
+                    }
                 } label: {
                     Image(systemName: "arrow.clockwise")
                         .frame(width: 20, height: 20, alignment: .center)
@@ -66,32 +68,21 @@ struct ChatView: View {
         }
     }
 
-    func getTags() {
-        Task {
-            do {
-                viewModel.waitingResponse = false
-                viewModel.errorModel.showError = false
-                viewModel.tags = try await getLocalModels(
-                    timeoutRequest: viewModel.timeoutRequest,
-                    timeoutResource: viewModel.timeoutResource
-                )
-                if viewModel.tags.models.count > 0 {
-                    viewModel.model = viewModel.tags.models[0].name
-                } else {
-                    viewModel.model = ""
-                    viewModel.errorModel = noModelsError(error: nil)
-                }
-            } catch let NetError.invalidURL(error) {
-                viewModel.errorModel = invalidURLError(error: error)
-            } catch let NetError.invalidData(error) {
-                viewModel.errorModel = invalidTagsDataError(error: error)
-            } catch let NetError.invalidResponse(error) {
-                viewModel.errorModel = invalidResponseError(error: error)
-            } catch let NetError.unreachable(error) {
-                viewModel.errorModel = unreachableError(error: error)
-            } catch {
-                viewModel.errorModel = genericError(error: error)
-            }
+    func getTags() async {
+        do {
+            viewModel.waitingResponse = false
+            viewModel.errorModel.showError = false
+            _ = try await getLocalModels()
+        } catch let NetError.invalidURL(error) {
+            viewModel.errorModel = invalidURLError(error: error)
+        } catch let NetError.invalidData(error) {
+            viewModel.errorModel = invalidTagsDataError(error: error)
+        } catch let NetError.invalidResponse(error) {
+            viewModel.errorModel = invalidResponseError(error: error)
+        } catch let NetError.unreachable(error) {
+            viewModel.errorModel = unreachableError(error: error)
+        } catch {
+            viewModel.errorModel = genericError(error: error)
         }
     }
 }

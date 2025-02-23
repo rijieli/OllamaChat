@@ -22,7 +22,7 @@ struct ChatOptionsView: View {
                             "https://github.com/ollama/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values"
                     )!
                 )
-                
+
                 Spacer()
 
                 Button("Reset to Default") {
@@ -49,9 +49,9 @@ struct ChatOptionsView: View {
             LabeledContent("Repeat Last N") {
                 TextField("", value: $viewModel.repeatLastN, format: .number)
             }
-            
+
             sectionHeader("Advanced Settings")
-            
+
             Picker("Mirostat Mode", selection: $viewModel.mirostat) {
                 Text("Disabled").tag(0)
                 Text("Mirostat 1.0").tag(1)
@@ -85,24 +85,13 @@ struct ChatOptionsView: View {
                 Slider(value: $viewModel.minP, in: 0...1, step: 0.05)
             }
         }
-        .labeledContentStyle(OptionsLabeledContentStyle())
+        .labeledContentStyle(.settings)
         .maxWidth()
         .padding(16)
     }
-    
+
     func sectionHeader(_ title: LocalizedStringKey) -> some View {
         Text(title)
             .font(.system(size: 16, weight: .bold))
-    }
-}
-
-struct OptionsLabeledContentStyle: LabeledContentStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        HStack(spacing: 4) {
-            configuration.label
-                .frame(maxWidth: 200, alignment: .leading)
-            configuration.content
-                .maxWidth()
-        }
     }
 }
