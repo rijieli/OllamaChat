@@ -29,26 +29,21 @@ class ChatViewModel: ObservableObject {
         }
     }
 
-    @Published var tags = ModelGroup(models: [])
+    @Published var tags = OllamaModelGroup(models: [])
 
     @AppStorage("host") var host = "http://127.0.0.1"
     @AppStorage("port") var port = "11434"
     @AppStorage("timeoutRequest") var timeoutRequest = "60"
     @AppStorage("timeoutResource") var timeoutResource = "604800"
-    
-    @AppStorage("ChatOptions.mirostat") var mirostat = 0
-    @AppStorage("ChatOptions.mirostatEta") var mirostatEta = 0.1
-    @AppStorage("ChatOptions.mirostatTau") var mirostatTau = 5.0
-    @AppStorage("ChatOptions.numCtx") var numCtx = 2048
-    @AppStorage("ChatOptions.repeatLastN") var repeatLastN = 64
-    @AppStorage("ChatOptions.repeatPenalty") var repeatPenalty = 1.1
-    @AppStorage("ChatOptions.temperature") var temperature = 0.6
-    @AppStorage("ChatOptions.seed") var seed = 0
-    @AppStorage("ChatOptions.numPredict") var numPredict = -1
-    @AppStorage("ChatOptions.topK") var topK = 40
-    @AppStorage("ChatOptions.topP") var topP = 0.9
-    @AppStorage("ChatOptions.minP") var minP = 0.0
 
+    @Published var chatOptions: ChatOptions = {
+        UserDefaults.standard.getCodable(forKey: "ChatViewModel.ChatOptions") ?? .defaultValue
+    }()
+    {
+        didSet {
+            UserDefaults.standard.setCodable(chatOptions, forKey: "ChatViewModel.ChatOptions")
+        }
+    }
 
     @Published var showSystemConfig = false
 
@@ -57,7 +52,7 @@ class ChatViewModel: ObservableObject {
     var editingCellIndex: Int? = nil
 
     @Published var currentChat: SingleChat? = nil
-    
+
     @Published var showSettingsView = false
 
     @Published var model: String
@@ -70,11 +65,16 @@ class ChatViewModel: ObservableObject {
 
     @Published var errorModel = ErrorModel(showError: false, errorTitle: "", errorMessage: "")
 
-    var work: Task<Void, Never>?
+    @Published var scrollToBottomToggle = false
+
+    private let scrollDeboucner = Debouncer(delay: 0.1)
+
+    private(set) var work: Task<Void, Never>?
 
     @MainActor
     func send() {
         work = Task {
+            guard let chatID = currentChat?.id else { return }
             do {
                 self.errorModel.showError = false
                 waitingResponse = true
@@ -85,6 +85,7 @@ class ChatViewModel: ObservableObject {
 
                 if !current.content.isEmpty {
                     self.messages.append(current)
+                    scrollToBottom()
                 }
 
                 current = .init(role: .user, content: "")
@@ -142,27 +143,39 @@ class ChatViewModel: ObservableObject {
                     throw NetError.invalidResponse(error: nil)
                 }
 
-                self.messages.append(.init(role: .assistant, content: ""))
+                let decoder = JSONDecoder()
+                let message = ChatMessage(role: .assistant, content: "")
                 for try await line in data.lines {
-                    let decoder = JSONDecoder()
-                    decoder.keyDecodingStrategy = .convertFromSnakeCase
+                    guard !line.isEmpty else { continue }
+                    
+                    if chatID != currentChat?.id {
+                        CoreDataStack.shared.saveContext()
+                        break
+                    }
+
+                    if messages.last?.id != message.id {
+                        messages.append(message)
+                    }
                     let data = line.data(using: .utf8)!
                     let decoded = try! decoder.decode(ResponseModel.self, from: data)
-                    self.messages[self.messages.index(before: self.messages.endIndex)].content +=
-                        decoded.message.content
+                    if let index = self.messages.lastIndex(where: { $0.id == message.id }) {
+                        self.messages[index].content += decoded.message.content
+                    }
+                    scrollDeboucner.call {
+                        self.scrollToBottom()
+                    }
                 }
 
                 waitingResponse = false
                 if let currentChat {
                     currentChat.messages = messages
                     currentChat.model = filterdModel
-                    CoreDataStack.shared.saveContext()
                 } else {
                     let newChat = SingleChat.createNewSingleChat(messages: messages, model: model)
                     newChat.model = filterdModel
-                    CoreDataStack.shared.saveContext()
                     currentChat = newChat
                 }
+                CoreDataStack.shared.saveContext()
                 model = filterdModel
             } catch let NetError.invalidURL(error) {
                 errorModel = invalidURLError(error: error)
@@ -191,6 +204,12 @@ class ChatViewModel: ObservableObject {
         current = .init(role: .user, content: "")
         if messages.last?.role == .user {
             send()
+        }
+    }
+
+    func scrollToBottom() {
+        DispatchQueue.main.async {
+            self.scrollToBottomToggle.toggle()
         }
     }
 

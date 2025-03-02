@@ -9,7 +9,7 @@ import SwiftUI
 
 #if os(macOS)
 struct ManageModelsView: View {
-    @State private var tags = ModelGroup(models: [])
+    @State private var tags = OllamaModelGroup(models: [])
     @State private var errorModel: ErrorModel = ErrorModel(
         showError: false,
         errorTitle: "",
@@ -33,7 +33,7 @@ struct ManageModelsView: View {
     var timeoutRequest: String { chatViewModel.timeoutRequest }
     var timeoutResource: String { chatViewModel.timeoutResource }
 
-    @State private var modelToDelete: LanguageModel?
+    @State private var modelToDelete: OllamaLanguageModel?
     @State private var showModelDeletionAlert = false
 
     var body: some View {
@@ -165,7 +165,7 @@ struct ManageModelsView: View {
         Task {
             do {
                 errorModel.showError = false
-                tags = try await getLocalModels()
+                tags = try await fetchOllamaModels()
                 toDuplicate = self.tags.models.first?.name ?? ""
                 if tags.models.count == 0 {
                     errorModel = noModelsError(error: nil)

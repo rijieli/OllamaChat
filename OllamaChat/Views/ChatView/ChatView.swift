@@ -72,7 +72,7 @@ struct ChatView: View {
         do {
             viewModel.waitingResponse = false
             viewModel.errorModel.showError = false
-            _ = try await getLocalModels()
+            _ = try await fetchOllamaModels()
         } catch let NetError.invalidURL(error) {
             viewModel.errorModel = invalidURLError(error: error)
         } catch let NetError.invalidData(error) {

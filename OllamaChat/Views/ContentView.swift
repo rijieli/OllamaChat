@@ -34,7 +34,7 @@ struct ContentView: View {
                     print("Refresh Models")
                     Task {
                         do {
-                            _ = try await getLocalModels(timeout: 5)
+                            _ = try await fetchOllamaModels(timeout: 5)
                         } catch {
                             print(error.localizedDescription)
                         }

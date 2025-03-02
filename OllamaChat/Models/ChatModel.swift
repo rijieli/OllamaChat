@@ -6,7 +6,6 @@
 //  Copyright © 2025 IdeasForm. All rights reserved.
 //
 
-
 import Foundation
 
 struct PromptModel: Encodable {
@@ -21,20 +20,20 @@ struct ChatModel: Encodable {
     let options: ChatOptions
 }
 
-struct ChatOptions: Encodable {
-    let temperature: Double
-    let topP: Double
-    let topK: Int
-    let minP: Double
-    let numPredict: Int
-    let repeatLastN: Int
-    let repeatPenalty: Double
-    let seed: Int
-    let numCtx: Int
-    let mirostat: Int
-    let mirostatEta: Double
-    let mirostatTau: Double
-    
+struct ChatOptions: Codable {
+    var temperature: Double
+    var topP: Double
+    var topK: Int
+    var minP: Double
+    var numPredict: Int
+    var repeatLastN: Int
+    var repeatPenalty: Double
+    var seed: Int
+    var numCtx: Int
+    var mirostat: Int
+    var mirostatEta: Double
+    var mirostatTau: Double
+
     enum CodingKeys: String, CodingKey {
         case temperature, seed
         case numCtx = "num_ctx"
@@ -44,8 +43,26 @@ struct ChatOptions: Encodable {
         case numPredict = "num_predict"
         case repeatLastN = "repeat_last_n"
         case repeatPenalty = "repeat_penalty"
-        case mirostat, mirostatEta = "mirostat_eta"
+        case mirostat
+        case mirostatEta = "mirostat_eta"
         case mirostatTau = "mirostat_tau"
+    }
+    
+    static var defaultValue: ChatOptions {
+        ChatOptions(
+            temperature: 0.6,
+            topP: 0.9,
+            topK: 40,
+            minP: 0.0,
+            numPredict: -1,
+            repeatLastN: 64,
+            repeatPenalty: 1.1,
+            seed: 0,
+            numCtx: 2048,
+            mirostat: 0,
+            mirostatEta: 0.1,
+            mirostatTau: 5.0
+        )
     }
 }
 
@@ -55,8 +72,7 @@ enum ChatMessageRole: String, Codable {
     case assistant
 }
 
-struct ChatMessage: Identifiable, Encodable, Equatable, Hashable, Decodable, CustomStringConvertible
-{
+struct ChatMessage: Identifiable, Codable, Equatable, Hashable {
 
     var id: String
     var role: ChatMessageRole

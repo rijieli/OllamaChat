@@ -14,11 +14,26 @@ struct ResponseModel: Decodable, Hashable {
     let done: Bool
     let message: ChatMessage
     let context: [Int]?
-    let total_duration: Int?
-    let load_duration: Int?
-    let prompt_eval_count: Int?
-    let eval_count: Int?
-    let eval_duration: Int?
+    let totalDuration: Int?
+    let loadDuration: Int?
+    let promptEvalCount: Int?
+    let evalCount: Int?
+    let evalDuration: Int?
+    
+    enum CodingKeys: String, CodingKey {
+        case model
+        case createdAt = "created_at"
+        case response
+        case done
+        case message
+        case context
+        case totalDuration = "total_duration"
+        case loadDuration = "load_duration"
+        case promptEvalCount = "prompt_eval_count"
+        case evalCount = "eval_count"
+        case evalDuration = "eval_duration"
+    }
+        
 }
 
 struct DownloadResponseModel: Decodable, Hashable {

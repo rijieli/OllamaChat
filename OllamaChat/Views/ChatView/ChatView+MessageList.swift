@@ -9,6 +9,8 @@
 import SwiftUI
 import Translation
 
+private let scrollDebounce = Debouncer(delay: 1)
+
 extension ChatView {
     
     var messagesList: some View {
@@ -63,7 +65,7 @@ extension ChatView {
                 .padding(.bottom, 0)
                 .padding(.trailing, 12)
             }
-            .onChange(of: viewModel.messages) { _ in
+            .onChange(of: viewModel.scrollToBottomToggle) { newValue in
                 proxy.scrollTo(bottomID, anchor: .bottom)
             }
             .onAppear {

@@ -21,7 +21,7 @@ extension ChatView {
         .pickerStyle(.menu)
     }
 
-    private func modelHelpText(for model: LanguageModel) -> String {
+    private func modelHelpText(for model: OllamaLanguageModel) -> String {
         var help = [String]()
         
         // Basic info
@@ -50,7 +50,7 @@ extension ChatView {
         return help.joined(separator: "\n")
     }
 
-    private var modelBinding: Binding<LanguageModel> {
+    private var modelBinding: Binding<OllamaLanguageModel> {
         .init(
             get: {
                 viewModel.tags.models
@@ -58,7 +58,7 @@ extension ChatView {
                         $0.name == viewModel.model
                     }
                     ?? viewModel.tags.models.first
-                    ?? LanguageModel.emptyModel
+                    ?? OllamaLanguageModel.emptyModel
             },
             set: { model in
                 viewModel.model = model.name

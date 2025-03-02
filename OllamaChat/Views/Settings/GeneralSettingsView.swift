@@ -112,7 +112,7 @@ struct GeneralSettingsView: View {
 
         Task {
             do {
-                _ = try await getLocalModels(timeout: 5)
+                _ = try await fetchOllamaModels(timeout: 5)
                 DispatchQueue.main.async {
                     self.testResult = (
                         true, "Connected: \(APIEndPoint)"

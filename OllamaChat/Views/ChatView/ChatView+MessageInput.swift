@@ -44,6 +44,11 @@ extension ChatView {
                     .frame(width: 40 + 12, height: 40, alignment: .leading)
                 }
                 .animation(.smooth(duration: 0.3), value: allowSubmitNewMessage)
+                .onChange(of: viewModel.waitingResponse) { newValue in
+                    if newValue == false {
+                        promptFieldIsFocused = true
+                    }
+                }
         }
         .padding(.horizontal, 12)
         .padding(.bottom, 12)

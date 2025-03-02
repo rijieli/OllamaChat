@@ -26,7 +26,7 @@ struct ChatOptionsView: View {
                 Spacer()
 
                 Button("Reset to Default") {
-                    viewModel.resetChatOptionsToDefault()
+                    viewModel.chatOptions = .defaultValue
                 }
             }
             .maxWidth(alignment: .leading)
@@ -34,20 +34,23 @@ struct ChatOptionsView: View {
             // Basic Settings
             SettingsSectionHeader("Basic Settings")
 
-            LabeledContent("Temperature (\(viewModel.temperature, specifier: "%.2f"))") {
-                Slider(value: $viewModel.temperature, in: 0...1, step: 0.1)
+            LabeledContent("Temperature (\(viewModel.chatOptions.temperature, specifier: "%.2f"))")
+            {
+                Slider(value: $viewModel.chatOptions.temperature, in: 0...1, step: 0.1)
             }
 
-            LabeledContent("Top P (\(viewModel.topP, specifier: "%.2f"))") {
-                Slider(value: $viewModel.topP, in: 0...1, step: 0.05)
+            LabeledContent("Top P (\(viewModel.chatOptions.topP, specifier: "%.2f"))") {
+                Slider(value: $viewModel.chatOptions.topP, in: 0...1, step: 0.05)
             }
 
-            LabeledContent("Repeat Penalty (\(viewModel.repeatPenalty, specifier: "%.2f"))") {
-                Slider(value: $viewModel.repeatPenalty, in: 0...2, step: 0.05)
+            LabeledContent(
+                "Repeat Penalty (\(viewModel.chatOptions.repeatPenalty, specifier: "%.2f"))"
+            ) {
+                Slider(value: $viewModel.chatOptions.repeatPenalty, in: 0...2, step: 0.05)
             }
 
             LabeledContent("Repeat Last N") {
-                TextField("", value: $viewModel.repeatLastN, format: .number)
+                TextField("", value: $viewModel.chatOptions.repeatLastN, format: .number)
             }
 
             Button {
@@ -66,37 +69,41 @@ struct ChatOptionsView: View {
 
             if showAdvancedSettings {
                 VStack(alignment: .leading, spacing: 12) {
-                    Picker("Mirostat Mode", selection: $viewModel.mirostat) {
+                    Picker("Mirostat Mode", selection: $viewModel.chatOptions.mirostat) {
                         Text("Disabled").tag(0)
                         Text("Mirostat 1.0").tag(1)
                         Text("Mirostat 2.0").tag(2)
                     }
                     .pickerStyle(.segmented)
 
-                    if viewModel.mirostat > 0 {
-                        LabeledContent("Eta (\(viewModel.mirostatEta, specifier: "%.2f"))") {
-                            Slider(value: $viewModel.mirostatEta, in: 0...1, step: 0.05)
+                    if viewModel.chatOptions.mirostat > 0 {
+                        LabeledContent(
+                            "Eta (\(viewModel.chatOptions.mirostatEta, specifier: "%.2f"))"
+                        ) {
+                            Slider(value: $viewModel.chatOptions.mirostatEta, in: 0...1, step: 0.05)
                         }
 
-                        LabeledContent("Tau (\(viewModel.mirostatTau, specifier: "%.2f"))") {
-                            Slider(value: $viewModel.mirostatTau, in: 0...10, step: 0.1)
+                        LabeledContent(
+                            "Tau (\(viewModel.chatOptions.mirostatTau, specifier: "%.2f"))"
+                        ) {
+                            Slider(value: $viewModel.chatOptions.mirostatTau, in: 0...10, step: 0.1)
                         }
                     }
 
                     LabeledContent("Context Window") {
-                        TextField("", value: $viewModel.numCtx, format: .number)
+                        TextField("", value: $viewModel.chatOptions.numCtx, format: .number)
                     }
 
                     LabeledContent("Max tokens to predict") {
-                        TextField("", value: $viewModel.numPredict, format: .number)
+                        TextField("", value: $viewModel.chatOptions.numPredict, format: .number)
                     }
 
-                    LabeledContent("Top K (\(viewModel.topK))") {
-                        TextField("", value: $viewModel.topK, format: .number)
+                    LabeledContent("Top K (\(viewModel.chatOptions.topK))") {
+                        TextField("", value: $viewModel.chatOptions.topK, format: .number)
                     }
 
-                    LabeledContent("Min P (\(viewModel.minP, specifier: "%.2f"))") {
-                        Slider(value: $viewModel.minP, in: 0...1, step: 0.05)
+                    LabeledContent("Min P (\(viewModel.chatOptions.minP, specifier: "%.2f"))") {
+                        Slider(value: $viewModel.chatOptions.minP, in: 0...1, step: 0.05)
                     }
                 }
             }
