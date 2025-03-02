@@ -33,18 +33,33 @@ class ModelManager: ObservableObject {
         completions = ModelManager.storage
     }
 
-    func createOpenAICompletion(name: String, endpoint: String) {
+    func createOpenAICompletion(name: String, endpoint: String, apiKey: String? = nil, configJSON: String? = nil) {
         let completion = ChatCompletion(
             provider: .api,
             name: name,
             endpoint: endpoint,
-            apiKey: nil,
-            configJSONRaw: nil
+            apiKey: apiKey,
+            configJSONRaw: configJSON
         )
         completions.append(completion)
         ModelManager.storage = completions
     }
-
+    
+    func updateCompletion(at index: Int, name: String, endpoint: String, apiKey: String? = nil, configJSON: String? = nil) {
+        guard index >= 0 && index < completions.count else { return }
+        
+        completions[index].name = name
+        completions[index].endpoint = endpoint
+        completions[index].apiKey = apiKey
+        completions[index].configJSONRaw = configJSON
+        
+        ModelManager.storage = completions
+    }
+    
+    func deleteCompletion(withName name: String) {
+        completions.removeAll(where: { $0.name == name })
+        ModelManager.storage = completions
+    }
 }
 
 enum ModelProvider: String, Codable {
@@ -53,9 +68,9 @@ enum ModelProvider: String, Codable {
 }
 
 struct ChatCompletion: Codable {
-    let provider: ModelProvider
-    let name: String
-    let endpoint: String
-    let apiKey: String?
-    let configJSONRaw: String?
+    var provider: ModelProvider
+    var name: String
+    var endpoint: String
+    var apiKey: String?
+    var configJSONRaw: String?
 }

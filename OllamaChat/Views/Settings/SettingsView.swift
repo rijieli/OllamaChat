@@ -12,7 +12,7 @@ import SwiftUI
 struct SettingsView: View {
 
     private enum Tabs: Hashable {
-        case general, models, chatOptions
+        case general, models, chatOptions, webAPI
     }
 
     var body: some View {
@@ -32,6 +32,11 @@ struct SettingsView: View {
                     Label("Chat Options", systemImage: "plus.message.fill")
                 }
                 .tag(Tabs.chatOptions)
+            WebAPISettingsView()
+                .tabItem {
+                    Label("Web API", systemImage: "network")
+                }
+                .tag(Tabs.webAPI)
         }
         .frame(width: 600)
     }
