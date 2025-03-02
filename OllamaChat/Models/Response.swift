@@ -19,7 +19,7 @@ struct ResponseModel: Decodable, Hashable {
     let promptEvalCount: Int?
     let evalCount: Int?
     let evalDuration: Int?
-    
+
     enum CodingKeys: String, CodingKey {
         case model
         case createdAt = "created_at"
@@ -33,7 +33,7 @@ struct ResponseModel: Decodable, Hashable {
         case evalCount = "eval_count"
         case evalDuration = "eval_duration"
     }
-        
+
 }
 
 struct DownloadResponseModel: Decodable, Hashable {

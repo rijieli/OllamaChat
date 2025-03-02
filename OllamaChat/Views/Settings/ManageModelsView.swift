@@ -9,24 +9,24 @@ import SwiftUI
 
 #if os(macOS)
 struct ManageModelsView: View {
-    @State private var tags = OllamaModelGroup(models: [])
+    
+    @ObservedObject var chatViewModel = ChatViewModel.shared
+    
     @State private var errorModel: ErrorModel = ErrorModel(
         showError: false,
         errorTitle: "",
         errorMessage: ""
     )
-    @State private var modelName: String = ""
-    @State private var toDuplicate: String = ""
-    @State private var newName: String = ""
+    @State private var modelToDownlad: String = ""
     @State private var showProgress: Bool = false
     @State private var showingErrorPopover: Bool = false
     @State private var totalSize: Double = 0
     @State private var completedSoFar: Double = 0
     @State private var globalSystemPrompt = AppSettings.globalSystem
-
-    @Environment(\.dismiss) var dismiss
-
-    @ObservedObject var chatViewModel = ChatViewModel.shared
+    
+    var tags: OllamaModelGroup {
+        chatViewModel.tags
+    }
 
     var host: String { chatViewModel.host }
     var port: String { chatViewModel.port }
@@ -92,10 +92,10 @@ struct ManageModelsView: View {
             HStack {
                 Text("Get Model:")
                     .font(.headline)
-                TextField("Model name. e.g. llama3", text: $modelName)
+                TextField("Model name. e.g. llama3", text: $modelToDownlad)
                     .textFieldStyle(.roundedBorder)
                 Button {
-                    downloadModel(name: modelName)
+                    downloadModel(name: modelToDownlad)
                 } label: {
                     Image(systemName: "arrowshape.down.fill")
                         .frame(width: 20, height: 20, alignment: .center)
@@ -103,7 +103,7 @@ struct ManageModelsView: View {
             }
             if showProgress {
                 HStack {
-                    Text("Downloading \(modelName)")
+                    Text("Downloading \(modelToDownlad)")
                     ProgressView(value: completedSoFar, total: totalSize)
                     Text(
                         "\(Int(completedSoFar / 1024 / 1024 ))/ \(Int(totalSize / 1024 / 1024)) MB"
@@ -155,7 +155,9 @@ struct ManageModelsView: View {
                 modelToDelete = nil
             }
             Button("Delete", role: .destructive) {
-                removeModel(name: modelName)
+                if let modelToDelete = modelToDelete {
+                    removeModel(name: modelToDelete.name)
+                }
                 modelToDelete = nil
             }
         }
@@ -165,8 +167,7 @@ struct ManageModelsView: View {
         Task {
             do {
                 errorModel.showError = false
-                tags = try await fetchOllamaModels()
-                toDuplicate = self.tags.models.first?.name ?? ""
+                _ = try await fetchOllamaModels()
                 if tags.models.count == 0 {
                     errorModel = noModelsError(error: nil)
                 }
@@ -243,29 +244,6 @@ struct ManageModelsView: View {
         Task {
             do {
                 try await deleteModel(name: name)
-                getTags()
-            } catch NetError.invalidURL(let error) {
-                errorModel = invalidURLError(error: error)
-            } catch NetError.invalidData(let error) {
-                errorModel = invalidDataError(error: error)
-            } catch NetError.invalidResponse(let error) {
-                errorModel = invalidResponseError(error: error)
-            } catch NetError.unreachable(let error) {
-                errorModel = unreachableError(error: error)
-            } catch {
-                errorModel = genericError(error: error)
-            }
-        }
-    }
-
-    func duplicateModel(source: String, destination: String) {
-        Task {
-            do {
-                try await copyModel(
-                    host: "\(host):\(port)",
-                    source: source,
-                    destination: destination
-                )
                 getTags()
             } catch NetError.invalidURL(let error) {
                 errorModel = invalidURLError(error: error)

@@ -33,7 +33,7 @@ class ModelManager: ObservableObject {
         completions = ModelManager.storage
     }
 
-    func createWebAPI(name: String, endpoint: String) {
+    func createOpenAICompletion(name: String, endpoint: String) {
         let completion = ChatCompletion(
             provider: .api,
             name: name,
