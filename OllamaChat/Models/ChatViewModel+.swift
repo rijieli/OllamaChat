@@ -8,6 +8,10 @@
 
 extension ChatViewModel {
     var apiEndPoint: String {
-        return host + (port.isEmpty ? "" : ":" + port) + "/api/"
+        if host.isEmpty {
+            return "http://127.0.0.1:" + (port.isEmpty ? "11434" : port) + "/api/"
+        } else {
+            return host + (port.isEmpty ? "" : ":" + port) + "/api/"
+        }
     }
 }
