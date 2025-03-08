@@ -22,7 +22,6 @@ struct ManageModelsView: View {
     @State private var showingErrorPopover: Bool = false
     @State private var totalSize: Double = 0
     @State private var completedSoFar: Double = 0
-    @State private var globalSystemPrompt = AppSettings.globalSystem
     
     var tags: OllamaModelGroup {
         chatViewModel.tags
@@ -109,27 +108,10 @@ struct ManageModelsView: View {
             }
             .listStyle(.plain)
             .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
-            .frame(height: 100)
+            .frame(height: 250)
             .modifier(BorderDecoratedStyleModifier(paddingV: 8))
             .padding(.bottom, 8)
 
-            VStack(alignment: .leading) {
-                HStack {
-                    SettingsSectionHeader(
-                        "Global System Prompt:",
-                        subtitle: "Automatic apply to each chat."
-                    )
-                    Spacer(minLength: 0)
-                    Button("Save") {
-                        AppSettings.globalSystem = globalSystemPrompt
-                    }
-                }
-                TextEditor(text: $globalSystemPrompt)
-                    .disableAutoQuotes()
-                    .font(.body)
-                    .frame(height: 100)
-                    .modifier(BorderDecoratedStyleModifier())
-            }
             HStack {
                 Text("Get Model:")
                     .font(.headline)

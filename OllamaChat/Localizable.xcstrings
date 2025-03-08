@@ -90,6 +90,7 @@
       }
     },
     "Basic Settings" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -383,6 +384,9 @@
           }
         }
       }
+    },
+    "Model Parameters" : {
+
     },
     "Model:" : {
       "localizations" : {

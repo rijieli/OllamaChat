@@ -12,28 +12,48 @@ struct ChatOptionsView: View {
     @ObservedObject var viewModel: ChatViewModel = .shared
     @AppStorage("ChatOptionsView.showAdvancedSettings")
     private var showAdvancedSettings = false
+    @State private var globalSystemPrompt = AppSettings.globalSystem
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Link(
-                    "View Parameters Documentation",
-                    destination: URL(
-                        string:
-                            "https://github.com/ollama/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values"
-                    )!
-                )
-
-                Spacer()
-
+            VStack(alignment: .leading) {
+                HStack {
+                    SettingsSectionHeader(
+                        "Global System Prompt:",
+                        subtitle: "Automatic apply to each chat."
+                    )
+                    Spacer(minLength: 0)
+                    Button("Save") {
+                        AppSettings.globalSystem = globalSystemPrompt
+                    }
+                }
+                TextEditor(text: $globalSystemPrompt)
+                    .disableAutoQuotes()
+                    .font(.body)
+                    .frame(height: 100)
+                    .modifier(BorderDecoratedStyleModifier())
+            }
+            
+            CommonSeparator(16)
+            
+            HStack(spacing: 0) {
+                VStack(alignment: .leading, spacing: 4) {
+                    SettingsSectionHeader("Model Parameters")
+                    Link(
+                        "View Parameters Documentation",
+                        destination: URL(
+                            string:
+                                "https://github.com/ollama/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values"
+                        )!
+                    )
+                }
+                
+                Spacer(minLength: 0)
+                
                 Button("Reset to Default") {
                     viewModel.chatOptions = .defaultValue
                 }
             }
-            .maxWidth(alignment: .leading)
-
-            // Basic Settings
-            SettingsSectionHeader("Basic Settings")
 
             LabeledContent("Temperature (\(viewModel.chatOptions.temperature, specifier: "%.2f"))")
             {
@@ -121,6 +141,8 @@ struct ChatOptionsView: View {
             }
             .maxWidth(alignment: .leading)
             .clipped()
+            
+            Color.clear.frame(height: 56)
         }
         .labeledContentStyle(.settings)
         .maxWidth()

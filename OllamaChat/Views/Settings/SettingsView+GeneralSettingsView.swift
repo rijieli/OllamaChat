@@ -26,7 +26,7 @@ struct GeneralSettingsView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             SettingsSectionHeader("Ollama Service")
-            HStack {
+            VStack {
                 LabeledContent("Host:") {
                     TextField("Host:", text: $chatViewModel.host)
                 }
@@ -80,9 +80,14 @@ struct GeneralSettingsView: View {
             
             if let result = testResult, result.success == false {
                 Text(helperText)
-                    .lineLimit(2, reservesSpace: true)
+                    .lineLimit(3, reservesSpace: true)
                     .multilineTextAlignment(.leading)
                     .maxWidth(alignment: .leading)
+                    .padding(8)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(Color.red.opacity(0.1))
+                    )
             }
 
             #if DEBUG

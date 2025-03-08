@@ -114,13 +114,19 @@ struct SettingsView: View {
                 }
                 .frame(height: 40)
             }
-            .visualEffect(material: .fullScreenUI)
+            .visualEffect(material: .sidebar)
             .frame(width: 215)
             .ignoresSafeArea()
+            .overlay(alignment: .trailing) {
+                Color.ocDividerColor
+                    .frame(width: 0.5)
+                    .ignoresSafeArea()
+            }
 
             ZStack {
                 ScrollView {
                     VStack(spacing: 0) {
+                        Color.clear.frame(height: 24)
                         switch viewModel.selectedTab {
                         case .general:
                             GeneralSettingsView()
@@ -133,40 +139,18 @@ struct SettingsView: View {
                         }
                     }
                     .maxFrame()
-                    .padding(.horizontal, 16)
+                    .padding(.horizontal, 24)
                 }
                 .id(viewModel.selectedTab)
             }
             .maxFrame()
             .background(.background)
+            .ignoresSafeArea()
         }
         .frame(minWidth: 715, maxWidth: 715, minHeight: 540, maxHeight: .infinity)
         .introspect(.window, on: .macOS(.v13, .v14, .v15)) { nsWindow in
             nsWindow.titlebarAppearsTransparent = true
             nsWindow.titleVisibility = .hidden
-        }
-    }
-}
-
-struct SettingsSectionHeader: View {
-    let title: LocalizedStringKey
-    var subtitle: LocalizedStringKey? = nil
-    
-    init(_ title: LocalizedStringKey, subtitle: LocalizedStringKey? = nil) {
-        self.title = title
-        self.subtitle = subtitle
-    }
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            Text(title)
-                .font(.system(size: 15, weight: .bold))
-            if let subtitle {
-                Text(subtitle)
-                    .font(.system(size: 12))
-                    .foregroundColor(.secondary)
-                    .padding(.top, 2)
-            }
         }
     }
 }
