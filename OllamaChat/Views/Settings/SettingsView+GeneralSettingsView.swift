@@ -103,7 +103,6 @@ struct GeneralSettingsView: View {
             #endif
         }
         .maxWidth()
-        .padding(16)
     }
 
     private func testConnection() {

@@ -141,3 +141,15 @@ extension View {
     }
 
 }
+
+extension View {
+    
+    public func borderDebug(_ color: Color = .red, _ opacity: CGFloat = 0.2) -> some View {
+        #if DEBUG
+        self.overlay { Rectangle().strokeBorder(color.opacity(opacity), lineWidth: 0.5) }
+        #else
+        self
+        #endif
+    }
+    
+}

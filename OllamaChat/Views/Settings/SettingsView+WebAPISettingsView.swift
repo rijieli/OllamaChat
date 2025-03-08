@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct WebAPISettingsView: View {
-    @StateObject private var modelManager = ModelManager.shared
+    @StateObject private var modelManager = APIManager.shared
 
     @State private var isAddingNewAPI = false
     @State private var editingCompletion: ChatCompletion?
@@ -25,8 +25,9 @@ struct WebAPISettingsView: View {
     @State private var showError = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 8) {
             SettingsSectionHeader("Web API Connections")
+                .maxWidth(alignment: .leading)
 
             if modelManager.completions.isEmpty {
                 Text("No API connections configured.")
@@ -123,7 +124,6 @@ struct WebAPISettingsView: View {
             }
         }
         .maxWidth()
-        .padding(16)
         .alert(isPresented: $showDeleteConfirmation) {
             Alert(
                 title: Text("Delete API Connection"),

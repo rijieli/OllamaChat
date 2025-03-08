@@ -13,64 +13,34 @@ protocol ChatCompletionAbility {
     func cancel() async
 }
 
-class ModelManager: ObservableObject {
-    enum Constants {
-        static let kLocalStore = "ModelManager.LocalStore"
-    }
-
-    static let shared = ModelManager()
-
-    private static var storage: [ChatCompletion] {
-        get { UserDefaults.standard.getCodable(forKey: Constants.kLocalStore) ?? [] }
-        set { UserDefaults.standard.setCodable(newValue, forKey: Constants.kLocalStore) }
-    }
-
-    @Published var completions: [ChatCompletion] = ModelManager.storage
-
-    private init() {}
-
-    func loadCompletions() {
-        completions = ModelManager.storage
-    }
-
-    func createOpenAICompletion(name: String, endpoint: String, apiKey: String? = nil, configJSON: String? = nil) {
-        let completion = ChatCompletion(
-            provider: .api,
-            name: name,
-            endpoint: endpoint,
-            apiKey: apiKey,
-            configJSONRaw: configJSON
-        )
-        completions.append(completion)
-        ModelManager.storage = completions
-    }
-    
-    func updateCompletion(at index: Int, name: String, endpoint: String, apiKey: String? = nil, configJSON: String? = nil) {
-        guard index >= 0 && index < completions.count else { return }
-        
-        completions[index].name = name
-        completions[index].endpoint = endpoint
-        completions[index].apiKey = apiKey
-        completions[index].configJSONRaw = configJSON
-        
-        ModelManager.storage = completions
-    }
-    
-    func deleteCompletion(withName name: String) {
-        completions.removeAll(where: { $0.name == name })
-        ModelManager.storage = completions
-    }
-}
-
 enum ModelProvider: String, Codable {
     case ollama
     case api
 }
 
-struct ChatCompletion: Codable {
+struct ChatCompletion: Codable, Identifiable {
+    let id: String
     var provider: ModelProvider
     var name: String
     var endpoint: String
     var apiKey: String?
+    var models: [String]
     var configJSONRaw: String?
+
+    init(
+        provider: ModelProvider,
+        name: String,
+        endpoint: String,
+        apiKey: String?,
+        models: [String] = [],
+        configJSONRaw: String? = nil
+    ) {
+        self.id = UUID().uuidString
+        self.provider = provider
+        self.name = name
+        self.endpoint = endpoint
+        self.apiKey = apiKey
+        self.configJSONRaw = configJSONRaw
+        self.models = models
+    }
 }

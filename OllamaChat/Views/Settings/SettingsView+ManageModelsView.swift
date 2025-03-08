@@ -35,11 +35,53 @@ struct ManageModelsView: View {
 
     @State private var modelToDelete: OllamaLanguageModel?
     @State private var showModelDeletionAlert = false
-
+    
     var body: some View {
+        ScrollView {
+            configContent
+        }
+    }
+
+    var configContent: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Local Models:")
-                .font(.headline)
+            HStack {
+                SettingsSectionHeader("Local Models:")
+                Spacer(minLength: 0)
+                HStack {
+                    if errorModel.showError {
+                        Button {
+                            self.showingErrorPopover.toggle()
+                        } label: {
+                            Label("Error", systemImage: "exclamationmark.triangle")
+                                .foregroundStyle(.red)
+                        }
+                        .popover(isPresented: self.$showingErrorPopover) {
+                            VStack(alignment: .leading) {
+                                Text(self.errorModel.errorTitle)
+                                    .font(.title2)
+                                    .textSelection(.enabled)
+                                Text(self.errorModel.errorMessage)
+                                    .textSelection(.enabled)
+                            }
+                            .padding()
+                        }
+                    } else {
+                        Label("Connected", systemImage: "circle.fill")
+                            .foregroundStyle(.green)
+                            .fixedWidth()
+                    }
+                    Button {
+                        getTags()
+                    } label: {
+                        Image(systemName: "arrow.clockwise")
+                            .frame(width: 20, height: 20, alignment: .center)
+                    }
+                }
+                .task {
+                    getTags()
+                }
+            }
+            
             if tags.models.count == 0 {
                 HStack {
                     Label("Error", systemImage: "exclamationmark.triangle")
@@ -69,16 +111,15 @@ struct ManageModelsView: View {
             .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
             .frame(height: 100)
             .modifier(BorderDecoratedStyleModifier(paddingV: 8))
+            .padding(.bottom, 8)
 
             VStack(alignment: .leading) {
                 HStack {
-                    VStack(alignment: .leading) {
-                        Text("Global System Prompt:")
-                            .font(.headline)
-                        Text("Automatic apply to each chat.")
-                            .font(.footnote)
-                    }
-                    Spacer()
+                    SettingsSectionHeader(
+                        "Global System Prompt:",
+                        subtitle: "Automatic apply to each chat."
+                    )
+                    Spacer(minLength: 0)
                     Button("Save") {
                         AppSettings.globalSystem = globalSystemPrompt
                     }
@@ -111,45 +152,8 @@ struct ManageModelsView: View {
                 }
             }
             Text("Find more models: [Models](https://ollama.com/library)")
-
-            CommonSeparator(16)
-
-            HStack {
-                if errorModel.showError {
-                    Button {
-                        self.showingErrorPopover.toggle()
-                    } label: {
-                        Label("Error", systemImage: "exclamationmark.triangle")
-                            .foregroundStyle(.red)
-                    }
-                    .popover(isPresented: self.$showingErrorPopover) {
-                        VStack(alignment: .leading) {
-                            Text(self.errorModel.errorTitle)
-                                .font(.title2)
-                                .textSelection(.enabled)
-                            Text(self.errorModel.errorMessage)
-                                .textSelection(.enabled)
-                        }
-                        .padding()
-                    }
-                } else {
-                    Label("Connected", systemImage: "circle.fill")
-                        .foregroundStyle(.green)
-                        .fixedWidth()
-                }
-                Button {
-                    getTags()
-                } label: {
-                    Image(systemName: "arrow.clockwise")
-                        .frame(width: 20, height: 20, alignment: .center)
-                }
-            }
-            .task {
-                getTags()
-            }
         }
         .maxWidth()
-        .padding(16)
         .alert("Are you sure you want to delete the model?", isPresented: $showModelDeletionAlert) {
             Button("Cancel", role: .cancel) {
                 modelToDelete = nil
