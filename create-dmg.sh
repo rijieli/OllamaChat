@@ -1,5 +1,8 @@
 #!/bin/zsh
 
+# Step1: ./create-dmg.sh
+# Step2: sparkle-sign OllamaChat OllamaChat.dmg
+
 # Check if the folder name is provided
 if [ -z "$1" ]; then
   FOLDER_PATH="Archives/"

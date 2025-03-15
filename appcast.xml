@@ -5,21 +5,22 @@
         <link>https://github.com/rijieli/OllamaChat/releases</link>
         <description>Latest updates for OllamaChat</description>
         <item>
-            <title>Version 1.5.4</title>
-            <sparkle:version>85</sparkle:version>
-            <sparkle:shortVersionString>1.5.4</sparkle:shortVersionString>
+            <title>Version 1.5.5</title>
+            <sparkle:version>94</sparkle:version>
+            <sparkle:shortVersionString>1.5.5</sparkle:shortVersionString>
             <enclosure
-                url="https://github.com/rijieli/OllamaChat/releases/download/1.5.4/OllamaChat.dmg"
-                sparkle:version="85"
-                sparkle:shortVersionString="1.5.4"
+                url="https://github.com/rijieli/OllamaChat/releases/download/1.5.5/OllamaChat.dmg"
+                sparkle:version="94"
+                sparkle:shortVersionString="1.5.5"
                 type="application/octet-stream"
-                sparkle:edSignature="W90R9I8hUg6vqXqki9rWlJzzmMqHROO7rdwleQY6ih5sDC/GEyjt3yNN4U2N9ucB68pnNskwDWmy/nNObKSaCA=="
-                length="2366589"
+                sparkle:edSignature="9XWuCBHiwBJZ6p+T6XJGfM1N4/uL3I84KjmGkP1xUFu86pCb02im7kjzSZjvjCfLxlwIEGVawSCRd/tTGnt3BQ=="
+                length="2524818"
             />
             <description><![CDATA[
-                <h2>Changes in version 1.5.4:</h2>
+                <h2>Changes in version 1.5.5:</h2>
                 <ul>
-                    <li>Add basic support for Ollama hosts that use a URL format.</li>
+                    <li>Fix the API endpoint configuration error.</li>
+                    <li>New settings UI.</li>
                 </ul>
             ]]></description>
         </item>
