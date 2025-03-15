@@ -1,13 +1,13 @@
 //
-//  Ollama_SwiftUITestsLaunchTests.swift
-//  Ollama SwiftUITests
+//  OllamaChatUITestsLaunchTests.swift
+//  OllamaChatUITests
 //
 //  Created by Karim ElGhandour on 07.10.23.
 //
 
 import XCTest
 
-final class Ollama_SwiftUITestsLaunchTests: XCTestCase {
+final class OllamaChatTestsLaunchTests: XCTestCase {
 
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true
