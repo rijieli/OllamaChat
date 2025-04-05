@@ -35,7 +35,7 @@ If you already have Ollama installed, you can now download **Ollama Chat**:
 5. Select the model from the dropdown on the main page to start your conversation
 6. Write your prompt and start the conversation!
 
-## How to build and run in local machine
+## How to build and run OllamaChat?
 
 Please ensure that Xcode is installed on your Mac.
 
