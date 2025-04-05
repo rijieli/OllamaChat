@@ -35,6 +35,15 @@ If you already have Ollama installed, you can now download **Ollama Chat**:
 5. Select the model from the dropdown on the main page to start your conversation
 6. Write your prompt and start the conversation!
 
+## How to build and run in local machine
+
+Please ensure that Xcode is installed on your Mac.
+
+1. Clone this project to your local machine.
+2. Double-click on `OllamaChat.xcodeproj`.
+3. Wait for the dependencies to be fetched.
+4. Press `Command + R` to build and run the project.
+
 ## Frequently Asked Questions:
 ### 1. I am getting a "Server is unreachable" error
 - You need to download and install https://ollama.ai, and it must be running in the background for this interface to work.
