@@ -63,7 +63,7 @@ struct OllamaModelParameter: Codable, Hashable {
     let parentModel: String
     let format: String
     let family: String
-    let families: [String]
+    let families: [String]?
     let parameterSize: String
     let quantizationLevel: String
 
@@ -81,7 +81,7 @@ struct OllamaModelParameter: Codable, Hashable {
             parentModel: "",
             format: "",
             family: "",
-            families: [],
+            families: nil,
             parameterSize: "",
             quantizationLevel: ""
         )
