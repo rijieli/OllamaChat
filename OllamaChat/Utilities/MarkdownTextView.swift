@@ -17,26 +17,23 @@ struct CollapsibleThinkBlock: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            VStack(spacing: 4) {
+            VStack(alignment: .leading, spacing: 2) {
                 HStack(spacing: 4) {
+                    Text(isThinking ? "Thinking" : "Thought")
+                        .font(.system(size: 13, weight: .medium))
                     Image(systemName: "chevron.right")
-                        .frame(width: 16, height: 16)
+                        .frame(width: 12, height: 12)
                         .rotationEffect(.degrees(isExpanded ? 90 : 0))
-                        .font(.system(size: 12, weight: .semibold))
-                    
-                    Text(isThinking ? "Thinking..." : "Thinking")
-                        .font(.headline)
-                        .foregroundColor(.blue)
+                        .font(.system(size: 12, weight: .medium))
                     
                     if isThinking {
                         ProgressView()
                             .controlSize(.small)
                             .padding(.leading, 4)
                     }
-                    
-                    Spacer()
                 }
-                .frame(height: 28)
+                .foregroundStyle(Color.secondary)
+                .frame(height: 24)
                 .contentShape(.rect)
                 .textSelection(.disabled)
                 .onTapGesture {
@@ -47,24 +44,27 @@ struct CollapsibleThinkBlock: View {
                 
                 if isExpanded {
                     Text(thinkContent)
-                        .maxWidth()
-                        .font(.system(size: 13))
-                        .foregroundStyle(Color.ocAssistantBubbleForeground)
-                        .padding(.top, 4)
-                        .padding(.bottom, 8)
+                        .maxWidth(alignment: .leading)
+                        .font(.system(size: 12))
+                        .foregroundStyle(Color.secondary)
+                        .padding(.leading, 14)
+                        .overlay(alignment: .leading) {
+                            Rectangle()
+                                .fill(.secondary)
+                                .opacity(0.5)
+                                .frame(width: 2)
+                                .frame(width: 8)
+                        }
+                        .padding(.vertical, 8)
                 }
             }
             .tint(.blue)
-            .padding(.horizontal, 8)
-            .background {
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(Color.blue.opacity(0.1))
-            }
             .animation(.default, value: isThinking)
             if !remainingContent.isEmpty {
                 Markdown(remainingContent)
             }
         }
+        .maxWidth(alignment: .leading)
     }
 }
 

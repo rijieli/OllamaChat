@@ -26,7 +26,7 @@ extension ChatView {
                 floatingButtonsAlignment: .bottomTrailing
             ) {
                 MarkdownTextView(message: message.content, isUser: isUser)
-                    .padding([.leading, .trailing], 8)
+                    .padding([.leading, .trailing], 10)
                     .padding([.top, .bottom], 8)
                     .textSelection(.enabled)
                     .background(isUser ? Color.blue : Color.ocAssistantBubbleBackground)
