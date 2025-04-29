@@ -134,7 +134,7 @@ private struct ChatBubble<Content: View, FloatingButtons: View>: View {
                 Spacer(minLength: 32)
             }
             content
-                .mask { RoundedRectangle(cornerRadius: 12) }
+                .clipShape(RoundedRectangle(cornerRadius: 12))
                 .overlay(alignment: floatingButtonsAlignment) {
                     if hovered {
                         buttons.fixedSize().zIndex(1)
