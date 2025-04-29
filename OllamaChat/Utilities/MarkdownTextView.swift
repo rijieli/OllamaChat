@@ -46,6 +46,7 @@ struct CollapsibleThinkBlock: View {
                     Text(thinkContent)
                         .maxWidth(alignment: .leading)
                         .font(.system(size: 12))
+                        .lineSpacing(2)
                         .foregroundStyle(Color.secondary)
                         .padding(.leading, 14)
                         .overlay(alignment: .leading) {
