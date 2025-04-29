@@ -5,21 +5,21 @@
         <link>https://github.com/rijieli/OllamaChat/releases</link>
         <description>Latest updates for OllamaChat</description>
         <item>
-            <title>Version 1.5.6</title>
-            <sparkle:version>100</sparkle:version>
-            <sparkle:shortVersionString>1.5.6</sparkle:shortVersionString>
+            <title>Version 1.5.7</title>
+            <sparkle:version>103</sparkle:version>
+            <sparkle:shortVersionString>1.5.7</sparkle:shortVersionString>
             <enclosure
-                url="https://github.com/rijieli/OllamaChat/releases/download/1.5.6/OllamaChat.dmg"
-                sparkle:version="100"
-                sparkle:shortVersionString="1.5.6"
+                url="https://github.com/rijieli/OllamaChat/releases/download/1.5.7/OllamaChat.dmg"
+                sparkle:version="103"
+                sparkle:shortVersionString="1.5.7"
                 type="application/octet-stream"
-                sparkle:edSignature="UmXp0FHx9hiJdtwVfMKz5QgK2z4Te7qiwkrdAD0YX/V9cafXbV1e/H0ewSctnaCzfhWfPrNzL0YXEvFomTD2BQ=="
-                length="2561579"
+                sparkle:edSignature="zE1W8F8AXxsX19XAQZ3QF7cUHAjOqmhXBlE7LHjzv3wwx+QFl9hSL8BemqGp/Kmw2ahWLJXBkq7HC6BDYAaiCg=="
+                length="2582337"
             />
             <description><![CDATA[
-                <h2>Changes in version 1.5.6:</h2>
+                <h2>Changes in version 1.5.7:</h2>
                 <ul>
-                    <li> - Fix connection issues </li>
+                    <li> - Add basic support for think blocks. </li>
                 </ul>
             ]]></description>
         </item>

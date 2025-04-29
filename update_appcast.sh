@@ -1,34 +1,5 @@
 #!/bin/zsh
 
-# Check if app name is provided or try to find it in Archives
-if [ -z "$1" ]; then
-    # Look for .app bundles in Archives directory
-    APP_FILES=(./Archives/*.app(N))
-    
-    if [ ${#APP_FILES[@]} -eq 0 ]; then
-        echo "Error: No .app bundles found in Archives directory."
-        echo "Usage: ./update_appcast.sh AppName"
-        exit 1
-    elif [ ${#APP_FILES[@]} -eq 1 ]; then
-        APP_NAME=$(basename "${APP_FILES[1]}" .app)
-        echo "Found app: $APP_NAME"
-    else
-        echo "Multiple apps found in Archives directory:"
-        for app in "${APP_FILES[@]}"; do
-            echo "  - $(basename "$app" .app)"
-        done
-        echo "Please specify which app to use:"
-        echo "Usage: ./update_appcast.sh AppName"
-        exit 1
-    fi
-else
-    APP_NAME="$1"
-    if [[ ! -d "./Archives/$APP_NAME.app" ]]; then
-        echo "Error: $APP_NAME.app not found in Archives directory"
-        exit 1
-    fi
-fi
-
 # Use sparkle_sign.sh directly instead of the shell function
 SPARKLE_SIGN="$HOME/Workspace/.zshrc/sparkle_sign.sh"
 if [ ! -f "$SPARKLE_SIGN" ]; then
@@ -36,11 +7,23 @@ if [ ! -f "$SPARKLE_SIGN" ]; then
     exit 1
 fi
 
+# Automatically detect app name from Archives directory
+APP_FILE=$(ls -1 ./Archives/ | grep '\.app$' | head -n 1)
+if [ -n "$APP_FILE" ]; then
+    APP_NAME=$(basename "$APP_FILE" .app)
+    echo "Found app: $APP_NAME"
+else
+    echo "Error: No .app bundle found in Archives directory."
+    exit 1
+fi
+
+DMG_NAME="$APP_NAME.dmg"
+
 # Get Sign via command line using full path
-EDSIGN=$("$SPARKLE_SIGN" $APP_NAME $APP_NAME.dmg | tail -n 1)
+EDSIGN=$("$SPARKLE_SIGN" "$APP_NAME" "$DMG_NAME" | tail -n 1)
 echo "Signing with: $EDSIGN"
 
-# Split EDSIGN into signature and length (handle sparkle:edSignature="VALUE" length="VALUE" format)
+# Split EDSIGN into signature and length
 signature=$(echo "$EDSIGN" | grep -o 'sparkle:edSignature="[^"]*"' | cut -d'"' -f2)
 length=$(echo "$EDSIGN" | grep -o 'length="[^"]*"' | cut -d'"' -f2)
 
