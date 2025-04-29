@@ -16,8 +16,9 @@ extension ChatView {
 
         @State var showTranslation = false
 
-        let isUser: Bool
         let message: ChatMessage
+        
+        var isUser: Bool { message.role == .user}
 
         var body: some View {
             ChatBubble(

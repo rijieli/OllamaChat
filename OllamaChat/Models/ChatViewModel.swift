@@ -67,7 +67,7 @@ class ChatViewModel: ObservableObject {
 
     @Published var scrollToBottomToggle = false
 
-    private let scrollDeboucner = Debouncer(delay: 0.1)
+    private let scrollThrottler = Throttler(interval: 0.1)
 
     private(set) var work: Task<Void, Never>?
 
@@ -161,7 +161,7 @@ class ChatViewModel: ObservableObject {
                     if let index = self.messages.lastIndex(where: { $0.id == message.id }) {
                         self.messages[index].content += decoded.message.content
                     }
-                    scrollDeboucner.call {
+                    scrollThrottler.call {
                         self.scrollToBottom()
                     }
                 }

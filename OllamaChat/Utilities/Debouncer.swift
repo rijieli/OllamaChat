@@ -34,3 +34,28 @@ public class Debouncer {
         cancellable?.cancel()
     }
 }
+
+public class Throttler {
+    private let subject = PassthroughSubject<Void, Never>()
+    private var cancellable: AnyCancellable?
+
+    public init(interval: TimeInterval) {
+        cancellable =
+            subject
+            .throttle(for: .seconds(interval), scheduler: DispatchQueue.main, latest: false)
+            .sink { [weak self] _ in
+                self?.action?()
+            }
+    }
+
+    private var action: (() -> Void)?
+
+    public func call(_ callback: @escaping () -> Void) {
+        action = callback
+        subject.send()
+    }
+
+    deinit {
+        cancellable?.cancel()
+    }
+}

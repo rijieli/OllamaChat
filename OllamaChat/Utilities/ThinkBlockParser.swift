@@ -8,64 +8,51 @@
 
 import SwiftUI
 
+private let openThinkTagRegex: NSRegularExpression? = try? NSRegularExpression(
+    pattern: "<think>",
+    options: []
+)
+
 class ThinkBlockParser {
+    private static let openTag = "<think>"
+    private static let closeTag = "</think>"
+    
     static func parse(markdownString: String) -> (thinkContent: String, remainingContent: String, isIncomplete: Bool) {
-        // Look for opening tag
-        let openingPattern = "<think>"
-        let closingPattern = "</think>"
-        
-        guard markdownString.contains(openingPattern) else {
+        // Fast path: Check if both tags exist using string operations
+        guard let openRange = markdownString.range(of: openTag) else {
             return ("", markdownString, false)
         }
         
-        // Check if the closing tag is missing (incomplete think block)
-        let hasClosingTag = markdownString.contains(closingPattern)
-        
-        if hasClosingTag {
-            // Complete think block - extract as before
-            let thinkPattern = "<think>(.*?)</think>"
+        if let closeRange = markdownString.range(of: closeTag) {
+            // We have both tags - use string operations
+            let startIndex = markdownString.index(openRange.upperBound, offsetBy: 0)
+            let endIndex = closeRange.lowerBound
             
-            guard
-                let regex = try? NSRegularExpression(
-                    pattern: thinkPattern,
-                    options: [.dotMatchesLineSeparators]
-                ),
-                let match = regex.firstMatch(
-                    in: markdownString,
-                    range: NSRange(markdownString.startIndex..., in: markdownString)
-                )
-            else {
-                return ("", markdownString, false)
-            }
+            let thinkContent = String(markdownString[startIndex..<endIndex])
+                .trimmingCharacters(in: .whitespacesAndNewlines)
             
-            let thinkRange = Range(match.range(at: 1), in: markdownString)!
-            let thinkContent = String(markdownString[thinkRange]).trimmingCharacters(
-                in: .whitespacesAndNewlines
-            )
-            
-            let remainingRange = markdownString.startIndex..<markdownString.endIndex
+            // Get remaining content by removing the whole think block
+            let fullRange = openRange.lowerBound..<markdownString.index(closeRange.upperBound, offsetBy: 0)
             var remainingContent = markdownString
-            if let matchRange = Range(match.range, in: markdownString) {
-                remainingContent = String(
-                    markdownString[remainingRange].replacingCharacters(in: matchRange, with: "")
-                )
-            }
+            remainingContent.removeSubrange(fullRange)
             
             return (thinkContent, remainingContent.trimmingCharacters(in: .whitespacesAndNewlines), false)
-        } else {
-            // Incomplete think block - extract what's available so far
-            if let openingTagRange = markdownString.range(of: openingPattern) {
-                let startIndex = markdownString.index(openingTagRange.upperBound, offsetBy: 0)
-                let thinkContent = String(markdownString[startIndex...]).trimmingCharacters(
-                    in: .whitespacesAndNewlines
-                )
-                
-                // For incomplete think blocks, the remaining content is empty because 
-                // we're still in the thinking phase
-                return (thinkContent, "", true)
-            }
-            
+        }
+        
+        // Slow path: Incomplete block - use regex as fallback
+        guard let openingMatch = openThinkTagRegex?.firstMatch(
+            in: markdownString,
+            range: NSRange(markdownString.startIndex..., in: markdownString)
+        ) else {
             return ("", markdownString, false)
         }
+        
+        // Handle incomplete think block
+        let openingTagRange = Range(openingMatch.range, in: markdownString)!
+        let startIndex = markdownString.index(openingTagRange.upperBound, offsetBy: 0)
+        let thinkContent = String(markdownString[startIndex...])
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        return (thinkContent, "", true)
     }
 }

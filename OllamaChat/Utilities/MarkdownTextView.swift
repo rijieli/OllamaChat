@@ -17,37 +17,43 @@ struct CollapsibleThinkBlock: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            DisclosureGroup(
-                isExpanded: $isExpanded,
-                content: {
-                    Text(thinkContent)
-                        .font(.system(size: 13))
-                        .foregroundStyle(Color.ocAssistantBubbleForeground)
-                        .padding(.vertical, 8)
-                },
-                label: {
-                    HStack {
-                        Text(isThinking ? "Thinking..." : "Thinking")
-                            .font(.headline)
-                            .foregroundColor(.blue)
-                        
-                        if isThinking {
-                            ProgressView()
-                                .controlSize(.small)
-                                .padding(.leading, 4)
-                        }
-                        
-                        Spacer()
+            VStack(spacing: 4) {
+                HStack(spacing: 4) {
+                    Image(systemName: "chevron.right")
+                        .frame(width: 16, height: 16)
+                        .rotationEffect(.degrees(isExpanded ? 90 : 0))
+                        .font(.system(size: 12, weight: .semibold))
+                    
+                    Text(isThinking ? "Thinking..." : "Thinking")
+                        .font(.headline)
+                        .foregroundColor(.blue)
+                    
+                    if isThinking {
+                        ProgressView()
+                            .controlSize(.small)
+                            .padding(.leading, 4)
                     }
-                    .contentShape(.rect)
-                    .textSelection(.disabled)
-                    .onTapGesture {
-                        withAnimation {
-                            isExpanded.toggle()
-                        }
+                    
+                    Spacer()
+                }
+                .frame(height: 28)
+                .contentShape(.rect)
+                .textSelection(.disabled)
+                .onTapGesture {
+                    withAnimation {
+                        isExpanded.toggle()
                     }
                 }
-            )
+                
+                if isExpanded {
+                    Text(thinkContent)
+                        .maxWidth()
+                        .font(.system(size: 13))
+                        .foregroundStyle(Color.ocAssistantBubbleForeground)
+                        .padding(.top, 4)
+                        .padding(.bottom, 8)
+                }
+            }
             .tint(.blue)
             .padding(.horizontal, 8)
             .background {

@@ -21,8 +21,7 @@ extension ChatView {
                     .padding()
                 let messages = viewModel.messages.filter { $0.role != .system }
                 ForEach(messages) { message in
-                    let isUser = message.role == .user
-                    MessageBubble(isUser: isUser, message: message)
+                    MessageBubble(message: message)
                 }
 
                 Color.clear.frame(height: 40)
@@ -69,6 +68,9 @@ extension ChatView {
                 proxy.scrollTo(bottomID, anchor: .bottom)
             }
             .onAppear {
+                proxy.scrollTo(bottomID, anchor: .bottom)
+            }
+            .onChange(of: viewModel.currentChat) { newValue in
                 proxy.scrollTo(bottomID, anchor: .bottom)
             }
         }
