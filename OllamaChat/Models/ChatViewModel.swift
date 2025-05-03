@@ -21,11 +21,9 @@ class ChatViewModel: ObservableObject {
         #endif
         if let lastChat {
             messages = lastChat.messages
-            model = lastChat.model
             currentChat = lastChat
         } else {
             messages = [.globalSystem]
-            model = ""
         }
     }
 
@@ -55,9 +53,9 @@ class ChatViewModel: ObservableObject {
 
     @Published var showSettingsView = false
 
-    @Published var model: String
-
     @Published var current = ChatMessage(role: .user, content: "")
+    
+    var model: String { currentChat?.model ?? "" }
 
     @Published var messages: [ChatMessage]
 
@@ -176,7 +174,6 @@ class ChatViewModel: ObservableObject {
                     currentChat = newChat
                 }
                 CoreDataStack.shared.saveContext()
-                model = filterdModel
             } catch let NetError.invalidURL(error) {
                 errorModel = invalidURLError(error: error)
             } catch let NetError.invalidData(error) {
@@ -254,7 +251,6 @@ class ChatViewModel: ObservableObject {
     func loadChat(_ chat: SingleChat?) {
         if let chat {
             messages = chat.messages
-            model = chat.model
             currentChat = chat
         } else {
             messages = [.globalSystem]

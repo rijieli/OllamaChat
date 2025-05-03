@@ -42,7 +42,7 @@ func fetchOllamaModels(timeout: Double? = nil) async throws -> OllamaModelGroup 
         let decoded = try decoder.decode(OllamaModelGroup.self, from: data)
         await MainActor.run {
             ChatViewModel.shared.tags = decoded
-            ChatViewModel.shared.model = decoded.models.first?.name ?? ""
+            ChatViewModel.shared.currentChat?.model = decoded.models.first?.name ?? ""
             if decoded.models.count == 0 {
                 ChatViewModel.shared.errorModel = noModelsError(error: nil)
             } else {

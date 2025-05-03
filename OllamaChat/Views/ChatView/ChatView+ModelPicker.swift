@@ -61,7 +61,8 @@ extension ChatView {
                     ?? OllamaLanguageModel.emptyModel
             },
             set: { model in
-                viewModel.model = model.name
+                viewModel.currentChat?.model = model.name
+                CoreDataStack.shared.saveContext()
             }
         )
     }

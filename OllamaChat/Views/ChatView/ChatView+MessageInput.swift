@@ -9,7 +9,7 @@
 import SwiftUI
 
 extension ChatView {
-
+    
     var messageInput: some View {
         ZStack {
             TextEditor(text: $viewModel.current.content)
@@ -37,7 +37,6 @@ extension ChatView {
                             .buttonStyle(.plain)
                             .keyboardShortcut(.return, modifiers: .command)
                             .transition(.scale)
-                            .borderDebug()
                             .help("⌘ + Return")
                         }
                     }
@@ -55,7 +54,7 @@ extension ChatView {
         .maxFrame()
         .frame(height: 160)
     }
-
+    
     var allowSubmitNewMessage: Bool {
         guard !viewModel.current.content.isEmpty else { return false }
         guard !viewModel.waitingResponse else { return false }
