@@ -50,7 +50,7 @@ struct ChatOptions: Codable {
     
     static var defaultValue: ChatOptions {
         ChatOptions(
-            temperature: 0.6,
+            temperature: 0.8,
             topP: 0.9,
             topK: 40,
             minP: 0.0,

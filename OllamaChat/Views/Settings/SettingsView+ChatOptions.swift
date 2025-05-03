@@ -57,7 +57,7 @@ struct ChatOptionsView: View {
 
             LabeledContent("Temperature (\(viewModel.chatOptions.temperature, specifier: "%.2f"))")
             {
-                Slider(value: $viewModel.chatOptions.temperature, in: 0...1, step: 0.1)
+                Slider(value: $viewModel.chatOptions.temperature, in: 0...2, step: 0.1)
             }
 
             LabeledContent("Top P (\(viewModel.chatOptions.topP, specifier: "%.2f"))") {
