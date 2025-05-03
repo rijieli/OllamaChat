@@ -30,7 +30,6 @@ extension ChatView {
                             } label: {
                                 Image(systemName: "arrow.up.circle.fill")
                                     .font(.system(size: 24))
-                                    .frame(width: 20, height: 20, alignment: .center)
                                     .frame(width: 40, height: 40)
                                     .foregroundStyle(.blue)
                                     .contentShape(Rectangle())
@@ -38,10 +37,10 @@ extension ChatView {
                             .buttonStyle(.plain)
                             .keyboardShortcut(.return, modifiers: .command)
                             .transition(.scale)
+                            .borderDebug()
                             .help("⌘ + Return")
                         }
                     }
-                    .frame(width: 40 + 12, height: 40, alignment: .leading)
                 }
                 .animation(.smooth(duration: 0.3), value: allowSubmitNewMessage)
                 .onChange(of: viewModel.waitingResponse) { newValue in

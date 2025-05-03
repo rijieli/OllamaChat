@@ -69,11 +69,11 @@ class ChatViewModel: ObservableObject {
 
     private let scrollThrottler = Throttler(interval: 0.1)
 
-    private(set) var work: Task<Void, Never>?
+    private var chatTask: Task<Void, Never>?
 
     @MainActor
     func send() {
-        work = Task {
+        chatTask = Task {
             guard let chatID = currentChat?.id else { return }
             do {
                 self.errorModel.showError = false
@@ -197,7 +197,7 @@ class ChatViewModel: ObservableObject {
     func resendUntil(_ message: ChatMessage) {
         guard let idx = messages.firstIndex(where: { $0.id == message.id }) else { return }
         waitingResponse = false
-        work?.cancel()
+        chatTask?.cancel()
         if idx < messages.endIndex {
             messages = Array(messages[...idx])
         }
@@ -205,6 +205,11 @@ class ChatViewModel: ObservableObject {
         if messages.last?.role == .user {
             send()
         }
+    }
+    
+    func cancelTask() {
+        chatTask?.cancel()
+        waitingResponse = false
     }
 
     func scrollToBottom() {
