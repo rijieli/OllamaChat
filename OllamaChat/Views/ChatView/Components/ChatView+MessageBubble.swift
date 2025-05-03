@@ -13,158 +13,134 @@ extension ChatView {
     
     struct MessageBubble: View {
         
-        @ObservedObject var viewModel = ChatViewModel.shared
-        
         @State var showTranslation = false
+        @State var hovered = false
         
         let message: ChatMessage
         
         var isUser: Bool { message.role == .user }
         
         var body: some View {
-            ChatBubble(isUser: isUser) {
+            VStack(spacing: 0) {
                 MarkdownTextView(
-                    message: message.content,
-                    isUser: isUser,
-                    isCurrent: message == viewModel.messages.last
+                    content: message.markdownContent
                 )
                 .padding(.horizontal, 10)
                 .padding(.vertical, 8)
                 .textSelection(.enabled)
                 .background(isUser ? Color.blue : Color.ocAssistantBubbleBackground)
+                .clipShape(RoundedRectangle(cornerRadius: 12))
                 .ifTranslationPresentation(isPresented: $showTranslation, text: message.content)
-                #if os(iOS)
-                .contentShape(.contextMenuPreview, .rect(cornerRadius: 8))
-                .contextMenu {
-                    contextButtons()
+                .padding(.leading, isUser ? 32 : 0)
+                .padding(.trailing, isUser ? 0 : 23)
+                .maxWidth(alignment: isUser ? .trailing : .leading)
+                .contentShape(Rectangle())
+                
+                ZStack {
+                    if hovered {
+                        BubbleContextMenu(message: message, showTranslation: $showTranslation)
+                            .maxHeight()
+                            .frame(minWidth: 36)
+                            .maxWidth(alignment: isUser ? .trailing : .leading)
+                            .transition(.opacity)
+                    }
                 }
-                #endif
-            } buttons: {
-                HStack(spacing: 0) {
-                    contextButtons()
-                }
-                .maxHeight()
-                .frame(minWidth: 36)
+                .frame(height: 24)
+                .padding(.top, 1)
+                .padding(.bottom, 3)
+                .animation(.default, value: hovered)
             }
-        }
-        
-        @ViewBuilder
-        func contextButtons() -> some View {
-            if isUser {
-                MessageBubbleButton("Retry", "arrow.trianglehead.2.clockwise.rotate.90") {
-                    viewModel.resendUntil(message)
-                }
-            }
-            #if DEBUG
-            MessageBubbleButton("Read", "speaker.wave.2") {
-                TextSpeechCenter.shared.read(message.content)
-            }
-            #endif
-            if #available(macOS 14.4, iOS 17.4, *) {
-                MessageBubbleButton("Translate", "translate") {
-                    showTranslation = true
-                }
-            }
-            MessageBubbleButton("Edit", "bubble.and.pencil") {
-                viewModel.editMessage(message)
-            }
-            MessageBubbleButton("Copy", "doc.on.doc") {
-                #if os(macOS)
-                let pasteboard = NSPasteboard.general
-                pasteboard.clearContents()  // Clears the pasteboard before writing
-                pasteboard.setString(message.content, forType: .string)
-                #else
-                let pasteboard = UIPasteboard.general
-                pasteboard.string = message.content
-                #endif
-            }
+            .onHover { hovered = $0 }
         }
     }
     
-    struct MessageBubbleButton: View {
-        @State var hovered = false
-        
-        let title: LocalizedStringKey
-        let systemName: String
-        let action: VoidClosureOptionl
-        
-        init(
-            _ title: LocalizedStringKey,
-            _ systemName: String,
-            action: VoidClosureOptionl
-        ) {
-            self.title = title
-            self.systemName = systemName
-            self.action = action
-        }
+    struct BubbleContextMenu: View {
+        let message: ChatMessage
+        @Binding var showTranslation: Bool
+        var isUser: Bool { message.role == .user }
+        @StateObject var viewModel = ChatViewModel.shared
         
         var body: some View {
-            Button {
-                action?()
-            } label: {
-                #if os(macOS)
-                ZStack {
-                    if hovered {
-                        RoundedRectangle(cornerRadius: 6)
-                            .fill(.black.opacity(0.05))
-                            .padding(1)
+            HStack(spacing: 0) {
+                if isUser {
+                    MessageBubbleButton("Retry", "arrow.trianglehead.2.clockwise.rotate.90") {
+                        viewModel.resendUntil(message)
                     }
-                    Image(systemName: systemName)
-                        .font(.system(size: 10, weight: .bold))
-                        .foregroundStyle(.primary.opacity(hovered ? 1 : 0.7))
                 }
-                .frame(width: 24, height: 24)
-                .contentShape(Rectangle())
-                .onHover { hovered = $0 }
-                #else
-                Label(title, systemImage: systemName)
+                #if DEBUG
+                MessageBubbleButton("Read", "speaker.wave.2") {
+                    TextSpeechCenter.shared.read(message.content)
+                }
                 #endif
+                if #available(macOS 14.4, iOS 17.4, *) {
+                    MessageBubbleButton("Translate", "translate") {
+                        showTranslation = true
+                    }
+                }
+                MessageBubbleButton("Edit", "bubble.and.pencil") {
+                    viewModel.editMessage(message)
+                }
+                MessageBubbleButton("Copy", "doc.on.doc") {
+                    #if os(macOS)
+                    let pasteboard = NSPasteboard.general
+                    pasteboard.clearContents()  // Clears the pasteboard before writing
+                    pasteboard.setString(message.content, forType: .string)
+                    #else
+                    let pasteboard = UIPasteboard.general
+                    pasteboard.string = message.content
+                    #endif
+                }
             }
-            .buttonStyle(.simpleVisualEffect)
-            .help(title)
         }
     }
 }
 
-private struct ChatBubble<Content: View, FloatingButtons: View>: View {
+struct MessageBubbleButton: View {
     @State var hovered = false
     
-    let isUser: Bool
-    let content: () -> Content
-    let buttons: () -> FloatingButtons
+    let title: LocalizedStringKey
+    let systemName: String
+    let action: VoidClosureOptionl
+    
+    init(
+        _ title: LocalizedStringKey,
+        _ systemName: String,
+        action: VoidClosureOptionl
+    ) {
+        self.title = title
+        self.systemName = systemName
+        self.action = action
+    }
     
     var body: some View {
-        VStack(spacing: 0) {
-            HStack(spacing: 0) {
-                if isUser {
-                    Spacer(minLength: 32)
-                }
-                content()
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-                if !isUser {
-                    Spacer(minLength: 32)
-                }
-            }
-            .contentShape(Rectangle())
+        Button {
+            action?()
+        } label: {
+            #if os(macOS)
             ZStack {
                 if hovered {
-                    buttons()
-                        .maxWidth(alignment: isUser ? .trailing : .leading)
-                        .transition(.opacity)
+                    RoundedRectangle(cornerRadius: 6)
+                        .fill(.black.opacity(0.05))
+                        .padding(1)
                 }
+                Image(systemName: systemName)
+                    .font(.system(size: 10, weight: .bold))
+                    .foregroundStyle(.primary.opacity(hovered ? 1 : 0.7))
             }
-            .frame(height: 24)
-            .padding(.top, 1)
-            .padding(.bottom, 3)
-            .animation(.default, value: hovered)
+            .frame(width: 24, height: 24)
+            .contentShape(Rectangle())
+            .onHover { hovered = $0 }
+            #else
+            Label(title, systemImage: systemName)
+            #endif
         }
-        .onHover { hovered = $0 }
+        .buttonStyle(.simpleVisualEffect)
+        .help(title)
     }
 }
 
 private struct CollapsibleThinkBlock: View {
-    let thinkContent: String
-    let remainingContent: String
+    let content: MarkdownContent
     let isThinking: Bool
     @State private var isExpanded: Bool = false
     
@@ -197,7 +173,7 @@ private struct CollapsibleThinkBlock: View {
                 }
                 
                 if isExpanded {
-                    Text(thinkContent)
+                    Text(content.think)
                         .maxWidth(alignment: .leading)
                         .font(.system(size: 12))
                         .lineSpacing(2)
@@ -215,8 +191,8 @@ private struct CollapsibleThinkBlock: View {
             }
             .tint(.blue)
             .animation(.default, value: isThinking)
-            if !remainingContent.isEmpty {
-                Markdown(remainingContent)
+            if !content.message.isEmpty {
+                Markdown(content.message)
                     .padding(.bottom, 4)
             }
         }
@@ -224,47 +200,27 @@ private struct CollapsibleThinkBlock: View {
     }
 }
 
-private struct MarkdownContent {
-    let thinkContent: String
-    let remainingContent: String
-}
-
 private struct MarkdownTextView: View {
-    let message: String
-    let isUser: Bool
-    let isCurrent: Bool
-    
-    @State private var parsedContent: MarkdownContent?
-    @StateObject var viewModel: ChatViewModel = .shared
+    @StateObject var viewModel = ChatViewModel.shared
+    let content: MarkdownContent
     
     var body: some View {
-        Group {
-            if let parsedContent, !parsedContent.thinkContent.isEmpty {
-                CollapsibleThinkBlock(
-                    thinkContent: parsedContent.thinkContent,
-                    remainingContent: parsedContent.remainingContent,
-                    isThinking: isCurrent && viewModel.waitingResponse
-                )
-                .markdownTheme(.assistantTheme)
-            } else {
-                Markdown(message)
-                    .markdownTheme(isUser ? .userTheme : .assistantTheme)
-            }
+        if !content.think.isEmpty {
+            let isThinking =
+                content.isIncomplete
+                && viewModel.waitingResponse
+            
+            CollapsibleThinkBlock(
+                content: content,
+                isThinking: isThinking
+            )
+            .markdownTheme(.assistantTheme)
+            .frame(minHeight: 24)
+        } else {
+            Markdown(content.message)
+                .markdownTheme(content.isUser ? .userTheme : .assistantTheme)
+                .frame(minHeight: 12)
         }
-        .onChange(of: message) { _ in
-            updateCache()
-        }
-        .onAppear {
-            updateCache()
-        }
-    }
-    
-    private func updateCache(forceComplete: Bool = false) {
-        let result = ThinkBlockParser.parse(markdownString: message)
-        parsedContent = .init(
-            thinkContent: result.thinkContent,
-            remainingContent: result.remainingContent
-        )
     }
 }
 
@@ -290,4 +246,25 @@ extension MarkdownUI.Theme {
                 FontSize(13)
             }
     }()
+}
+
+struct MarkdownContent: Hashable {
+    let think: String
+    let message: String
+    let isIncomplete: Bool
+    let isUser: Bool
+}
+
+extension ChatMessage {
+    
+    var markdownContent: MarkdownContent {
+        let (think, message, isIncomplete) = ThinkBlockParser.parse(markdownString: content)
+        return MarkdownContent(
+            think: think,
+            message: message,
+            isIncomplete: isIncomplete,
+            isUser: role == .user
+        )
+    }
+    
 }
