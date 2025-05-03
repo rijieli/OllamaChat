@@ -5,21 +5,23 @@
         <link>https://github.com/rijieli/OllamaChat/releases</link>
         <description>Latest updates for OllamaChat</description>
         <item>
-            <title>Version 1.5.7</title>
-            <sparkle:version>103</sparkle:version>
-            <sparkle:shortVersionString>1.5.7</sparkle:shortVersionString>
+            <title>Version 1.5.8</title>
+            <sparkle:version>113</sparkle:version>
+            <sparkle:shortVersionString>1.5.8</sparkle:shortVersionString>
             <enclosure
-                url="https://github.com/rijieli/OllamaChat/releases/download/1.5.7/OllamaChat.dmg"
-                sparkle:version="103"
-                sparkle:shortVersionString="1.5.7"
+                url="https://github.com/rijieli/OllamaChat/releases/download/1.5.8/OllamaChat.dmg"
+                sparkle:version="113"
+                sparkle:shortVersionString="1.5.8"
                 type="application/octet-stream"
-                sparkle:edSignature="zE1W8F8AXxsX19XAQZ3QF7cUHAjOqmhXBlE7LHjzv3wwx+QFl9hSL8BemqGp/Kmw2ahWLJXBkq7HC6BDYAaiCg=="
-                length="2582337"
+                sparkle:edSignature="1WU50mPKXblmMt5ZIsQKeQYjpis5HPDtOdLnTr+uBTYvSeYEtGbgUdliieQxC8Gzejg0NlM38ld8pG2b3+hYBQ=="
+                length="2573626"
             />
             <description><![CDATA[
-                <h2>Changes in version 1.5.7:</h2>
+                <h2>Changes in version 1.5.8:</h2>
                 <ul>
-                    <li> - Add basic support for think blocks. </li>
+                    <li> New think message UI </li>
+                    <li> New message context menu UI </li>
+                    <li> Fix the temperature parameter range </li>
                 </ul>
             ]]></description>
         </item>
