@@ -217,6 +217,7 @@ private struct CollapsibleThinkBlock: View {
             .animation(.default, value: isThinking)
             if !remainingContent.isEmpty {
                 Markdown(remainingContent)
+                    .padding(.bottom, 4)
             }
         }
         .maxWidth(alignment: .leading)
@@ -250,7 +251,6 @@ private struct MarkdownTextView: View {
                     .markdownTheme(isUser ? .userTheme : .assistantTheme)
             }
         }
-        .frame(minHeight: 24)
         .onChange(of: message) { _ in
             updateCache()
         }

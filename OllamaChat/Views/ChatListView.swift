@@ -132,8 +132,8 @@ struct ChatListView: View {
                 HStack(spacing: 4) {
                     Image(systemName: "plus")
                     Text("New Chat")
-                        .font(.system(size: 14, weight: .semibold))
                 }
+                .font(.system(size: 13, weight: .semibold))
                 .frame(height: 32)
                 .maxWidth()
             }
@@ -166,7 +166,8 @@ struct ChatListView: View {
             }
         }
         .font(.system(size: 14, weight: .bold))
-        .padding(.bottom, 16)
+        .padding(.bottom, 12)
+        .padding(.top, 8)
         .padding(.horizontal, 12)
         #else
         HStack(spacing: 16) {

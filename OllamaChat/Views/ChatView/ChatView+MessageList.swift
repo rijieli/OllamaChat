@@ -24,8 +24,8 @@ extension ChatView {
                     .foregroundStyle(.secondary)
                     .padding()
                 VStack(spacing: 0) {
-                    ForEach(messages) { message in
-                        MessageBubble(message: message)
+                    ForEach(messages) {
+                        MessageBubble(message: $0)
                     }
                 }
                 .padding(.horizontal, 12)

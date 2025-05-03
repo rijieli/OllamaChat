@@ -278,6 +278,16 @@ class ChatViewModel: ObservableObject {
             case .general(let error):
                 errorModel = genericError(error: error)
             }
+        } else if let urlError = error as? URLError {
+            switch urlError.code {
+            case .cancelled:
+                break
+            case .timedOut:
+                errorModel = invalidResponseError(error: error)
+            default:
+                errorModel = genericError(error: error)
+            }
+            log.error("Chat Error: \(error.localizedDescription)")
         } else {
             errorModel = genericError(error: error)
         }
