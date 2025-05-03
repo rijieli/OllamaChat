@@ -7,7 +7,9 @@
 
 import Foundation
 
-struct ErrorModel {
+struct ErrorModel: Identifiable {
+    var id: String { errorTitle }
+    
     var showError: Bool
     var errorTitle: String
     var errorMessage: String

@@ -37,8 +37,8 @@ func fetchOllamaModels(timeout: Double? = nil) async throws -> OllamaModelGroup 
     guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
         throw NetError.invalidResponse(error: nil)
     }
+    let decoder = JSONDecoder()
     do {
-        let decoder = JSONDecoder()
         let decoded = try decoder.decode(OllamaModelGroup.self, from: data)
         await MainActor.run {
             ChatViewModel.shared.tags = decoded
@@ -46,7 +46,7 @@ func fetchOllamaModels(timeout: Double? = nil) async throws -> OllamaModelGroup 
             if decoded.models.count == 0 {
                 ChatViewModel.shared.errorModel = noModelsError(error: nil)
             } else {
-                ChatViewModel.shared.errorModel.showError = false
+                ChatViewModel.shared.clearError()
             }
         }
         return decoded

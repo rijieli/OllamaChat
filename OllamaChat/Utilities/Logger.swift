@@ -13,5 +13,29 @@ extension Logger {
     static let general = Logger(subsystem: subsystem, category: "general")
 }
 
+let log = Log.self
 
-let log = Logger.general
+public struct Log {
+    static let prefix = "💬 "
+    public static func debug(_ message: @autoclosure () -> Any) {
+        #if DEBUG
+        let evalMessage = "\(message())"
+        Logger.general.debug("\(prefix)\(evalMessage)")
+        #endif
+    }
+
+    public static func warning(_ message: @autoclosure () -> Any) {
+        #if DEBUG
+        let evalMessage = "\(message())"
+        Logger.general.warning("\(prefix)\(evalMessage)")
+        #endif
+    }
+
+    public static func error(_ message: @autoclosure () -> Any) {
+        #if DEBUG
+        let evalMessage = "\(message())"
+        Logger.general.error("\(prefix)\(evalMessage)")
+        #endif
+    }
+
+}

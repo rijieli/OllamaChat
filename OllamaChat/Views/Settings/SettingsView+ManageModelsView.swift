@@ -26,12 +26,12 @@ struct ManageModelsView: View {
     var tags: OllamaModelGroup {
         chatViewModel.tags
     }
-
+    
     var host: String { chatViewModel.host }
     var port: String { chatViewModel.port }
     var timeoutRequest: String { chatViewModel.timeoutRequest }
     var timeoutResource: String { chatViewModel.timeoutResource }
-
+    
     @State private var modelToDelete: OllamaLanguageModel?
     @State private var showModelDeletionAlert = false
     
@@ -40,7 +40,7 @@ struct ManageModelsView: View {
             configContent
         }
     }
-
+    
     var configContent: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
@@ -111,7 +111,7 @@ struct ManageModelsView: View {
             .frame(height: 250)
             .modifier(BorderDecoratedStyleModifier(paddingV: 8))
             .padding(.bottom, 8)
-
+            
             HStack {
                 Text("Get Model:")
                     .font(.headline)
@@ -148,7 +148,7 @@ struct ManageModelsView: View {
             }
         }
     }
-
+    
     func getTags() {
         Task {
             do {
@@ -157,50 +157,42 @@ struct ManageModelsView: View {
                 if tags.models.count == 0 {
                     errorModel = noModelsError(error: nil)
                 }
-            } catch NetError.invalidURL(let error) {
-                errorModel = invalidURLError(error: error)
-            } catch NetError.invalidData(let error) {
-                errorModel = invalidTagsDataError(error: error)
-            } catch NetError.invalidResponse(let error) {
-                errorModel = invalidResponseError(error: error)
-            } catch NetError.unreachable(let error) {
-                errorModel = unreachableError(error: error)
             } catch {
-                errorModel = genericError(error: error)
+                handleError(error)
             }
         }
     }
-
+    
     func downloadModel(name: String) {
         Task {
             do {
                 showProgress = true
-
+                
                 let endpoint = APIEndPoint + "pull"
-
+                
                 guard let url = URL(string: endpoint) else {
                     throw NetError.invalidURL(error: nil)
                 }
-
+                
                 var request = URLRequest(url: url)
                 request.httpMethod = "POST"
                 request.setValue("application/json", forHTTPHeaderField: "Content-Type")
                 request.httpBody = "{\"name\":\"\(name)\"}".data(using: String.Encoding.utf8)!
-
+                
                 let data: URLSession.AsyncBytes
                 let response: URLResponse
-
+                
                 do {
                     (data, response) = try await URLSession.shared.bytes(for: request)
                 } catch {
                     throw NetError.unreachable(error: error)
                 }
-
+                
                 guard let response = response as? HTTPURLResponse, response.statusCode == 200
                 else {
                     throw NetError.invalidResponse(error: nil)
                 }
-
+                
                 for try await line in data.lines {
                     let decoder = JSONDecoder()
                     decoder.keyDecodingStrategy = .convertFromSnakeCase
@@ -209,39 +201,42 @@ struct ManageModelsView: View {
                     self.completedSoFar = decoded.completed ?? 0
                     self.totalSize = decoded.total ?? 100
                 }
-
+                
                 showProgress = false
                 getTags()
-            } catch NetError.invalidURL(let error) {
-                errorModel = invalidURLError(error: error)
-            } catch NetError.invalidData(let error) {
-                errorModel = invalidDataError(error: error)
-            } catch NetError.invalidResponse(let error) {
-                errorModel = invalidResponseError(error: error)
-            } catch NetError.unreachable(let error) {
-                errorModel = unreachableError(error: error)
             } catch {
-                errorModel = genericError(error: error)
+                handleError(error)
             }
         }
     }
-
+    
     func removeModel(name: String) {
         Task {
             do {
                 try await deleteModel(name: name)
                 getTags()
-            } catch NetError.invalidURL(let error) {
-                errorModel = invalidURLError(error: error)
-            } catch NetError.invalidData(let error) {
-                errorModel = invalidDataError(error: error)
-            } catch NetError.invalidResponse(let error) {
-                errorModel = invalidResponseError(error: error)
-            } catch NetError.unreachable(let error) {
-                errorModel = unreachableError(error: error)
             } catch {
+                handleError(error)
+            }
+        }
+    }
+    
+    func handleError(_ error: Error) {
+        if let netError = error as? NetError {
+            switch netError {
+            case .invalidURL(let error):
+                errorModel = invalidURLError(error: error)
+            case .invalidData(let error):
+                errorModel = invalidDataError(error: error)
+            case .invalidResponse(let error):
+                errorModel = invalidResponseError(error: error)
+            case .unreachable(let error):
+                errorModel = unreachableError(error: error)
+            case .general(let error):
                 errorModel = genericError(error: error)
             }
+        } else {
+            errorModel = genericError(error: error)
         }
     }
 }

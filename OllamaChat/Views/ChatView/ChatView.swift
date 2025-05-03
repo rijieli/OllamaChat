@@ -10,17 +10,18 @@ import SwiftUI
 import SwiftUIIntrospect
 
 struct ChatView: View {
-    let fontSize: CGFloat = 15
-
-    @State private var showingErrorPopover: Bool = false
-
-    @ObservedObject var viewModel = ChatViewModel.shared
-    @ObservedObject var speechCenter = TextSpeechCenter.shared
-
+    
+    @StateObject var viewModel = ChatViewModel.shared
+    @StateObject var speechCenter = TextSpeechCenter.shared
+    
     @FocusState var promptFieldIsFocused: Bool
-
+    
     @Namespace var bottomID
-
+    
+    var statusTitle: LocalizedStringKey {
+        viewModel.errorModel == nil ? "Connected" : "Error"
+    }
+    
     var body: some View {
         VStack(spacing: 0) {
             messagesList
@@ -34,28 +35,35 @@ struct ChatView: View {
         .toolbar {
             ToolbarItemGroup(placement: .automatic) {
                 modelPicker()
-
-                if viewModel.errorModel.showError {
-                    Button {
-                        self.showingErrorPopover.toggle()
-                    } label: {
-                        Label("Error", systemImage: "exclamationmark.triangle")
-                            .foregroundStyle(.red)
-                    }
-                    .popover(isPresented: self.$showingErrorPopover) {
-                        VStack(alignment: .leading) {
-                            Text(viewModel.errorModel.errorTitle)
-                                .font(.title2)
-                                .textSelection(.enabled)
-                            Text(viewModel.errorModel.errorMessage)
-                                .textSelection(.enabled)
-                        }
-                        .padding()
-                    }
-                } else {
-                    Label("Connected", systemImage: "circle.fill")
-                        .foregroundStyle(.green)
+                
+                Button {
+                    viewModel.clearError()
+                } label: {
+                    Image(systemName: "circle.fill")
+                        .frame(width: 24, height: 24)
+                        .frame(width: 28, height: 28)
+                        .foregroundStyle(viewModel.errorModel == nil ? .green : .red)
+                        .contentShape(.rect)
                 }
+                .buttonStyle(.simpleVisualEffect)
+                .help(statusTitle)
+                .popover(
+                    item: $viewModel.errorModel
+                ) { errorModel in
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(errorModel.errorTitle)
+                            .font(.system(size: 14, weight: .semibold))
+                            .textSelection(.enabled)
+                        Text(errorModel.errorMessage)
+                            .font(.system(size: 13))
+                            .textSelection(.enabled)
+                    }
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 12)
+                    .frame(width: 320)
+                    .interactiveDismissDisabled()
+                }
+                
                 Button {
                     Task {
                         await getTags()
@@ -67,22 +75,16 @@ struct ChatView: View {
             }
         }
     }
-
+    
     func getTags() async {
         do {
-            viewModel.waitingResponse = false
-            viewModel.errorModel.showError = false
+            await MainActor.run {
+                viewModel.waitingResponse = false
+                viewModel.errorModel = nil
+            }
             _ = try await fetchOllamaModels()
-        } catch let NetError.invalidURL(error) {
-            viewModel.errorModel = invalidURLError(error: error)
-        } catch let NetError.invalidData(error) {
-            viewModel.errorModel = invalidTagsDataError(error: error)
-        } catch let NetError.invalidResponse(error) {
-            viewModel.errorModel = invalidResponseError(error: error)
-        } catch let NetError.unreachable(error) {
-            viewModel.errorModel = unreachableError(error: error)
         } catch {
-            viewModel.errorModel = genericError(error: error)
+            viewModel.handleError(error)
         }
     }
 }
