@@ -22,7 +22,7 @@ If you already have Ollama installed, you can now download **Ollama Chat**:
 [![Download OllamaChat](https://img.shields.io/badge/Download-OllamaChat-green?style=for-the-badge&logo=apple)](https://github.com/rijieli/OllamaChat/releases/latest/download/OllamaChat.dmg)
 
 <p align="center">
-    <img src="assets/images/Preview.jpeg" width="640">
+    <img src="assets/images/Preview.jpeg">
 </p>
 
 ## Getting Started:
