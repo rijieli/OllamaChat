@@ -63,6 +63,7 @@ extension ChatView {
             set: { model in
                 viewModel.currentChat?.model = model.name
                 CoreDataStack.shared.saveContext()
+                viewModel.objectWillChange.send()
             }
         )
     }
