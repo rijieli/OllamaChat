@@ -5,23 +5,21 @@
         <link>https://github.com/rijieli/OllamaChat/releases</link>
         <description>Latest updates for OllamaChat</description>
         <item>
-            <title>Version 1.5.8</title>
-            <sparkle:version>113</sparkle:version>
-            <sparkle:shortVersionString>1.5.8</sparkle:shortVersionString>
+            <title>Version 1.5.9</title>
+            <sparkle:version>115</sparkle:version>
+            <sparkle:shortVersionString>1.5.9</sparkle:shortVersionString>
             <enclosure
-                url="https://github.com/rijieli/OllamaChat/releases/download/1.5.8/OllamaChat.dmg"
-                sparkle:version="113"
-                sparkle:shortVersionString="1.5.8"
+                url="https://github.com/rijieli/OllamaChat/releases/download/1.5.9/OllamaChat.dmg"
+                sparkle:version="115"
+                sparkle:shortVersionString="1.5.9"
                 type="application/octet-stream"
-                sparkle:edSignature="1WU50mPKXblmMt5ZIsQKeQYjpis5HPDtOdLnTr+uBTYvSeYEtGbgUdliieQxC8Gzejg0NlM38ld8pG2b3+hYBQ=="
-                length="2573626"
+                sparkle:edSignature="hagQA2C36UMtGoki9dnrET/V2McBiz2cROtK0atkZ0urSwqZLZZtMaf0Wz1VO3NzNOXoKVHQ6bcMgUFs1KJ3BQ=="
+                length="2573613"
             />
             <description><![CDATA[
-                <h2>Changes in version 1.5.8:</h2>
+                <h2>Changes in version 1.5.9:</h2>
                 <ul>
-                    <li> New think message UI </li>
-                    <li> New message context menu UI </li>
-                    <li> Fix the temperature parameter range </li>
+                    <li> Fix chat model settings not being saved </li>
                 </ul>
             ]]></description>
         </item>
