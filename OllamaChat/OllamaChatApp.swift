@@ -36,6 +36,7 @@ struct OllamaChatApp: App {
             }
             .windowStyle(.hiddenTitleBar)
             .windowResizability(.contentSize)
+            
         #else
             WindowGroup {
                 ContentView()

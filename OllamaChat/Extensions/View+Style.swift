@@ -31,12 +31,21 @@ struct BorderDecoratedStyleModifier: ViewModifier {
             .padding(.horizontal, paddingH)
             .padding(.vertical, paddingV)
             .background {
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.ocPrimaryBackground)
-                    .overlay {
-                        RoundedRectangle(cornerRadius: 8)
-                            .strokeBorder(Color.ocDividerColor, lineWidth: 1)
-                    }
+                if #available(macOS 26, *) {
+                    ConcentricRectangle(corners: .concentric(minimum: 12), isUniform: true)
+                        .fill(Color.ocPrimaryBackground)
+                        .overlay {
+                            ConcentricRectangle(corners: .concentric(minimum: 12), isUniform: true)
+                                .stroke(Color.ocDividerColor, lineWidth: 1)
+                        }
+                } else {
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(Color.ocPrimaryBackground)
+                        .overlay {
+                            RoundedRectangle(cornerRadius: 8)
+                                .strokeBorder(Color.ocDividerColor, lineWidth: 1)
+                        }
+                }
             }
     }
 }

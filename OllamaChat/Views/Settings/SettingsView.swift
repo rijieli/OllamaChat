@@ -124,7 +124,7 @@ struct SettingsView: View {
             }
 
             ZStack {
-                ScrollView {
+                ScrollView(.vertical, showsIndicators: false) {
                     VStack(spacing: 0) {
                         Color.clear.frame(height: 24)
                         switch viewModel.selectedTab {
@@ -148,7 +148,7 @@ struct SettingsView: View {
             .ignoresSafeArea()
         }
         .frame(minWidth: 715, maxWidth: 715, minHeight: 540, maxHeight: .infinity)
-        .introspect(.window, on: .macOS(.v13, .v14, .v15)) { nsWindow in
+        .introspect(.window, on: .macOS(.v13, .v14, .v15, .v26)) { nsWindow in
             nsWindow.titlebarAppearsTransparent = true
             nsWindow.titleVisibility = .hidden
         }

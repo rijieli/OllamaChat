@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import AppKit
 
 struct NoAnimationButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
@@ -30,5 +31,23 @@ struct SimpleVisualEffectButtonStyle: ButtonStyle {
 extension ButtonStyle where Self == SimpleVisualEffectButtonStyle {
     static var simpleVisualEffect: SimpleVisualEffectButtonStyle {
         SimpleVisualEffectButtonStyle()
+    }
+}
+
+struct RoundedPlainButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .background {
+                Group {
+                    if #available(macOS 26, *) {
+                        Capsule()
+                            .fill(Color.ocSecondaryBackground)
+                    } else {
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(Color.ocSecondaryBackground)
+                    }
+                }
+            }
+            .opacity(configuration.isPressed ? 0.8 : 1)
     }
 }

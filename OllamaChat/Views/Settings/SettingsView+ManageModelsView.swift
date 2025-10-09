@@ -36,9 +36,7 @@ struct ManageModelsView: View {
     @State private var showModelDeletionAlert = false
     
     var body: some View {
-        ScrollView {
-            configContent
-        }
+        configContent
     }
     
     var configContent: some View {

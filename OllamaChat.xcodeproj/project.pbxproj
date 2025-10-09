@@ -31,7 +31,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		327B90432AD17EA300A94F10 /* OllamaChat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OllamaChat.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		327B90432AD17EA300A94F10 /* Chat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Chat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		327B90542AD17EA400A94F10 /* OllamaChatTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OllamaChatTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		327B905E2AD17EA400A94F10 /* OllamaChatUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OllamaChatUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -100,7 +100,7 @@
 		327B90442AD17EA300A94F10 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				327B90432AD17EA300A94F10 /* OllamaChat.app */,
+				327B90432AD17EA300A94F10 /* Chat.app */,
 				327B90542AD17EA400A94F10 /* OllamaChatTests.xctest */,
 				327B905E2AD17EA400A94F10 /* OllamaChatUITests.xctest */,
 			);
@@ -141,7 +141,7 @@
 				DB59E7062D630519002A99E1 /* Sparkle */,
 			);
 			productName = "Ollama Swift";
-			productReference = 327B90432AD17EA300A94F10 /* OllamaChat.app */;
+			productReference = 327B90432AD17EA300A94F10 /* Chat.app */;
 			productType = "com.apple.product-type.application";
 		};
 		327B90532AD17EA400A94F10 /* OllamaChatTests */ = {
@@ -467,7 +467,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = OllamaChat/Resources/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Ollama Chat";
+				INFOPLIST_KEY_CFBundleDisplayName = Chat;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Ideas Form";
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "This app needs access to the local network to function properly";
@@ -479,7 +479,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ideasform.ollamachat;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Chat;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -506,7 +506,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = OllamaChat/Resources/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Ollama Chat";
+				INFOPLIST_KEY_CFBundleDisplayName = Chat;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Ideas Form";
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "This app needs access to the local network to function properly";
@@ -518,7 +518,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ideasform.ollamachat;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Chat;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -654,7 +654,7 @@
 			repositoryURL = "https://github.com/siteline/swiftui-introspect";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.3.0;
+				minimumVersion = 26.0.0;
 			};
 		};
 		DBF592C42B872B3E0085D1BF /* XCRemoteSwiftPackageReference "Hue" */ = {

@@ -13,6 +13,10 @@ extension Color {
         .dynamicColor(light: "#FFFFFF", dark: "#1A1A1A")
     }
     
+    public static var ocSecondaryBackground: Color {
+        .dynamicColor(light: "#E3E3E3", dark: "#393939")
+    }
+    
     public static var ocDividerColor: Color {
         #if os(macOS)
         return Color(NSColor.separatorColor)

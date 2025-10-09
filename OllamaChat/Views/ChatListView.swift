@@ -20,11 +20,17 @@ private let timeFormatter: DateFormatter = {
 
 struct ChatListView: View {
     
-    #if os(macOS)
-    let cornerRadius: CGFloat = 8
-    #else
-    let cornerRadius: CGFloat = 16
-    #endif
+    var cornerRadius: CGFloat = {
+        #if os(macOS)
+        if #available(macOS 26, *) {
+            return 16
+        } else {
+            return 8
+        }
+        #else
+        return 16
+        #endif
+    }()
 
     @Environment(\.managedObjectContext) private var viewContext
     @FetchRequest(
@@ -137,11 +143,13 @@ struct ChatListView: View {
                 .frame(height: 32)
                 .maxWidth()
             }
+            .buttonStyle(RoundedPlainButtonStyle())
             
             if #available(macOS 14.0, *) {
                 SettingsLink {
                     gearLabel
                 }
+                .buttonStyle(RoundedPlainButtonStyle())
             } else {
                 Button(
                     action: {
@@ -163,6 +171,7 @@ struct ChatListView: View {
                         gearLabel
                     }
                 )
+                .buttonStyle(RoundedPlainButtonStyle())
             }
         }
         .font(.system(size: 14, weight: .bold))
