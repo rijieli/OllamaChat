@@ -47,7 +47,7 @@
 					ios,
 				);
 			};
-			target = 327B90422AD17EA300A94F10 /* OllamaChat */;
+			target = 327B90422AD17EA300A94F10 /* Chat */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -117,9 +117,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		327B90422AD17EA300A94F10 /* OllamaChat */ = {
+		327B90422AD17EA300A94F10 /* Chat */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 327B90682AD17EA400A94F10 /* Build configuration list for PBXNativeTarget "OllamaChat" */;
+			buildConfigurationList = 327B90682AD17EA400A94F10 /* Build configuration list for PBXNativeTarget "Chat" */;
 			buildPhases = (
 				327B903F2AD17EA300A94F10 /* Sources */,
 				327B90402AD17EA300A94F10 /* Frameworks */,
@@ -133,7 +133,7 @@
 			fileSystemSynchronizedGroups = (
 				DB59E74F2D630D5D002A99E1 /* OllamaChat */,
 			);
-			name = OllamaChat;
+			name = Chat;
 			packageProductDependencies = (
 				DB5B94DE2B7FB76600273FFA /* SwiftUIIntrospect */,
 				DBF592C52B872B3E0085D1BF /* Hue */,
@@ -230,7 +230,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				327B90422AD17EA300A94F10 /* OllamaChat */,
+				327B90422AD17EA300A94F10 /* Chat */,
 				327B90532AD17EA400A94F10 /* OllamaChatTests */,
 				327B905D2AD17EA400A94F10 /* OllamaChatUITests */,
 			);
@@ -310,12 +310,12 @@
 /* Begin PBXTargetDependency section */
 		327B90562AD17EA400A94F10 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 327B90422AD17EA300A94F10 /* OllamaChat */;
+			target = 327B90422AD17EA300A94F10 /* Chat */;
 			targetProxy = 327B90552AD17EA400A94F10 /* PBXContainerItemProxy */;
 		};
 		327B90602AD17EA400A94F10 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 327B90422AD17EA300A94F10 /* OllamaChat */;
+			target = 327B90422AD17EA300A94F10 /* Chat */;
 			targetProxy = 327B905F2AD17EA400A94F10 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -603,7 +603,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		327B90682AD17EA400A94F10 /* Build configuration list for PBXNativeTarget "OllamaChat" */ = {
+		327B90682AD17EA400A94F10 /* Build configuration list for PBXNativeTarget "Chat" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				327B90692AD17EA400A94F10 /* Debug */,

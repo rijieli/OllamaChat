@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "327B90422AD17EA300A94F10"
-               BuildableName = "OllamaChat.app"
-               BlueprintName = "OllamaChat"
+               BuildableName = "Chat.app"
+               BlueprintName = "Chat"
                ReferencedContainer = "container:OllamaChat.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -69,8 +69,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "327B90422AD17EA300A94F10"
-            BuildableName = "OllamaChat.app"
-            BlueprintName = "OllamaChat"
+            BuildableName = "Chat.app"
+            BlueprintName = "Chat"
             ReferencedContainer = "container:OllamaChat.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -86,8 +86,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "327B90422AD17EA300A94F10"
-            BuildableName = "OllamaChat.app"
-            BlueprintName = "OllamaChat"
+            BuildableName = "Chat.app"
+            BlueprintName = "Chat"
             ReferencedContainer = "container:OllamaChat.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
