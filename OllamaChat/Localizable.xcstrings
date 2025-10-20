@@ -147,9 +147,6 @@
         }
       }
     },
-    "Configuration (JSON)" : {
-
-    },
     "Connected" : {
       "localizations" : {
         "zh-Hans" : {
@@ -169,6 +166,9 @@
           }
         }
       }
+    },
+    "Context: %@ tokens" : {
+
     },
     "Copy" : {
       "localizations" : {
@@ -249,6 +249,9 @@
         }
       }
     },
+    "e.g., gpt-4, claude-3-sonnet" : {
+
+    },
     "Edit" : {
       "localizations" : {
         "zh-Hans" : {
@@ -266,6 +269,9 @@
 
     },
     "Endpoint URL (optional)" : {
+
+    },
+    "Enter model name manually or fetch from API" : {
 
     },
     "Enter your name" : {
@@ -288,7 +294,16 @@
         }
       }
     },
+    "Error fetching models" : {
+
+    },
     "Eta (%.2f)" : {
+
+    },
+    "Fetch Models" : {
+
+    },
+    "Fetching models..." : {
 
     },
     "Find more models: [Models](https://ollama.com/library)" : {
@@ -354,9 +369,6 @@
     "http://127.0.0.1:11434" : {
 
     },
-    "https://api.example.com/v1" : {
-
-    },
     "If you are using a web URL as the host, you can try removing the port. If you are running Ollama locally, try using http://127.0.0.1 and set the port to 11434." : {
       "localizations" : {
         "zh-Hans" : {
@@ -367,6 +379,9 @@
         }
       }
     },
+    "Leave empty to use default endpoint" : {
+
+    },
     "Local Models:" : {
       "localizations" : {
         "zh-Hans" : {
@@ -376,6 +391,9 @@
           }
         }
       }
+    },
+    "Manual Entry" : {
+
     },
     "Max tokens to predict" : {
 
@@ -412,6 +430,12 @@
           }
         }
       }
+    },
+    "Model" : {
+
+    },
+    "Model name" : {
+
     },
     "Model name. e.g. llama3" : {
       "localizations" : {
@@ -501,6 +525,9 @@
           }
         }
       }
+    },
+    "Ollama" : {
+
     },
     "Ollama Chat" : {
 

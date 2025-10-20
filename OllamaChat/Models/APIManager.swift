@@ -47,13 +47,13 @@ class APIManager: ObservableObject {
         completions = APIManager.storage
     }
 
-    func createCompletion(provider: ModelProvider, name: String, endpoint: String, apiKey: String? = nil, configJSON: String? = nil) throws {
+    func createCompletion(provider: ModelProvider, name: String, endpoint: String, apiKey: String? = nil, selectedModel: String) throws {
         let completion = ChatCompletion(
             provider: provider,
             name: name,
             endpoint: endpoint,
             apiKey: apiKey,
-            configJSONRaw: configJSON
+            selectedModel: selectedModel
         )
 
         // Validate configuration before saving
@@ -79,22 +79,22 @@ class APIManager: ObservableObject {
         }
     }
 
-    @available(*, deprecated, message: "Use createCompletion(provider:name:endpoint:apiKey:configJSON:) instead")
-    func createOpenAICompletion(name: String, endpoint: String, apiKey: String? = nil, configJSON: String? = nil) {
+    @available(*, deprecated, message: "Use createCompletion(provider:name:endpoint:apiKey:selectedModel:) instead")
+    func createOpenAICompletion(name: String, endpoint: String, apiKey: String? = nil, selectedModel: String = "gpt-4o") {
         do {
-            try createCompletion(provider: .openai, name: name, endpoint: endpoint, apiKey: apiKey, configJSON: configJSON)
+            try createCompletion(provider: .openai, name: name, endpoint: endpoint, apiKey: apiKey, selectedModel: selectedModel)
         } catch {
             print("Error creating OpenAI completion: \(error)")
         }
     }
     
-    func updateCompletion(at index: Int, name: String, endpoint: String, apiKey: String? = nil, configJSON: String? = nil) {
+    func updateCompletion(at index: Int, name: String, endpoint: String, apiKey: String? = nil, selectedModel: String) {
         guard index >= 0 && index < completions.count else { return }
 
         completions[index].name = name
         completions[index].endpoint = endpoint
         completions[index].apiKey = apiKey
-        completions[index].configJSONRaw = configJSON
+        completions[index].selectedModel = selectedModel
 
         // Validate updated configuration
         do {
@@ -146,12 +146,34 @@ class APIManager: ObservableObject {
     }
 
     func migrateLegacyCompletions() {
-        // Migrate old .api completions to .openai for backwards compatibility
+        // Migrate old provider types and configurations for backwards compatibility
         for i in 0..<completions.count {
-            if completions[i].provider.rawValue == "api" {
+            let oldValue = completions[i].provider.rawValue
+            switch oldValue {
+            case "api":
                 completions[i].provider = .openai
+            case "deepseek", "groq", "togetherai", "custom":
+                // Migrate unsupported providers to OpenRouter
+                completions[i].provider = .openrouter
+            default:
+                break
+            }
+
+            // Set default model if selectedModel is empty
+            if completions[i].selectedModel.isEmpty {
+                completions[i].selectedModel = getDefaultModelForProvider(completions[i].provider)
             }
         }
         APIManager.storage = completions
+    }
+
+    private func getDefaultModelForProvider(_ provider: ModelProvider) -> String {
+        switch provider {
+        case .ollama: return "llama2"
+        case .openai: return "gpt-4o"
+        case .anthropic: return "claude-3-5-sonnet-20241022"
+        case .gemini: return "gemini-1.5-pro"
+        case .openrouter: return "anthropic/claude-3.5-sonnet"
+        }
     }
 }

@@ -14,7 +14,7 @@ enum ProviderFactory {
         switch configuration.provider {
         case .ollama:
             return OllamaProvider(configuration: configuration)
-        case .openai, .anthropic, .gemini, .deepseek, .groq, .togetherai, .custom:
+        case .openai, .anthropic, .gemini, .openrouter:
             return AIProxyProvider(configuration: configuration)
         }
     }
@@ -32,22 +32,11 @@ enum ProviderFactory {
                 throw ChatCompletionError.invalidConfiguration("Invalid Ollama endpoint URL")
             }
 
-        case .openai, .anthropic, .gemini, .deepseek, .groq, .togetherai, .custom:
+        case .openai, .anthropic, .gemini, .openrouter:
             // Validate API key requirements
             if configuration.provider.requiresAPIKey {
                 guard let apiKey = configuration.apiKey, !apiKey.isEmpty else {
                     throw ChatCompletionError.invalidConfiguration("API key is required for \(configuration.provider.displayName)")
-                }
-            }
-
-            // Validate endpoint for custom API
-            if configuration.provider == .custom {
-                guard !configuration.endpoint.isEmpty else {
-                    throw ChatCompletionError.invalidConfiguration("Custom API endpoint is required")
-                }
-
-                guard let _ = URL(string: configuration.endpoint) else {
-                    throw ChatCompletionError.invalidConfiguration("Invalid custom API endpoint URL")
                 }
             }
         }
@@ -61,8 +50,8 @@ enum ProviderFactory {
                 name: "Local Ollama",
                 endpoint: "http://127.0.0.1:11434",
                 apiKey: nil,
-                models: ["llama2"],
-                configJSONRaw: nil
+                selectedModel: "llama2",
+                models: ["llama2"]
             )
         case .openai:
             return ChatCompletion(
@@ -70,13 +59,8 @@ enum ProviderFactory {
                 name: "OpenAI GPT",
                 endpoint: "https://api.openai.com/v1",
                 apiKey: nil,
-                models: ["gpt-3.5-turbo", "gpt-4"],
-                configJSONRaw: """
-                {
-                    "model": "gpt-3.5-turbo",
-                    "useProxy": true
-                }
-                """
+                selectedModel: "gpt-4o",
+                models: ["gpt-4o", "gpt-3.5-turbo"]
             )
         case .anthropic:
             return ChatCompletion(
@@ -84,13 +68,8 @@ enum ProviderFactory {
                 name: "Anthropic Claude",
                 endpoint: "https://api.anthropic.com",
                 apiKey: nil,
-                models: ["claude-3-sonnet", "claude-3-opus"],
-                configJSONRaw: """
-                {
-                    "model": "claude-3-sonnet-20240229",
-                    "useProxy": true
-                }
-                """
+                selectedModel: "claude-3-5-sonnet-20241022",
+                models: ["claude-3-5-sonnet", "claude-3-opus"]
             )
         case .gemini:
             return ChatCompletion(
@@ -98,69 +77,17 @@ enum ProviderFactory {
                 name: "Google Gemini",
                 endpoint: "https://generativelanguage.googleapis.com",
                 apiKey: nil,
-                models: ["gemini-pro"],
-                configJSONRaw: """
-                {
-                    "model": "gemini-pro",
-                    "useProxy": true
-                }
-                """
+                selectedModel: "gemini-1.5-pro",
+                models: ["gemini-1.5-pro"]
             )
-        case .deepseek:
+        case .openrouter:
             return ChatCompletion(
-                provider: .deepseek,
-                name: "DeepSeek",
-                endpoint: "https://api.deepseek.com",
+                provider: .openrouter,
+                name: "OpenRouter",
+                endpoint: "https://openrouter.ai/api/v1",
                 apiKey: nil,
-                models: ["deepseek-chat", "deepseek-coder"],
-                configJSONRaw: """
-                {
-                    "model": "deepseek-chat",
-                    "useProxy": true
-                }
-                """
-            )
-        case .groq:
-            return ChatCompletion(
-                provider: .groq,
-                name: "Groq",
-                endpoint: "https://api.groq.com/openai/v1",
-                apiKey: nil,
-                models: ["llama3-8b-8192", "mixtral-8x7b-32768"],
-                configJSONRaw: """
-                {
-                    "model": "llama3-8b-8192",
-                    "useProxy": true
-                }
-                """
-            )
-        case .togetherai:
-            return ChatCompletion(
-                provider: .togetherai,
-                name: "Together AI",
-                endpoint: "https://api.together.xyz/v1",
-                apiKey: nil,
-                models: ["meta-llama/Llama-3-8b-chat-hf"],
-                configJSONRaw: """
-                {
-                    "model": "meta-llama/Llama-3-8b-chat-hf",
-                    "useProxy": true
-                }
-                """
-            )
-        case .custom:
-            return ChatCompletion(
-                provider: .custom,
-                name: "Custom API",
-                endpoint: "",
-                apiKey: nil,
-                models: [],
-                configJSONRaw: """
-                {
-                    "model": "your-model-name",
-                    "useProxy": false
-                }
-                """
+                selectedModel: "anthropic/claude-3.5-sonnet",
+                models: ["anthropic/claude-3.5-sonnet"]
             )
         }
     }

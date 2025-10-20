@@ -10,6 +10,7 @@ import SwiftUI
 
 struct WebAPISettingsView: View {
     @StateObject private var modelManager = APIManager.shared
+    @StateObject private var modelRegistry = ModelRegistry.shared
 
     @State private var isAddingNewAPI = false
     @State private var editingCompletion: ChatCompletion?
@@ -19,9 +20,11 @@ struct WebAPISettingsView: View {
     @State private var newCompletionName = ""
     @State private var newCompletionEndpoint = ""
     @State private var newCompletionApiKey = ""
-    @State private var newCompletionConfig = ""
     @State private var selectedProvider: ModelProvider = .openai
     @State private var showProviderSelector = false
+
+    @State private var selectedModel: ModelRegistry.AIModel?
+    @State private var manualModelName = ""
 
     @State private var errorMessage: String?
     @State private var showError = false
@@ -52,6 +55,9 @@ struct WebAPISettingsView: View {
                                         .cornerRadius(4)
                                         .foregroundStyle(.blue)
                                 }
+                                Text(completion.selectedModel)
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
                                 Text(completion.endpoint)
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
@@ -135,13 +141,11 @@ struct WebAPISettingsView: View {
                                 .placeholder(when: newCompletionEndpoint.isEmpty) {
                                     Text("http://127.0.0.1:11434").foregroundStyle(.secondary)
                                 }
-                        } else if editingCompletion?.provider != .custom {
-                            // Show endpoint for custom providers only
-                            TextField("Endpoint URL (optional)", text: $newCompletionEndpoint)
                         } else {
-                            TextField("Endpoint URL", text: $newCompletionEndpoint)
+                            // Show endpoint for cloud providers (optional)
+                            TextField("Endpoint URL (optional)", text: $newCompletionEndpoint)
                                 .placeholder(when: newCompletionEndpoint.isEmpty) {
-                                    Text("https://api.example.com/v1").foregroundStyle(.secondary)
+                                    Text("Leave empty to use default endpoint").foregroundStyle(.secondary)
                                 }
                         }
 
@@ -150,20 +154,122 @@ struct WebAPISettingsView: View {
                             SecureField("API Key", text: $newCompletionApiKey)
                         }
 
-                        if (isAddingNewAPI && selectedProvider != .ollama) ||
-                           (editingCompletion != nil && editingCompletion!.provider != .ollama) {
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text("Configuration (JSON)")
-                                    .font(.caption)
-                                TextEditor(text: $newCompletionConfig)
-                                    .font(.system(.body, design: .monospaced))
-                                    .frame(height: 100)
-                                    .border(Color.gray.opacity(0.2))
+                        // Model Selection
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Model")
+                                .font(.caption)
+                                .fontWeight(.medium)
 
-                                if isAddingNewAPI {
-                                    Text(getDefaultConfigForProvider(selectedProvider))
-                                        .font(.caption2)
-                                        .foregroundStyle(.secondary)
+                            if isAddingNewAPI || editingCompletion != nil {
+                                let currentCompletion = isAddingNewAPI ?
+                                    ChatCompletion(
+                                        provider: selectedProvider,
+                                        name: newCompletionName,
+                                        endpoint: newCompletionEndpoint,
+                                        apiKey: newCompletionApiKey.isEmpty ? nil : newCompletionApiKey,
+                                        selectedModel: selectedModel?.id ?? manualModelName
+                                    ) :
+                                    editingCompletion!
+
+                                if modelRegistry.isLoading(for: currentCompletion) {
+                                    HStack {
+                                        ProgressView()
+                                            .scaleEffect(0.8)
+                                        Text("Fetching models...")
+                                            .font(.caption)
+                                            .foregroundStyle(.secondary)
+                                    }
+                                    .frame(height: 32)
+                                } else if let error = modelRegistry.getError(for: currentCompletion) {
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        HStack {
+                                            Image(systemName: "exclamationmark.triangle")
+                                                .foregroundStyle(.orange)
+                                            Text("Error fetching models")
+                                                .font(.caption)
+                                                .foregroundStyle(.orange)
+                                            Spacer()
+                                            Button("Retry") {
+                                                Task {
+                                                    await modelRegistry.fetchModels(for: currentCompletion)
+                                                }
+                                            }
+                                            .font(.caption)
+                                        }
+                                        Text(error.localizedDescription)
+                                            .font(.caption2)
+                                            .foregroundStyle(.secondary)
+                                    }
+                                    .frame(height: 32)
+                                } else {
+                                    let availableModels = modelRegistry.getModels(for: currentCompletion)
+                                    if !availableModels.isEmpty {
+                                        Menu {
+                                            ForEach(availableModels) { model in
+                                                Button(action: {
+                                                    selectedModel = model
+                                                    manualModelName = ""
+                                                }) {
+                                                    HStack {
+                                                        VStack(alignment: .leading, spacing: 2) {
+                                                            Text(model.displayName)
+                                                                .font(.caption)
+                                                            if let contextLength = model.contextLength {
+                                                                Text("Context: \(contextLength.formatted()) tokens")
+                                                                    .font(.caption2)
+                                                                    .foregroundStyle(.secondary)
+                                                            }
+                                                        }
+                                                        Spacer()
+                                                        if let selectedModel = selectedModel, selectedModel.id == model.id {
+                                                            Image(systemName: "checkmark")
+                                                                .foregroundStyle(.blue)
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            Button("Manual Entry") {
+                                                selectedModel = nil
+                                                manualModelName = ""
+                                            }
+                                        } label: {
+                                            HStack {
+                                                Text(selectedModel?.displayName ?? (manualModelName.isEmpty ? "Select a model" : manualModelName))
+                                                    .foregroundStyle(selectedModel != nil || !manualModelName.isEmpty ? .primary : .secondary)
+                                                Spacer()
+                                                Image(systemName: "chevron.down")
+                                                    .font(.caption)
+                                                    .foregroundStyle(.secondary)
+                                            }
+                                            .frame(height: 32)
+                                            .padding(.horizontal, 8)
+                                            .background(Color.gray.opacity(0.1))
+                                            .cornerRadius(6)
+                                        }
+                                    } else {
+                                        VStack(alignment: .leading, spacing: 4) {
+                                            TextField("Model name", text: $manualModelName)
+                                                .placeholder(when: manualModelName.isEmpty) {
+                                                    Text("e.g., gpt-4, claude-3-sonnet").foregroundStyle(.secondary)
+                                                }
+
+                                            HStack {
+                                                Button("Fetch Models") {
+                                                    Task {
+                                                        await modelRegistry.fetchModels(for: currentCompletion)
+                                                    }
+                                                }
+                                                .font(.caption)
+                                                .disabled(newCompletionApiKey.isEmpty && selectedProvider.requiresAPIKey)
+
+                                                Spacer()
+
+                                                Text("Enter model name manually or fetch from API")
+                                                    .font(.caption2)
+                                                    .foregroundStyle(.secondary)
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -186,10 +292,11 @@ struct WebAPISettingsView: View {
                         }
                         .disabled(
                             newCompletionName.isEmpty ||
+                            (selectedModel == nil && manualModelName.isEmpty) ||
                             (isAddingNewAPI && selectedProvider != .ollama && selectedProvider.requiresAPIKey && newCompletionApiKey.isEmpty) ||
                             (editingCompletion != nil && editingCompletion!.provider.requiresAPIKey && newCompletionApiKey.isEmpty) ||
-                            (isAddingNewAPI && selectedProvider == .custom && newCompletionEndpoint.isEmpty) ||
-                            (editingCompletion != nil && editingCompletion!.provider == .custom && newCompletionEndpoint.isEmpty)
+                            (isAddingNewAPI && selectedProvider == .ollama && newCompletionEndpoint.isEmpty) ||
+                            (editingCompletion != nil && editingCompletion!.provider == .ollama && newCompletionEndpoint.isEmpty)
                         )
                     }
                     .padding(.top, 8)
@@ -222,7 +329,7 @@ struct WebAPISettingsView: View {
     private func createNewCompletion() {
         do {
             // Validate URL for providers that require it
-            if selectedProvider == .ollama || selectedProvider == .custom {
+            if selectedProvider == .ollama {
                 if !isValidURL(newCompletionEndpoint) {
                     errorMessage = "Please enter a valid URL"
                     showError = true
@@ -230,21 +337,14 @@ struct WebAPISettingsView: View {
                 }
             }
 
-            // Validate JSON if provided
-            if !newCompletionConfig.isEmpty {
-                if !isValidJSON(newCompletionConfig) {
-                    errorMessage = "Configuration is not valid JSON"
-                    showError = true
-                    return
-                }
-            }
+            let modelName = selectedModel?.id ?? manualModelName
 
             try modelManager.createCompletion(
                 provider: selectedProvider,
                 name: newCompletionName,
                 endpoint: newCompletionEndpoint.isEmpty ? getDefaultEndpointForProvider(selectedProvider) : newCompletionEndpoint,
                 apiKey: newCompletionApiKey.isEmpty ? nil : newCompletionApiKey,
-                configJSON: newCompletionConfig.isEmpty ? getDefaultConfigForProvider(selectedProvider) : newCompletionConfig
+                selectedModel: modelName
             )
 
             isAddingNewAPI = false
@@ -258,15 +358,14 @@ struct WebAPISettingsView: View {
         guard
             let index = modelManager.completions.firstIndex(where: {
                 $0.name == editingCompletion?.name
-            }),
-            let completion = editingCompletion
+            })
         else {
             return
         }
 
         do {
             // Validate URL for providers that require it
-            if completion.provider == .ollama || completion.provider == .custom {
+            if editingCompletion!.provider == .ollama {
                 if !isValidURL(newCompletionEndpoint) {
                     errorMessage = "Please enter a valid URL"
                     showError = true
@@ -274,21 +373,14 @@ struct WebAPISettingsView: View {
                 }
             }
 
-            // Validate JSON if provided
-            if !newCompletionConfig.isEmpty {
-                if !isValidJSON(newCompletionConfig) {
-                    errorMessage = "Configuration is not valid JSON"
-                    showError = true
-                    return
-                }
-            }
+            let modelName = selectedModel?.id ?? manualModelName
 
             modelManager.updateCompletion(
                 at: index,
                 name: newCompletionName,
-                endpoint: newCompletionEndpoint.isEmpty ? getDefaultEndpointForProvider(completion.provider) : newCompletionEndpoint,
+                endpoint: newCompletionEndpoint.isEmpty ? getDefaultEndpointForProvider(editingCompletion!.provider) : newCompletionEndpoint,
                 apiKey: newCompletionApiKey.isEmpty ? nil : newCompletionApiKey,
-                configJSON: newCompletionConfig.isEmpty ? getDefaultConfigForProvider(completion.provider) : newCompletionConfig
+                selectedModel: modelName
             )
 
             editingCompletion = nil
@@ -307,16 +399,32 @@ struct WebAPISettingsView: View {
         newCompletionName = completion.name
         newCompletionEndpoint = completion.endpoint
         newCompletionApiKey = completion.apiKey ?? ""
-        newCompletionConfig = completion.configJSONRaw ?? ""
         selectedProvider = completion.provider
         editingCompletion = completion
+
+        // Extract model from configuration
+        selectedModel = nil
+        manualModelName = completion.selectedModel
+
+        // Try to find matching model in registry
+        let availableModels = modelRegistry.getModels(for: completion)
+        if let matchingModel = availableModels.first(where: { $0.id == completion.selectedModel || $0.name == completion.selectedModel }) {
+            selectedModel = matchingModel
+            manualModelName = ""
+        }
+
+        // Trigger model fetching if needed
+        Task {
+            await modelRegistry.fetchModels(for: completion)
+        }
     }
 
     private func resetNewCompletionFields() {
         newCompletionName = ""
         newCompletionEndpoint = ""
         newCompletionApiKey = ""
-        newCompletionConfig = ""
+        selectedModel = nil
+        manualModelName = ""
         selectedProvider = .openai
     }
 
@@ -326,58 +434,7 @@ struct WebAPISettingsView: View {
         case .openai: return "https://api.openai.com/v1"
         case .anthropic: return "https://api.anthropic.com"
         case .gemini: return "https://generativelanguage.googleapis.com"
-        case .deepseek: return "https://api.deepseek.com"
-        case .groq: return "https://api.groq.com/openai/v1"
-        case .togetherai: return "https://api.together.xyz/v1"
-        case .custom: return ""
-        }
-    }
-
-    private func getDefaultConfigForProvider(_ provider: ModelProvider) -> String {
-        switch provider {
-        case .ollama: return ""
-        case .openai: return """
-        {
-            "model": "gpt-3.5-turbo",
-            "useProxy": true
-        }
-        """
-        case .anthropic: return """
-        {
-            "model": "claude-3-sonnet-20240229",
-            "useProxy": true
-        }
-        """
-        case .gemini: return """
-        {
-            "model": "gemini-pro",
-            "useProxy": true
-        }
-        """
-        case .deepseek: return """
-        {
-            "model": "deepseek-chat",
-            "useProxy": true
-        }
-        """
-        case .groq: return """
-        {
-            "model": "llama3-8b-8192",
-            "useProxy": true
-        }
-        """
-        case .togetherai: return """
-        {
-            "model": "meta-llama/Llama-3-8b-chat-hf",
-            "useProxy": true
-        }
-        """
-        case .custom: return """
-        {
-            "model": "your-model-name",
-            "useProxy": false
-        }
-        """
+        case .openrouter: return "https://openrouter.ai/api/v1"
         }
     }
 

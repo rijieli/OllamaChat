@@ -49,21 +49,6 @@ class AIProxyProvider: ObservableObject, ChatCompletionAbility {
             throw ChatCompletionError.invalidConfiguration("API key is required for \(configuration.provider.displayName)")
         }
 
-        // Parse configuration JSON if provided
-        var model = "gpt-3.5-turbo" // default model
-        var useProxy = true
-        var partialKey: String?
-        var serviceURL: String?
-
-        if let configJSON = configuration.configJSONRaw,
-           let configData = configJSON.data(using: .utf8),
-           let config = try? JSONSerialization.jsonObject(with: configData) as? [String: Any] {
-            model = config["model"] as? String ?? model
-            useProxy = config["useProxy"] as? Bool ?? true
-            partialKey = config["partialKey"] as? String
-            serviceURL = config["serviceURL"] as? String
-        }
-
         // Convert messages to OpenAI format
         let openAIMessages = messages.map { message in
             [
@@ -73,216 +58,51 @@ class AIProxyProvider: ObservableObject, ChatCompletionAbility {
         }
 
         do {
-            // Create the appropriate service based on provider
-            switch configuration.provider {
-            case .openai:
-                try await processOpenAI(
+            // Use OpenAI-compatible structure for all supported providers
+            if configuration.provider.isOpenAICompatible {
+                try await processOpenAICompatible(
                     messages: openAIMessages,
-                    model: model,
+                    model: configuration.selectedModel,
                     apiKey: apiKey,
-                    useProxy: useProxy,
-                    partialKey: partialKey,
-                    serviceURL: serviceURL,
                     continuation: continuation
                 )
-            case .anthropic:
-                try await processAnthropic(
-                    messages: openAIMessages,
-                    model: model,
-                    apiKey: apiKey,
-                    useProxy: useProxy,
-                    partialKey: partialKey,
-                    serviceURL: serviceURL,
-                    continuation: continuation
-                )
-            case .gemini:
-                try await processGemini(
-                    messages: openAIMessages,
-                    model: model,
-                    apiKey: apiKey,
-                    useProxy: useProxy,
-                    partialKey: partialKey,
-                    serviceURL: serviceURL,
-                    continuation: continuation
-                )
-            case .deepseek:
-                try await processDeepSeek(
-                    messages: openAIMessages,
-                    model: model,
-                    apiKey: apiKey,
-                    useProxy: useProxy,
-                    partialKey: partialKey,
-                    serviceURL: serviceURL,
-                    continuation: continuation
-                )
-            case .groq:
-                try await processGroq(
-                    messages: openAIMessages,
-                    model: model,
-                    apiKey: apiKey,
-                    useProxy: useProxy,
-                    partialKey: partialKey,
-                    serviceURL: serviceURL,
-                    continuation: continuation
-                )
-            case .togetherai:
-                try await processTogetherAI(
-                    messages: openAIMessages,
-                    model: model,
-                    apiKey: apiKey,
-                    useProxy: useProxy,
-                    partialKey: partialKey,
-                    serviceURL: serviceURL,
-                    continuation: continuation
-                )
-            case .custom:
-                try await processCustomAPI(
-                    messages: openAIMessages,
-                    model: model,
-                    apiKey: apiKey,
-                    useProxy: useProxy,
-                    partialKey: partialKey,
-                    serviceURL: serviceURL,
-                    continuation: continuation
-                )
-            case .ollama:
-                throw ChatCompletionError.invalidConfiguration("Ollama should use OllamaProvider")
+            } else {
+                // TODO: Implement Anthropic and Gemini specific handling
+                throw ChatCompletionError.unknownError(NSError(domain: "NotImplemented", code: -1, userInfo: [NSLocalizedDescriptionKey: "\(configuration.provider.displayName) not yet implemented"]))
             }
         } catch {
             throw ChatCompletionError.unknownError(error)
         }
     }
 
-    private func processOpenAI(
+    private func processOpenAICompatible(
         messages: [[String: Any]],
         model: String,
         apiKey: String,
-        useProxy: Bool,
-        partialKey: String?,
-        serviceURL: String?,
         continuation: AsyncThrowingStream<String, Error>.Continuation
     ) async throws {
+        // Use OpenAI service for all OpenAI-compatible providers
         let service: OpenAIService
 
-        if useProxy, let pKey = partialKey, let sURL = serviceURL {
-            service = AIProxy.openAIService(
-                partialKey: pKey,
-                serviceURL: sURL
+        // Configure service based on provider
+        switch configuration.provider {
+        case .openai:
+            service = AIProxy.openAIDirectService(
+                unprotectedAPIKey: apiKey,
+                baseURL: configuration.endpoint.isEmpty ? nil : configuration.endpoint
             )
-        } else {
+        case .openrouter:
+            // OpenRouter uses OpenAI-compatible format but with different base URL
+            service = AIProxy.openAIDirectService(
+                unprotectedAPIKey: apiKey,
+                baseURL: configuration.endpoint.isEmpty ? "https://openrouter.ai/api/v1" : configuration.endpoint
+            )
+        default:
             service = AIProxy.openAIDirectService(
                 unprotectedAPIKey: apiKey,
                 baseURL: configuration.endpoint.isEmpty ? nil : configuration.endpoint
             )
         }
-
-        let requestBody = OpenAIChatCompletionRequestBody(
-            model: model,
-            messages: messages.map { message in
-                OpenAIChatCompletionRequestBody.Message.user(
-                    content: .text(message["content"] as? String ?? "")
-                )
-            }
-        )
-
-        let stream = try await service.streamingChatCompletionRequest(
-            body: requestBody,
-            secondsToWait: 60
-        )
-
-        for try await chunk in stream {
-            if let content = chunk.choices.first?.delta.content {
-                continuation.yield(content)
-            }
-        }
-
-        continuation.finish()
-    }
-
-    private func processAnthropic(
-        messages: [[String: Any]],
-        model: String,
-        apiKey: String,
-        useProxy: Bool,
-        partialKey: String?,
-        serviceURL: String?,
-        continuation: AsyncThrowingStream<String, Error>.Continuation
-    ) async throws {
-        // Implementation for Anthropic Claude
-        // Similar structure to OpenAI but using AnthropicService
-        continuation.finish()
-    }
-
-    private func processGemini(
-        messages: [[String: Any]],
-        model: String,
-        apiKey: String,
-        useProxy: Bool,
-        partialKey: String?,
-        serviceURL: String?,
-        continuation: AsyncThrowingStream<String, Error>.Continuation
-    ) async throws {
-        // Implementation for Google Gemini
-        continuation.finish()
-    }
-
-    private func processDeepSeek(
-        messages: [[String: Any]],
-        model: String,
-        apiKey: String,
-        useProxy: Bool,
-        partialKey: String?,
-        serviceURL: String?,
-        continuation: AsyncThrowingStream<String, Error>.Continuation
-    ) async throws {
-        // Implementation for DeepSeek
-        continuation.finish()
-    }
-
-    private func processGroq(
-        messages: [[String: Any]],
-        model: String,
-        apiKey: String,
-        useProxy: Bool,
-        partialKey: String?,
-        serviceURL: String?,
-        continuation: AsyncThrowingStream<String, Error>.Continuation
-    ) async throws {
-        // Implementation for Groq
-        continuation.finish()
-    }
-
-    private func processTogetherAI(
-        messages: [[String: Any]],
-        model: String,
-        apiKey: String,
-        useProxy: Bool,
-        partialKey: String?,
-        serviceURL: String?,
-        continuation: AsyncThrowingStream<String, Error>.Continuation
-    ) async throws {
-        // Implementation for Together AI
-        continuation.finish()
-    }
-
-    private func processCustomAPI(
-        messages: [[String: Any]],
-        model: String,
-        apiKey: String,
-        useProxy: Bool,
-        partialKey: String?,
-        serviceURL: String?,
-        continuation: AsyncThrowingStream<String, Error>.Continuation
-    ) async throws {
-        // Implementation for custom API endpoints using OpenAI-compatible format
-        guard let baseURL = configuration.endpoint.isEmpty ? nil : configuration.endpoint else {
-            throw ChatCompletionError.invalidConfiguration("Custom API requires endpoint URL")
-        }
-
-        let service = AIProxy.openAIDirectService(
-            unprotectedAPIKey: apiKey,
-            baseURL: baseURL
-        )
 
         let requestBody = OpenAIChatCompletionRequestBody(
             model: model,

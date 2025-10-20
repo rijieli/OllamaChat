@@ -11,43 +11,45 @@ import SwiftUI
 import AppKit
 
 struct SettingsView: View {
-
+    
     enum SettingsTab: String, CaseIterable, Identifiable {
+        case ollama
+        case webAPI
+        
+        var id: String { rawValue }
+        var title: LocalizedStringKey {
+            switch self {
+            case .ollama: "Ollama"
+            case .webAPI: "Web API"
+            }
+        }
+        var sfSymbol: String {
+            switch self {
+            case .ollama: "server.rack"
+            case .webAPI: "network"
+            }
+        }
+    }
+    
+    enum OllamaSubTab: String, CaseIterable, Identifiable {
         case general
         case models
         case chatOptions
-        case webAPI
+        
         var id: String { rawValue }
         var title: LocalizedStringKey {
             switch self {
             case .general: "General"
             case .models: "Models"
             case .chatOptions: "Chat Options"
-            case .webAPI: "Web API"
             }
-        }
-        var sfSymbol: String {
-            switch self {
-            case .general: "gearshape"
-            case .models: "cube.box"
-            case .chatOptions: "text.bubble"
-            case .webAPI: "network"
-            }
-        }
-        
-        static var tabs: [SettingsTab] {
-            #if DEBUG
-            return allCases
-            #else
-            return [.general, .models, .chatOptions]
-            #endif
         }
     }
-
+    
     @Environment(\.isDarkMode) var isDarkMode
-
+    
     @StateObject var viewModel = SettingsViewModel.shared
-
+    
     var body: some View {
         HStack(spacing: 0) {
             VStack(spacing: 0) {
@@ -65,7 +67,7 @@ struct SettingsView: View {
                 
                 ScrollView {
                     VStack(spacing: 0) {
-                        ForEach(SettingsTab.tabs) { tab in
+                        ForEach(SettingsTab.allCases) { tab in
                             let selected = viewModel.selectedTab == tab
                             Button {
                                 if !selected {
@@ -122,26 +124,57 @@ struct SettingsView: View {
                     .frame(width: 0.5)
                     .ignoresSafeArea()
             }
-
-            ZStack {
-                ScrollView(.vertical, showsIndicators: false) {
+            
+            VStack(spacing: 0) {
+                switch viewModel.selectedTab {
+                case .ollama:
                     VStack(spacing: 0) {
-                        Color.clear.frame(height: 24)
-                        switch viewModel.selectedTab {
-                        case .general:
-                            GeneralSettingsView()
-                        case .models:
-                            ManageModelsView()
-                        case .chatOptions:
-                            ChatOptionsView()
-                        case .webAPI:
-                            WebAPISettingsView()
+                        // Segmented control for Ollama sub-tabs
+                        Picker("", selection: $viewModel.selectedOllamaSubTab) {
+                            ForEach(OllamaSubTab.allCases) { subTab in
+                                Text(subTab.title).tag(subTab)
+                            }
                         }
+                        .pickerStyle(.segmented)
+                        .padding(.vertical, 16)
+                        .maxWidth()
+                        .background {
+                            LinearGradient(
+                                colors: [
+                                    .white,
+                                    .white,
+                                    .white.opacity(0.8),
+                                    .white.opacity(0)
+                                ],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                        }
+                        .zIndex(1)
+                        
+                        ScrollView(.vertical, showsIndicators: false) {
+                            // Content based on selected sub-tab
+                            switch viewModel.selectedOllamaSubTab {
+                            case .general:
+                                GeneralSettingsView()
+                                    .padding(.horizontal, 24)
+                            case .models:
+                                ManageModelsView()
+                                    .padding(.horizontal, 24)
+                            case .chatOptions:
+                                ChatOptionsView()
+                                    .padding(.horizontal, 24)
+                            }
+                        }
+                        .ifScrollClipDisabled(true)
                     }
-                    .maxFrame()
-                    .padding(.horizontal, 24)
+                case .webAPI:
+                    ScrollView(.vertical, showsIndicators: false) {
+                        WebAPISettingsView()
+                            .padding(.horizontal, 24)
+                            .padding(.vertical, 24)
+                    }
                 }
-                .id(viewModel.selectedTab)
             }
             .maxFrame()
             .background(.background)

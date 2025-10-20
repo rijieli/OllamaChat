@@ -44,10 +44,7 @@ enum ModelProvider: String, Codable, CaseIterable {
     case openai
     case anthropic
     case gemini
-    case deepseek
-    case groq
-    case togetherai
-    case custom
+    case openrouter
 
     var displayName: String {
         switch self {
@@ -55,24 +52,30 @@ enum ModelProvider: String, Codable, CaseIterable {
         case .openai: return "OpenAI"
         case .anthropic: return "Anthropic Claude"
         case .gemini: return "Google Gemini"
-        case .deepseek: return "DeepSeek"
-        case .groq: return "Groq"
-        case .togetherai: return "Together AI"
-        case .custom: return "Custom API"
+        case .openrouter: return "OpenRouter"
         }
     }
 
     var requiresAPIKey: Bool {
         switch self {
         case .ollama: return false
-        case .openai, .anthropic, .gemini, .deepseek, .groq, .togetherai, .custom: return true
+        case .openai, .anthropic, .gemini, .openrouter: return true
         }
     }
 
     var supportsProxy: Bool {
         switch self {
         case .ollama: return false
-        case .openai, .anthropic, .gemini, .deepseek, .groq, .togetherai, .custom: return true
+        case .openai, .anthropic, .gemini, .openrouter: return true
+        }
+    }
+
+    var isOpenAICompatible: Bool {
+        switch self {
+        case .ollama: return false
+        case .openai, .openrouter: return true
+        case .anthropic: return false
+        case .gemini: return false
         }
     }
 }
@@ -83,23 +86,23 @@ struct ChatCompletion: Codable, Identifiable {
     var name: String
     var endpoint: String
     var apiKey: String?
+    var selectedModel: String
     var models: [String]
-    var configJSONRaw: String?
 
     init(
         provider: ModelProvider,
         name: String,
         endpoint: String,
         apiKey: String?,
-        models: [String] = [],
-        configJSONRaw: String? = nil
+        selectedModel: String,
+        models: [String] = []
     ) {
         self.id = UUID().uuidString
         self.provider = provider
         self.name = name
         self.endpoint = endpoint
         self.apiKey = apiKey
-        self.configJSONRaw = configJSONRaw
+        self.selectedModel = selectedModel
         self.models = models
     }
 }
