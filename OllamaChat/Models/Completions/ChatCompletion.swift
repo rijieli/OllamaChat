@@ -9,13 +9,72 @@
 import SwiftUI
 
 protocol ChatCompletionAbility {
-    func send(messages: [ChatMessage]) async
+    func send(messages: [ChatMessage]) async throws -> AsyncThrowingStream<String, Error>
     func cancel() async
 }
 
-enum ModelProvider: String, Codable {
+enum ChatCompletionError: Error, LocalizedError {
+    case invalidConfiguration(String)
+    case networkError(Error)
+    case authenticationError
+    case rateLimitError
+    case modelNotAvailable(String)
+    case unknownError(Error)
+
+    var errorDescription: String? {
+        switch self {
+        case .invalidConfiguration(let message):
+            return "Configuration error: \(message)"
+        case .networkError(let error):
+            return "Network error: \(error.localizedDescription)"
+        case .authenticationError:
+            return "Authentication failed. Please check your API key."
+        case .rateLimitError:
+            return "Rate limit exceeded. Please try again later."
+        case .modelNotAvailable(let model):
+            return "Model '\(model)' is not available."
+        case .unknownError(let error):
+            return "Unknown error: \(error.localizedDescription)"
+        }
+    }
+}
+
+enum ModelProvider: String, Codable, CaseIterable {
     case ollama
-    case api
+    case openai
+    case anthropic
+    case gemini
+    case deepseek
+    case groq
+    case togetherai
+    case custom
+
+    var displayName: String {
+        switch self {
+        case .ollama: return "Ollama (Local)"
+        case .openai: return "OpenAI"
+        case .anthropic: return "Anthropic Claude"
+        case .gemini: return "Google Gemini"
+        case .deepseek: return "DeepSeek"
+        case .groq: return "Groq"
+        case .togetherai: return "Together AI"
+        case .custom: return "Custom API"
+        }
+    }
+
+    var requiresAPIKey: Bool {
+        switch self {
+        case .ollama: return false
+        case .openai, .anthropic, .gemini, .deepseek, .groq, .togetherai, .custom: return true
+        }
+    }
+
+    var supportsProxy: Bool {
+        switch self {
+        case .ollama: return false
+        case .openai, .anthropic, .gemini, .deepseek, .groq, .togetherai, .custom: return true
+        }
+    }
 }
 
 struct ChatCompletion: Codable, Identifiable {

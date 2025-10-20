@@ -63,7 +63,11 @@
         }
       }
     },
+    "API Key" : {
+
+    },
     "API Key (optional)" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -143,7 +147,7 @@
         }
       }
     },
-    "Configuration (optional JSON)" : {
+    "Configuration (JSON)" : {
 
     },
     "Connected" : {
@@ -261,6 +265,9 @@
     "Endpoint URL" : {
 
     },
+    "Endpoint URL (optional)" : {
+
+    },
     "Enter your name" : {
       "localizations" : {
         "zh-Hans" : {
@@ -343,6 +350,12 @@
           }
         }
       }
+    },
+    "http://127.0.0.1:11434" : {
+
+    },
+    "https://api.example.com/v1" : {
+
     },
     "If you are using a web URL as the host, you can try removing the port. If you are running Ollama locally, try using http://127.0.0.1 and set the port to 11434." : {
       "localizations" : {
