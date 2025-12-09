@@ -65,19 +65,29 @@ enum ModelProvider: String, Codable, CaseIterable {
 
     var supportsProxy: Bool {
         switch self {
-        case .ollama: return false
-        case .openai, .anthropic, .gemini, .openrouter: return true
+        case .ollama, .openrouter: return false
+        case .openai, .anthropic, .gemini: return true
         }
     }
 
     var isOpenAICompatible: Bool {
         switch self {
         case .ollama: return false
-        case .openai, .openrouter: return true
+        case .openai: return true
+        case .openrouter: return false
         case .anthropic: return false
         case .gemini: return false
         }
     }
+}
+
+struct ModelMetadata: Codable {
+    var fileSize: String?
+    var family: String?
+    var format: String?
+    var quantizationLevel: String?
+    var source: String? // "ollama", "huggingface", etc.
+    var parameters: String?
 }
 
 struct ChatCompletion: Codable, Identifiable {
@@ -88,6 +98,13 @@ struct ChatCompletion: Codable, Identifiable {
     var apiKey: String?
     var selectedModel: String
     var models: [String]
+
+    // New properties for unified handling
+    var isEnabled: Bool = true
+    var isDefault: Bool = false
+    var contextLength: Int?
+    var lastUsed: Date?
+    var metadata: ModelMetadata?
 
     init(
         provider: ModelProvider,
@@ -105,4 +122,34 @@ struct ChatCompletion: Codable, Identifiable {
         self.selectedModel = selectedModel
         self.models = models
     }
+
+    // Computed properties
+    var isValid: Bool {
+        switch provider {
+        case .ollama:
+            return !endpoint.isEmpty && isValidURL(endpoint)
+        case .openai, .anthropic, .gemini, .openrouter:
+            return !(apiKey?.isEmpty ?? true)
+        }
+    }
+
+    var displayName: String {
+        return name.isEmpty ? provider.displayName : name
+    }
+
+    // Helper for URL validation
+    private func isValidURL(_ urlString: String) -> Bool {
+        guard let url = URL(string: urlString) else { return false }
+        return url.scheme != nil && url.host != nil
+    }
+
+    // Default configuration for testing
+    static let `default` = ChatCompletion(
+        provider: .ollama,
+        name: "Default Ollama",
+        endpoint: "http://localhost:11434",
+        apiKey: nil,
+        selectedModel: "llama2",
+        models: []
+    )
 }

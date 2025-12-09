@@ -14,8 +14,14 @@ enum ProviderFactory {
         switch configuration.provider {
         case .ollama:
             return OllamaProvider(configuration: configuration)
-        case .openai, .anthropic, .gemini, .openrouter:
-            return AIProxyProvider(configuration: configuration)
+        case .openai:
+            return OpenAIProvider(configuration: configuration)
+        case .anthropic:
+            return AnthropicProvider(configuration: configuration)
+        case .gemini:
+            return GeminiProvider(configuration: configuration)
+        case .openrouter:
+            return OpenRouterDirectProvider(configuration: configuration)
         }
     }
 
@@ -60,7 +66,13 @@ enum ProviderFactory {
                 endpoint: "https://api.openai.com/v1",
                 apiKey: nil,
                 selectedModel: "gpt-4o",
-                models: ["gpt-4o", "gpt-3.5-turbo"]
+                models: [
+                    "gpt-4o",
+                    "gpt-4o-mini",
+                    "gpt-4-turbo",
+                    "gpt-4",
+                    "gpt-3.5-turbo"
+                ]
             )
         case .anthropic:
             return ChatCompletion(
@@ -69,7 +81,13 @@ enum ProviderFactory {
                 endpoint: "https://api.anthropic.com",
                 apiKey: nil,
                 selectedModel: "claude-3-5-sonnet-20241022",
-                models: ["claude-3-5-sonnet", "claude-3-opus"]
+                models: [
+                    "claude-3-5-sonnet-20241022",
+                    "claude-3-5-haiku-20241022",
+                    "claude-3-opus-20240229",
+                    "claude-3-sonnet-20240229",
+                    "claude-3-haiku-20240307"
+                ]
             )
         case .gemini:
             return ChatCompletion(
@@ -78,7 +96,11 @@ enum ProviderFactory {
                 endpoint: "https://generativelanguage.googleapis.com",
                 apiKey: nil,
                 selectedModel: "gemini-1.5-pro",
-                models: ["gemini-1.5-pro"]
+                models: [
+                    "gemini-1.5-pro",
+                    "gemini-1.5-flash",
+                    "gemini-1.0-pro"
+                ]
             )
         case .openrouter:
             return ChatCompletion(
@@ -87,7 +109,15 @@ enum ProviderFactory {
                 endpoint: "https://openrouter.ai/api/v1",
                 apiKey: nil,
                 selectedModel: "anthropic/claude-3.5-sonnet",
-                models: ["anthropic/claude-3.5-sonnet"]
+                models: [
+                    "anthropic/claude-3.5-sonnet",
+                    "anthropic/claude-3.5-haiku",
+                    "openai/gpt-4o",
+                    "openai/gpt-4o-mini",
+                    "google/gemini-pro-1.5",
+                    "meta-llama/llama-3.1-70b-instruct",
+                    "meta-llama/llama-3.1-8b-instruct"
+                ]
             )
         }
     }

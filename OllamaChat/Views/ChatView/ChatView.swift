@@ -10,18 +10,18 @@ import SwiftUI
 import SwiftUIIntrospect
 
 struct ChatView: View {
-    
+
     @StateObject var viewModel = ChatViewModel.shared
     @StateObject var speechCenter = TextSpeechCenter.shared
-    
+
     @FocusState var promptFieldIsFocused: Bool
-    
+
     @Namespace var bottomID
-    
+
     var statusTitle: LocalizedStringKey {
         viewModel.errorModel == nil ? "Connected" : "Error"
     }
-    
+
     var body: some View {
         VStack(spacing: 0) {
             messagesList
@@ -30,12 +30,16 @@ struct ChatView: View {
         .frame(minWidth: 400, idealWidth: 700, minHeight: 500, idealHeight: 800)
         .background(Color.ocPrimaryBackground)
         .task {
-            await getTags()
+            // Initialize model registry and fetch all models
+            await UnifiedModelRegistry.shared.fetchAllModels()
+
+            // Note: viewModel.model is computed and will automatically reflect
+            // the default configuration when needed
         }
         .toolbar {
             ToolbarItemGroup(placement: .automatic) {
                 modelPicker()
-                
+
                 Button {
                     viewModel.clearError()
                 } label: {
@@ -63,10 +67,10 @@ struct ChatView: View {
                     .frame(width: 320)
                     .interactiveDismissDisabled()
                 }
-                
+
                 Button {
                     Task {
-                        await getTags()
+                        await UnifiedModelRegistry.shared.fetchAllModels()
                     }
                 } label: {
                     Image(systemName: "arrow.clockwise")
@@ -75,16 +79,5 @@ struct ChatView: View {
             }
         }
     }
-    
-    func getTags() async {
-        do {
-            await MainActor.run {
-                viewModel.waitingResponse = false
-                viewModel.errorModel = nil
-            }
-            _ = try await fetchOllamaModels()
-        } catch {
-            viewModel.handleError(error)
-        }
-    }
 }
+

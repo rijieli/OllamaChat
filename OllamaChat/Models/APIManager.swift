@@ -11,7 +11,8 @@ import SwiftUI
 class APIManager: ObservableObject {
     enum Constants {
         static let kLocalStore = "ModelManager.LocalStore"
-        static let kDefaultCompletion = "ModelManager.LocalStore"
+        static let kDefaultCompletion = "ModelManager.DefaultCompletionID"
+        static let kConfigurationsV2 = "ModelManager.Configurations.v2"
     }
 
     static let shared = APIManager()
@@ -20,14 +21,14 @@ class APIManager: ObservableObject {
         get { UserDefaults.standard.getCodable(forKey: Constants.kLocalStore) ?? [] }
         set { UserDefaults.standard.setCodable(newValue, forKey: Constants.kLocalStore) }
     }
-    
+
     private static var defaultCompletionID: String? {
-        get { UserDefaults.standard.value(forKey: Constants.kLocalStore) as? String }
-        set { UserDefaults.standard.set(newValue, forKey: Constants.kLocalStore) }
+        get { UserDefaults.standard.string(forKey: Constants.kDefaultCompletion) }
+        set { UserDefaults.standard.set(newValue, forKey: Constants.kDefaultCompletion) }
     }
 
     @Published var completions: [ChatCompletion] = APIManager.storage
-    
+
     @Published var defaultCompletion: ChatCompletion? = {
         let completions = APIManager.storage
         if let defaultID =  APIManager.defaultCompletionID {
@@ -40,6 +41,10 @@ class APIManager: ObservableObject {
             APIManager.defaultCompletionID = defaultCompletion?.id
         }
     }
+
+    // New properties for unified model handling
+    @Published var isLoadingModels = false
+    @Published var modelFetchError: Error?
 
     private init() {}
 
@@ -145,35 +150,137 @@ class APIManager: ObservableObject {
         return ModelProvider.allCases
     }
 
-    func migrateLegacyCompletions() {
-        // Migrate old provider types and configurations for backwards compatibility
-        for i in 0..<completions.count {
-            let oldValue = completions[i].provider.rawValue
-            switch oldValue {
-            case "api":
-                completions[i].provider = .openai
-            case "deepseek", "groq", "togetherai", "custom":
-                // Migrate unsupported providers to OpenRouter
-                completions[i].provider = .openrouter
-            default:
-                break
+    // MARK: - Unified Model Management
+
+    /// Refresh all models for all enabled providers
+    @MainActor
+    func refreshAllModels() async {
+        isLoadingModels = true
+        modelFetchError = nil
+
+        defer { isLoadingModels = false }
+
+        do {
+            // For each enabled configuration, fetch models
+            for i in completions.indices {
+                guard completions[i].isEnabled else { continue }
+
+                do {
+                    let provider = try await createProvider(for: completions[i])
+                    // Note: This would need to be implemented in providers
+                    // For now, we'll keep existing models
+                    log.debug("Models refreshed for \(completions[i].displayName)")
+                } catch {
+                    log.error("Failed to refresh models for \(completions[i].displayName): \(error)")
+                }
             }
 
-            // Set default model if selectedModel is empty
-            if completions[i].selectedModel.isEmpty {
-                completions[i].selectedModel = getDefaultModelForProvider(completions[i].provider)
-            }
+            // Save updated configurations
+            APIManager.storage = completions
+        } catch {
+            modelFetchError = error
+            log.error("Failed to refresh models: \(error)")
         }
+    }
+
+    /// Get all enabled configurations
+    var enabledConfigurations: [ChatCompletion] {
+        return completions.filter { $0.isEnabled }
+    }
+
+    /// Get configurations for a specific provider
+    func getConfigurationsForProvider(_ provider: ModelProvider) -> [ChatCompletion] {
+        return completions.filter { $0.provider == provider }
+    }
+
+    /// Add a new configuration
+    func addConfiguration(_ config: ChatCompletion) throws {
+        // Validate configuration
+        try ProviderFactory.validateConfiguration(config)
+
+        completions.append(config)
+
+        // Set as default if it's the first one
+        if completions.count == 1 {
+            defaultCompletion = config
+        }
+
         APIManager.storage = completions
     }
 
-    private func getDefaultModelForProvider(_ provider: ModelProvider) -> String {
-        switch provider {
-        case .ollama: return "llama2"
-        case .openai: return "gpt-4o"
-        case .anthropic: return "claude-3-5-sonnet-20241022"
-        case .gemini: return "gemini-1.5-pro"
-        case .openrouter: return "anthropic/claude-3.5-sonnet"
+    /// Update an existing configuration
+    func updateConfiguration(_ config: ChatCompletion) throws {
+        guard let index = completions.firstIndex(where: { $0.id == config.id }) else {
+            throw APIManagerError.configurationNotFound
+        }
+
+        // Validate configuration
+        try ProviderFactory.validateConfiguration(config)
+
+        completions[index] = config
+        APIManager.storage = completions
+
+        // Update default if needed
+        if defaultCompletion?.id == config.id {
+            defaultCompletion = config
+        }
+    }
+
+    /// Delete a configuration
+    func deleteConfiguration(id: String) {
+        completions.removeAll { $0.id == id }
+        APIManager.storage = completions
+
+        // Update default if it was deleted
+        if defaultCompletion?.id == id {
+            defaultCompletion = completions.first
+        }
+    }
+
+    /// Set default configuration
+    func setDefaultConfiguration(_ config: ChatCompletion) {
+        guard completions.contains(where: { $0.id == config.id }) else { return }
+        defaultCompletion = config
+
+        // Update isDefault flag on all configurations
+        for i in completions.indices {
+            completions[i].isDefault = (completions[i].id == config.id)
+        }
+
+        APIManager.storage = completions
+    }
+
+    /// Toggle configuration enabled state
+    func toggleConfigurationEnabled(id: String) {
+        guard let index = completions.firstIndex(where: { $0.id == id }) else { return }
+        completions[index].isEnabled.toggle()
+        APIManager.storage = completions
+    }
+
+    /// Update last used timestamp
+    func updateLastUsed(id: String) {
+        guard let index = completions.firstIndex(where: { $0.id == id }) else { return }
+        completions[index].lastUsed = Date()
+        APIManager.storage = completions
+    }
+}
+
+// MARK: - Error Types
+
+enum APIManagerError: Error, LocalizedError {
+    case configurationNotFound
+    case invalidConfiguration(String)
+    case providerNotAvailable
+
+    var errorDescription: String? {
+        switch self {
+        case .configurationNotFound:
+            return "Configuration not found"
+        case .invalidConfiguration(let message):
+            return "Invalid configuration: \(message)"
+        case .providerNotAvailable:
+            return "Provider not available"
         }
     }
 }
+

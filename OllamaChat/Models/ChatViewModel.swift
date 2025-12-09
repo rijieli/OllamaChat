@@ -56,14 +56,18 @@ class ChatViewModel: ObservableObject {
     @Published var current = ChatMessage(role: .user, content: "")
     
     var model: String {
-        let modelName = currentChat?.model
-        if let modelName,
-            tags.models.contains(where: { $0.name == modelName })
-        {
-            return modelName
-        } else {
-            return tags.models.first?.name ?? ""
+        // First try to get from current chat
+        if let chatModel = currentChat?.model, !chatModel.isEmpty {
+            return chatModel
         }
+
+        // Then try to get from default configuration
+        if let defaultConfig = APIManager.shared.defaultCompletion {
+            return defaultConfig.selectedModel
+        }
+
+        // Fallback to tags for backward compatibility
+        return tags.models.first?.name ?? ""
     }
     
     @Published var messages: [ChatMessage]
@@ -80,56 +84,138 @@ class ChatViewModel: ObservableObject {
     
     @MainActor
     func send() {
+        // Check if we have a default configuration to use with provider system
+        if let defaultConfig = APIManager.shared.defaultCompletion {
+            sendWithProvider(defaultConfig)
+        } else {
+            // Fallback to legacy Ollama direct API
+            sendLegacy()
+        }
+    }
+
+    @MainActor
+    private func sendWithProvider(_ configuration: ChatCompletion) {
         chatTask = Task {
             guard let chatID = currentChat?.id else { return }
             do {
                 self.errorModel = nil
                 waitingResponse = true
-                
+
+                // Add system message if needed
                 if messages.isEmpty {
                     messages.append(.globalSystem)
                 }
-                
+
+                // Add user message if not empty
                 if !current.content.isEmpty {
                     self.messages.append(current)
                     scrollToBottom()
                 }
-                
+
                 current = .init(role: .user, content: "")
-                
+
+                // Update configuration with last used
+                APIManager.shared.updateLastUsed(id: configuration.id)
+
+                // Create provider
+                let provider = try await APIManager.shared.createProvider(for: configuration)
+
+                print("[Sending] <\(configuration.selectedModel)> via \(configuration.provider.displayName)")
+
+                // Create streaming response
+                let stream = try await provider.send(messages: messages)
+
+                // Create assistant message
+                let assistantMessage = ChatMessage(role: .assistant, content: "")
+                messages.append(assistantMessage)
+
+                // Process stream
+                for try await chunk in stream {
+                    // Check if chat is still active
+                    if chatID != currentChat?.id {
+                        CoreDataStack.shared.saveContext()
+                        break
+                    }
+
+                    // Update message content
+                    if let index = messages.lastIndex(where: { $0.id == assistantMessage.id }) {
+                        messages[index].content += chunk
+                        scrollThrottler.call {
+                            self.scrollToBottom()
+                        }
+                    }
+                }
+
+                waitingResponse = false
+
+                // Update chat
+                if let currentChat {
+                    currentChat.messages = messages
+                    currentChat.model = configuration.selectedModel
+                } else {
+                    let newChat = SingleChat.createNewSingleChat(messages: messages, model: configuration.selectedModel)
+                    currentChat = newChat
+                }
+
+                CoreDataStack.shared.saveContext()
+            } catch {
+                handleError(error)
+            }
+        }
+    }
+
+    @MainActor
+    private func sendLegacy() {
+        chatTask = Task {
+            guard let chatID = currentChat?.id else { return }
+            do {
+                self.errorModel = nil
+                waitingResponse = true
+
+                if messages.isEmpty {
+                    messages.append(.globalSystem)
+                }
+
+                if !current.content.isEmpty {
+                    self.messages.append(current)
+                    scrollToBottom()
+                }
+
+                current = .init(role: .user, content: "")
+
                 let filterdModel = self.model
-                
+
                 if filterdModel.isEmpty {
                     waitingResponse = false
                     errorModel = noModelsError(error: nil)
                     return
                 }
-                
+
                 let chatHistory = ChatModel(
                     model: filterdModel,
                     messages: messages,
                     options: chatOptions
                 )
-                
+
                 let endpoint = APIEndPoint + "chat"
-                
+
                 guard let url = URL(string: endpoint) else {
                     throw NetError.invalidURL(error: nil)
                 }
-                
+
                 var request = URLRequest(url: url)
                 request.httpMethod = "POST"
                 request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-                
+
                 let encoder = JSONEncoder()
                 let httpBody = try encoder.encode(chatHistory)
                 request.httpBody = httpBody
-                
+
                 print("[Sending] <\(chatHistory.model)> \(messages.last?.content.count ?? 0)")
-                
+
                 let data: URLSession.AsyncBytes
                 let response: URLResponse
-                
+
                 do {
                     let sessionConfig = URLSessionConfiguration.default
                     sessionConfig.timeoutIntervalForRequest = Double(timeoutRequest) ?? 60
@@ -140,21 +226,21 @@ class ChatViewModel: ObservableObject {
                 } catch {
                     throw NetError.unreachable(error: error)
                 }
-                
+
                 guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
                     throw NetError.invalidResponse(error: nil)
                 }
-                
+
                 let decoder = JSONDecoder()
                 let message = ChatMessage(role: .assistant, content: "")
                 for try await line in data.lines {
                     guard !line.isEmpty else { continue }
-                    
+
                     if chatID != currentChat?.id {
                         CoreDataStack.shared.saveContext()
                         break
                     }
-                    
+
                     if messages.last?.id != message.id {
                         messages.append(message)
                     }
@@ -167,7 +253,7 @@ class ChatViewModel: ObservableObject {
                         self.scrollToBottom()
                     }
                 }
-                
+
                 waitingResponse = false
                 if let currentChat {
                     currentChat.messages = messages
@@ -183,7 +269,7 @@ class ChatViewModel: ObservableObject {
             }
         }
     }
-    
+
     @MainActor
     func resendUntil(_ message: ChatMessage) {
         guard let idx = messages.firstIndex(where: { $0.id == message.id }) else { return }
@@ -255,10 +341,16 @@ class ChatViewModel: ObservableObject {
     }
     
     func newChat() {
+        // Use default configuration's model if available
+        let modelName = APIManager.shared.defaultCompletion?.selectedModel ?? tags.models.first?.name ?? ""
         let newChat = SingleChat.createNewSingleChat(
             messages: [],
-            model: tags.models.first?.name ?? ""
+            model: modelName
         )
+
+        // Note: providerId will be stored in currentChat when messages are sent
+        // This requires Core Data schema migration for full persistence
+
         CoreDataStack.shared.saveContext()
         loadChat(newChat)
     }

@@ -53,6 +53,9 @@
     "Add New API Connection" : {
 
     },
+    "Add New Configuration" : {
+
+    },
     "Advanced Settings" : {
       "localizations" : {
         "zh-Hans" : {
@@ -194,6 +197,9 @@
 
     },
     "Current Local IPv6:" : {
+
+    },
+    "Default" : {
 
     },
     "Delete" : {
@@ -379,6 +385,9 @@
         }
       }
     },
+    "Last used: %@ ago" : {
+
+    },
     "Leave empty to use default endpoint" : {
 
     },
@@ -458,6 +467,7 @@
       }
     },
     "Model:" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -512,6 +522,9 @@
           }
         }
       }
+    },
+    "No configurations available" : {
+
     },
     "No models downloaded locally. Add a model by typing the name in the field at the bottom of the page." : {
 

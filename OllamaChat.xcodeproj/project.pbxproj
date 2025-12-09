@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		DB093D8C2D50E6A200EFD525 /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = DB093D8B2D50E6A200EFD525 /* MarkdownUI */; };
-		DB58EEBF2EA62FAB00374D26 /* AIProxy in Frameworks */ = {isa = PBXBuildFile; productRef = DB58EEBE2EA62FAB00374D26 /* AIProxy */; };
 		DB59E7072D630519002A99E1 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = DB59E7062D630519002A99E1 /* Sparkle */; };
 		DB5B94DF2B7FB76600273FFA /* SwiftUIIntrospect in Frameworks */ = {isa = PBXBuildFile; productRef = DB5B94DE2B7FB76600273FFA /* SwiftUIIntrospect */; };
 		DBF592C62B872B3E0085D1BF /* Hue in Frameworks */ = {isa = PBXBuildFile; productRef = DBF592C52B872B3E0085D1BF /* Hue */; };
@@ -65,7 +64,6 @@
 			files = (
 				DB093D8C2D50E6A200EFD525 /* MarkdownUI in Frameworks */,
 				DB59E7072D630519002A99E1 /* Sparkle in Frameworks */,
-				DB58EEBF2EA62FAB00374D26 /* AIProxy in Frameworks */,
 				DBF592C62B872B3E0085D1BF /* Hue in Frameworks */,
 				DB5B94DF2B7FB76600273FFA /* SwiftUIIntrospect in Frameworks */,
 			);
@@ -141,7 +139,6 @@
 				DBF592C52B872B3E0085D1BF /* Hue */,
 				DB093D8B2D50E6A200EFD525 /* MarkdownUI */,
 				DB59E7062D630519002A99E1 /* Sparkle */,
-				DB58EEBE2EA62FAB00374D26 /* AIProxy */,
 			);
 			productName = "Ollama Swift";
 			productReference = 327B90432AD17EA300A94F10 /* Chat.app */;
@@ -228,7 +225,6 @@
 				DBF592C42B872B3E0085D1BF /* XCRemoteSwiftPackageReference "Hue" */,
 				DB093D892D50E63200EFD525 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
 				DB59E7052D630519002A99E1 /* XCRemoteSwiftPackageReference "Sparkle" */,
-				DB58EEBD2EA62FAB00374D26 /* XCRemoteSwiftPackageReference "AIProxySwift" */,
 			);
 			productRefGroup = 327B90442AD17EA300A94F10 /* Products */;
 			projectDirPath = "";
@@ -645,14 +641,6 @@
 				minimumVersion = 2.4.1;
 			};
 		};
-		DB58EEBD2EA62FAB00374D26 /* XCRemoteSwiftPackageReference "AIProxySwift" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/lzell/AIProxySwift";
-			requirement = {
-				branch = main;
-				kind = branch;
-			};
-		};
 		DB59E7052D630519002A99E1 /* XCRemoteSwiftPackageReference "Sparkle" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/sparkle-project/Sparkle";
@@ -684,11 +672,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = DB093D892D50E63200EFD525 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */;
 			productName = MarkdownUI;
-		};
-		DB58EEBE2EA62FAB00374D26 /* AIProxy */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = DB58EEBD2EA62FAB00374D26 /* XCRemoteSwiftPackageReference "AIProxySwift" */;
-			productName = AIProxy;
 		};
 		DB59E7062D630519002A99E1 /* Sparkle */ = {
 			isa = XCSwiftPackageProductDependency;

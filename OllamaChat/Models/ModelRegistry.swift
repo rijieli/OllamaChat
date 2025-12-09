@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import AIProxy
 
 @MainActor
 class ModelRegistry: ObservableObject {

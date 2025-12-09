@@ -12,6 +12,8 @@ extension UserDefaults {
     func setCodable<T: Codable>(_ codable: T, forKey key: String) {
         do {
             let encoder = JSONEncoder()
+            encoder.dateEncodingStrategy = .iso8601
+            encoder.outputFormatting = .prettyPrinted
             let data = try encoder.encode(codable)
             set(data, forKey: key)
         } catch {
@@ -25,6 +27,7 @@ extension UserDefaults {
         }
         do {
             let decoder = JSONDecoder()
+            decoder.dateDecodingStrategy = .iso8601
             return try decoder.decode(T.self, from: data)
         } catch {
             log.error("Error decoding object for key \(key): \(error)")
