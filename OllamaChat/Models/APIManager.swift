@@ -22,6 +22,7 @@ class APIManager: ObservableObject {
         set { UserDefaults.standard.setCodable(newValue, forKey: Constants.kLocalStore) }
     }
 
+  
     private static var defaultCompletionID: String? {
         get { UserDefaults.standard.string(forKey: Constants.kDefaultCompletion) }
         set { UserDefaults.standard.set(newValue, forKey: Constants.kDefaultCompletion) }

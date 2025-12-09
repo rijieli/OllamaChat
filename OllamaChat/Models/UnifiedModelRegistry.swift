@@ -89,16 +89,9 @@ class UnifiedModelRegistry: ObservableObject {
     // MARK: - Ollama Model Fetching
 
     private func fetchOllamaModels() async throws -> [String] {
-        // Try to get the first enabled Ollama configuration
-        let endpoint: String
-        if let ollamaConfig = APIManager.shared.enabledConfigurations
-            .first(where: { $0.provider == .ollama }) {
-            endpoint = ollamaConfig.endpoint
-        } else {
-            // Fall back to default local Ollama endpoint
-            endpoint = "http://127.0.0.1:11434"
-            log.debug("No Ollama configuration found, using default endpoint: \(endpoint)")
-        }
+        // Always use the default local Ollama endpoint
+        // Ollama configurations are optional and for custom endpoints only
+        let endpoint = "http://127.0.0.1:11434"
 
         guard let url = URL(string: "\(endpoint)/api/tags") else {
             throw ModelRegistryError.invalidURL
@@ -139,6 +132,49 @@ class UnifiedModelRegistry: ObservableObject {
         let decodedResponse = try JSONDecoder().decode(OllamaResponse.self, from: data)
         let modelNames = decodedResponse.models.map { $0.name }
         log.debug("Fetched \(modelNames.count) Ollama models: \(modelNames)")
+
+        // Also update ChatViewModel.tags for the legacy system
+        var ollamaModels: [OllamaLanguageModel] = []
+
+        for model in decodedResponse.models {
+            // Create details separately to avoid complex expression
+            let parentModel = ""
+            let format = model.details?.format ?? ""
+            let family = model.details?.family ?? ""
+            let families = model.details?.families
+            let parameterSize = model.details?.parameter_size ?? ""
+            let quantizationLevel = model.details?.quantization_level ?? ""
+
+            let details = OllamaModelParameter(
+                parentModel: parentModel,
+                format: format,
+                family: family,
+                families: families,
+                parameterSize: parameterSize,
+                quantizationLevel: quantizationLevel
+            )
+
+            let name = model.name
+            let modifiedAt = model.modified_at ?? ""
+            let size = Int(model.size ?? 0)
+            let digest = model.digest ?? ""
+
+            let ollamaModel = OllamaLanguageModel(
+                name: name,
+                model: name,
+                modifiedAt: modifiedAt,
+                size: size,
+                digest: digest,
+                details: details
+            )
+
+            ollamaModels.append(ollamaModel)
+        }
+
+        await MainActor.run {
+            ChatViewModel.shared.tags = OllamaModelGroup(models: ollamaModels)
+        }
+
         return modelNames
     }
 
@@ -146,43 +182,32 @@ class UnifiedModelRegistry: ObservableObject {
         let apiManager = APIManager.shared
         var completions = apiManager.completions
 
-        // Check if there's an Ollama configuration
-        let ollamaIndex = completions.firstIndex(where: { $0.provider == .ollama })
+        // Update existing Ollama configuration(s) if they exist
+        // Don't auto-create configurations - Ollama is handled separately via ChatViewModel.tags
+        var hasOllamaConfig = false
+        for i in completions.indices {
+            if completions[i].provider == .ollama {
+                hasOllamaConfig = true
+                completions[i].models = models
 
-        if ollamaIndex == nil {
-            // Create a default Ollama configuration if none exists
-            let defaultOllamaConfig = ChatCompletion(
-                provider: .ollama,
-                name: "Local Ollama",
-                endpoint: "http://127.0.0.1:11434",
-                apiKey: nil,
-                selectedModel: models.first ?? "llama2",
-                models: models
-            )
-            completions.append(defaultOllamaConfig)
-            log.debug("Created default Ollama configuration")
-        } else {
-            // Update existing Ollama configuration(s)
-            for i in completions.indices {
-                if completions[i].provider == .ollama {
-                    completions[i].models = models
-
-                    // Update selected model if it's not in the new list
-                    if !models.contains(completions[i].selectedModel) {
-                        completions[i].selectedModel = models.first ?? "llama2"
-                    }
-
-                    // Set metadata if available
-                    if completions[i].metadata == nil {
-                        completions[i].metadata = ModelMetadata()
-                    }
-                    completions[i].metadata?.source = "ollama"
+                // Update selected model if it's not in the new list
+                if !models.contains(completions[i].selectedModel) && !models.isEmpty {
+                    completions[i].selectedModel = models.first ?? "llama2"
                 }
+
+                // Set metadata if available
+                if completions[i].metadata == nil {
+                    completions[i].metadata = ModelMetadata()
+                }
+                completions[i].metadata?.source = "ollama"
             }
         }
 
-        apiManager.completions = completions
-        UserDefaults.standard.setCodable(completions, forKey: APIManager.Constants.kLocalStore)
+        // Only save if there are Ollama configurations
+        if hasOllamaConfig {
+            apiManager.completions = completions
+            UserDefaults.standard.setCodable(completions, forKey: APIManager.Constants.kLocalStore)
+        }
     }
 
     // MARK: - Web API Model Management

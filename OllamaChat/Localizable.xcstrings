@@ -391,6 +391,9 @@
     "Leave empty to use default endpoint" : {
 
     },
+    "Local model" : {
+
+    },
     "Local Models:" : {
       "localizations" : {
         "zh-Hans" : {
@@ -400,6 +403,9 @@
           }
         }
       }
+    },
+    "Local Ollama" : {
+
     },
     "Manual Entry" : {
 
@@ -523,9 +529,6 @@
         }
       }
     },
-    "No configurations available" : {
-
-    },
     "No models downloaded locally. Add a model by typing the name in the field at the bottom of the page." : {
 
     },
@@ -564,6 +567,9 @@
           }
         }
       }
+    },
+    "Ollama service not running" : {
+
     },
     "Please select a chat from the list or create a new one" : {
       "localizations" : {
@@ -676,6 +682,9 @@
           }
         }
       }
+    },
+    "Selected" : {
+
     },
     "Settings" : {
       "localizations" : {
