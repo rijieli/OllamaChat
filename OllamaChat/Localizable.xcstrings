@@ -4,6 +4,9 @@
     "" : {
 
     },
+    "(%lld)" : {
+
+    },
     "%@" : {
       "localizations" : {
         "zh-Hans" : {
@@ -50,10 +53,13 @@
         }
       }
     },
-    "Add New API Connection" : {
+    "Add Connection" : {
 
     },
     "Add New Configuration" : {
+
+    },
+    "Add your first API connection to get started" : {
 
     },
     "Advanced Settings" : {
@@ -66,9 +72,6 @@
         }
       }
     },
-    "API Key" : {
-
-    },
     "API Key (optional)" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -80,7 +83,11 @@
         }
       }
     },
+    "API Key *" : {
+
+    },
     "Are you sure you want to delete '%@'?" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -89,6 +96,9 @@
           }
         }
       }
+    },
+    "Are you sure you want to delete '%@'? This action cannot be undone." : {
+
     },
     "Are you sure you want to delete the model?" : {
       "localizations" : {
@@ -160,6 +170,9 @@
         }
       }
     },
+    "Connection Name" : {
+
+    },
     "Context Window" : {
       "localizations" : {
         "zh-Hans" : {
@@ -184,6 +197,7 @@
       }
     },
     "Create" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -192,6 +206,9 @@
           }
         }
       }
+    },
+    "Create Connection" : {
+
     },
     "Current Local IPv4:" : {
 
@@ -258,6 +275,9 @@
     "e.g., gpt-4, claude-3-sonnet" : {
 
     },
+    "e.g., My OpenAI API" : {
+
+    },
     "Edit" : {
       "localizations" : {
         "zh-Hans" : {
@@ -271,13 +291,22 @@
     "Edit API Connection" : {
 
     },
-    "Endpoint URL" : {
-
-    },
     "Endpoint URL (optional)" : {
 
     },
+    "Endpoint URL *" : {
+
+    },
+    "Enter manually" : {
+
+    },
+    "Enter model name" : {
+
+    },
     "Enter model name manually or fetch from API" : {
+
+    },
+    "Enter your API key" : {
 
     },
     "Enter your name" : {
@@ -300,16 +329,16 @@
         }
       }
     },
-    "Error fetching models" : {
+    "Eta (%.2f)" : {
 
     },
-    "Eta (%.2f)" : {
+    "Failed to fetch models" : {
 
     },
     "Fetch Models" : {
 
     },
-    "Fetching models..." : {
+    "Fetching available models..." : {
 
     },
     "Find more models: [Models](https://ollama.com/library)" : {
@@ -331,6 +360,9 @@
           }
         }
       }
+    },
+    "General settings for the app." : {
+
     },
     "Get Model:" : {
       "localizations" : {
@@ -388,9 +420,6 @@
     "Last used: %@ ago" : {
 
     },
-    "Leave empty to use default endpoint" : {
-
-    },
     "Local model" : {
 
     },
@@ -407,7 +436,7 @@
     "Local Ollama" : {
 
     },
-    "Manual Entry" : {
+    "Manage your API configurations" : {
 
     },
     "Max tokens to predict" : {
@@ -446,10 +475,7 @@
         }
       }
     },
-    "Model" : {
-
-    },
-    "Model name" : {
+    "Model *" : {
 
     },
     "Model name. e.g. llama3" : {
@@ -494,6 +520,7 @@
       }
     },
     "Name" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -516,7 +543,7 @@
         }
       }
     },
-    "No API connections configured." : {
+    "No API Connections" : {
 
     },
     "No chat selected" : {
@@ -683,7 +710,13 @@
         }
       }
     },
+    "Save Changes" : {
+
+    },
     "Selected" : {
+
+    },
+    "Set as default" : {
 
     },
     "Settings" : {
@@ -818,6 +851,9 @@
 
     },
     "Web API Connections" : {
+
+    },
+    "Your API key is stored securely and never shared" : {
 
     }
   },

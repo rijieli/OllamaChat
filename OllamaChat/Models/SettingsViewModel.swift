@@ -9,12 +9,12 @@
 import SwiftUI
 
 class SettingsViewModel: ObservableObject {
-
+    
     static let shared = SettingsViewModel()
-
+    
     private init() {}
-
-    @Published var selectedTab = SettingsView.SettingsTab.ollama
+    
+    @Published var selectedTab = SettingsView.SettingsTab.general
     @Published var selectedOllamaSubTab = SettingsView.OllamaSubTab.general
-
+    
 }

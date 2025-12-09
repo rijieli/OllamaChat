@@ -13,6 +13,7 @@ import AppKit
 struct SettingsView: View {
     
     enum SettingsTab: String, CaseIterable, Identifiable {
+        case general
         case ollama
         case webAPI
         
@@ -20,12 +21,14 @@ struct SettingsView: View {
         var title: LocalizedStringKey {
             switch self {
             case .ollama: "Ollama"
+            case .general: "General"
             case .webAPI: "Web API"
             }
         }
         var sfSymbol: String {
             switch self {
             case .ollama: "server.rack"
+            case .general: "gearshape"
             case .webAPI: "network"
             }
         }
@@ -128,46 +131,9 @@ struct SettingsView: View {
             VStack(spacing: 0) {
                 switch viewModel.selectedTab {
                 case .ollama:
-                    VStack(spacing: 0) {
-                        // Segmented control for Ollama sub-tabs
-                        Picker("", selection: $viewModel.selectedOllamaSubTab) {
-                            ForEach(OllamaSubTab.allCases) { subTab in
-                                Text(subTab.title).tag(subTab)
-                            }
-                        }
-                        .pickerStyle(.segmented)
-                        .padding(.vertical, 16)
-                        .maxWidth()
-                        .background {
-                            LinearGradient(
-                                colors: [
-                                    .white,
-                                    .white,
-                                    .white.opacity(0.8),
-                                    .white.opacity(0)
-                                ],
-                                startPoint: .top,
-                                endPoint: .bottom
-                            )
-                        }
-                        .zIndex(1)
-                        
-                        ScrollView(.vertical, showsIndicators: false) {
-                            // Content based on selected sub-tab
-                            switch viewModel.selectedOllamaSubTab {
-                            case .general:
-                                GeneralSettingsView()
-                                    .padding(.horizontal, 24)
-                            case .models:
-                                ManageModelsView()
-                                    .padding(.horizontal, 24)
-                            case .chatOptions:
-                                ChatOptionsView()
-                                    .padding(.horizontal, 24)
-                            }
-                        }
-                        .ifScrollClipDisabled(true)
-                    }
+                    OllamaSettingsView()
+                case .general:
+                    GeneralSettingsView()
                 case .webAPI:
                     ScrollView(.vertical, showsIndicators: false) {
                         WebAPISettingsView()
