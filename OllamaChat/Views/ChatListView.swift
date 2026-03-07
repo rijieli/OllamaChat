@@ -102,8 +102,8 @@ struct ChatListView: View {
         .sheet(isPresented: $chatViewModel.showModelConfiguration) {
             ModelConfigurationView(viewModel: chatViewModel)
         }
-        .sheet(isPresented: $chatViewModel.showEditingMessage) {
-            MessageEditorView(viewModel: chatViewModel)
+        .sheet(item: $chatViewModel.showEditingMessage) { messageToEdit in
+            MessageEditorView(originalMessage: messageToEdit)
         }
         .sheet(isPresented: $chatViewModel.showSettingsView) {
             SettingsView()

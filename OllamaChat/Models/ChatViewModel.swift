@@ -56,9 +56,7 @@ class ChatViewModel: ObservableObject {
     
     @Published var showModelConfiguration = false
     
-    @Published var showEditingMessage = false
-    
-    var editingCellIndex: Int? = nil
+    @Published var showEditingMessage: ChatMessage?
     
     @Published var currentChat: SingleChat? = nil
     
@@ -225,9 +223,8 @@ class ChatViewModel: ObservableObject {
     }
     
     func editMessage(_ message: ChatMessage) {
-        guard let idx = messages.firstIndex(where: { $0.id == message.id }) else { return }
-        editingCellIndex = idx
-        showEditingMessage = true
+        guard messages.firstIndex(where: { $0.id == message.id }) != nil else { return }
+        showEditingMessage = message
     }
     
     func updateMessage(at index: Int, with newMessage: ChatMessage) {

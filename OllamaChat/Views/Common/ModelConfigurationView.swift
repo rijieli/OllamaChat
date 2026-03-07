@@ -92,7 +92,7 @@ struct ModelConfigurationView: View {
                 .padding(.horizontal, 12)
                 .padding(.vertical, 16)
                 .background(
-                    RoundedRectangle(cornerRadius: 8)
+                    RoundedRectangle(cornerRadius: 8.variable(os26: 16))
                         .strokeBorder(Color.ocDividerColor, lineWidth: 1)
                 )
                 .background()

@@ -309,6 +309,16 @@
     "Max tokens to predict" : {
 
     },
+    "Message" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "信息"
+          }
+        }
+      }
+    },
     "Min P (%.2f)" : {
 
     },
@@ -484,6 +494,16 @@
         }
       }
     },
+    "Resend" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重新发送"
+          }
+        }
+      }
+    },
     "Reset to Default" : {
       "localizations" : {
         "zh-Hans" : {
@@ -585,16 +605,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "翻译"
-          }
-        }
-      }
-    },
-    "Update" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "更新"
           }
         }
       }
