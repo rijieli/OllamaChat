@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1610"
+   LastUpgradeVersion = "2630"
    version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "327B90422AD17EA300A94F10"
                BuildableName = "Chat.app"
-               BlueprintName = "Chat"
+               BlueprintName = "OllamaChat"
                ReferencedContainer = "container:OllamaChat.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -70,7 +70,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "327B90422AD17EA300A94F10"
             BuildableName = "Chat.app"
-            BlueprintName = "Chat"
+            BlueprintName = "OllamaChat"
             ReferencedContainer = "container:OllamaChat.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -87,7 +87,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "327B90422AD17EA300A94F10"
             BuildableName = "Chat.app"
-            BlueprintName = "Chat"
+            BlueprintName = "OllamaChat"
             ReferencedContainer = "container:OllamaChat.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

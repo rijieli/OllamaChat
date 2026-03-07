@@ -18,11 +18,7 @@ extension Color {
     }
     
     public static var ocDividerColor: Color {
-        #if os(macOS)
         return Color(NSColor.separatorColor)
-        #else
-        return Color(UIColor.separator)
-        #endif
     }
     
     public static var ocAssistantBubbleBackground: Color {

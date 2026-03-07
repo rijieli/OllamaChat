@@ -4,9 +4,6 @@
     "" : {
 
     },
-    "(%lld)" : {
-
-    },
     "%@" : {
       "localizations" : {
         "zh-Hans" : {
@@ -133,6 +130,7 @@
       }
     },
     "Chats" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -202,12 +200,6 @@
         }
       }
     },
-    "Current Local IPv4:" : {
-
-    },
-    "Current Local IPv6:" : {
-
-    },
     "Default Model:" : {
 
     },
@@ -232,6 +224,7 @@
       }
     },
     "Done" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -342,6 +335,7 @@
       }
     },
     "Host IP:" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -360,9 +354,6 @@
           }
         }
       }
-    },
-    "http://127.0.0.1:11434" : {
-
     },
     "If you are using a web URL as the host, you can try removing the port. If you are running Ollama locally, try using http://127.0.0.1 and set the port to 11434." : {
       "localizations" : {
@@ -524,9 +515,6 @@
     "Ollama" : {
 
     },
-    "Ollama Chat" : {
-
-    },
     "Ollama Service" : {
       "localizations" : {
         "zh-Hans" : {
@@ -538,6 +526,7 @@
       }
     },
     "Ollama Service Config" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -564,6 +553,7 @@
       }
     },
     "Port:" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -622,9 +612,6 @@
     "Repeat Penalty (%.2f)" : {
 
     },
-    "Request Timeout" : {
-
-    },
     "Request Timeout (Default 60s):" : {
       "localizations" : {
         "zh-Hans" : {
@@ -644,9 +631,6 @@
           }
         }
       }
-    },
-    "Resources Timeout" : {
-
     },
     "Retry" : {
       "localizations" : {
@@ -672,6 +656,7 @@
 
     },
     "Settings" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {

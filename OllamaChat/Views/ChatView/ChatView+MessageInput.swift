@@ -16,15 +16,16 @@ extension ChatView {
                 .disableAutoQuotes()
                 .font(.body)
                 .onSubmit {
-                    allowSubmitNewMessage ? viewModel.send() : nil
+                    if allowSubmitNewMessage {
+                        viewModel.send()
+                    }
                 }
                 .disabled(viewModel.waitingResponse || viewModel.requiresModelSelectionOverlay)
                 .focused($promptFieldIsFocused)
                 .modifier(BorderDecoratedStyleModifier())
                 .overlay(alignment: .trailing) {
                     ZStack {
-                        if CurrentOS.ismacOS
-                            && allowSubmitNewMessage
+                        if allowSubmitNewMessage
                             && !viewModel.requiresModelSelectionOverlay
                         {
                             Button {

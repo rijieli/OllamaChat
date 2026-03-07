@@ -21,15 +21,11 @@ private let timeFormatter: DateFormatter = {
 struct ChatListView: View {
     
     var cornerRadius: CGFloat = {
-        #if os(macOS)
         if #available(macOS 26, *) {
             return 16
         } else {
             return 8
         }
-        #else
-        return 16
-        #endif
     }()
 
     @Environment(\.managedObjectContext) private var viewContext
@@ -105,32 +101,16 @@ struct ChatListView: View {
         }
         .sheet(isPresented: $chatViewModel.showModelConfiguration) {
             ModelConfigurationView(viewModel: chatViewModel)
-            #if os(iOS)
-            .presentationDetents([.medium, .large])
-            #endif
         }
         .sheet(isPresented: $chatViewModel.showEditingMessage) {
             MessageEditorView(viewModel: chatViewModel)
-            #if os(iOS)
-            .presentationDetents([.medium, .large])
-            #endif
         }
-        #if os(macOS)
         .sheet(isPresented: $chatViewModel.showSettingsView) {
             SettingsView()
         }
-        #else
-        .sheet(isPresented: $chatViewModel.showSettingsView) {
-            SettingsiOSView()
-        }
-        .navigationDestination(item: $chatViewModel.currentChat) { _ in
-            ChatView()
-        }
-        #endif
     }
 
     var footerView: some View {
-        #if os(macOS)
         HStack(spacing: 8) {
             Button {
                 chatViewModel.newChat()
@@ -178,27 +158,6 @@ struct ChatListView: View {
         .padding(.bottom, 12)
         .padding(.top, 8)
         .padding(.horizontal, 12)
-        #else
-        HStack(spacing: 16) {
-            Button{
-                chatViewModel.showSettingsView = true
-            } label: {
-                gearLabel
-            }
-            
-            Spacer()
-            
-            Button {
-                chatViewModel.newChat()
-            } label: {
-                Image(systemName: "plus")
-                    .frame(width: 32, height: 32)
-            }
-        }
-        .font(.system(size: 20, weight: .semibold))
-        .padding(.horizontal, 16)
-        .frame(height: 44)
-        #endif
     }
 
     var gearLabel: some View {
@@ -232,25 +191,14 @@ extension ChatListView {
         .background(
             RoundedRectangle(cornerRadius: cornerRadius).fill(.background)
                 .overlay {
-                    #if os(macOS)
                     RoundedRectangle(cornerRadius: cornerRadius)
                         .strokeBorder(
                             selected ? Color.accentColor : Color.ocDividerColor,
                             lineWidth: selected ? 2 : 0.5
                         )
-                    #else
-                    RoundedRectangle(cornerRadius: cornerRadius)
-                        .strokeBorder(
-                            selected ? Color.accentColor : Color.ocDividerColor,
-                            lineWidth: 1
-                        )
-                    #endif
                 }
         )
         .contentShape(.rect)
-        #if os(iOS)
-        .contentShape(.contextMenuPreview, RoundedRectangle(cornerRadius: cornerRadius))
-        #endif
         .ifGeometryGroup()
     }
 

@@ -50,7 +50,7 @@ extension ChatView {
     }
     
     var buttonHeight: CGFloat {
-        CurrentOS.isiOS ? 36 : 32
+        32
     }
     
     private func chatActionsView() -> some View {
@@ -69,12 +69,6 @@ extension ChatView {
             
             actionButton("gearshape.fill") {
                 viewModel.showModelConfiguration = true
-            }
-            
-            if CurrentOS.isiOS, allowSubmitNewMessage {
-                actionButton("arrow.up") {
-                    viewModel.send()
-                }
             }
         }
         .frame(height: 40)

@@ -5,10 +5,7 @@
 //  Created by Roger on 2025/2/23.
 //  Copyright © 2025 IdeasForm. All rights reserved.
 //
-
-#if os(macOS)
 import SwiftUI
-import AVFoundation
 
 extension SettingsView {
     struct OllamaSettingsView: View {
@@ -230,7 +227,6 @@ private struct DefaultModelPickerView: View {
         return "\(modelName) (Unavailable)"
     }
 }
-#endif
 
 private let helperText: LocalizedStringKey = """
     If you are using a web URL as the host, you can try removing the port. If you are running Ollama locally, try using http://127.0.0.1 and set the port to 11434.

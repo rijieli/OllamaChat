@@ -8,60 +8,32 @@
 import SwiftUI
 
 struct ContentView: View {
-    
-    #if os(macOS)
     @Environment(\.appearsActive) var appearsActive
-    #else
-    @Environment(\.scenePhase) var scenePhase
-    #endif
 
     @ObservedObject var viewModel: ChatViewModel = .shared
 
     var body: some View {
-        #if os(macOS)
-            NavigationSplitView {
-                ChatListView().navigationSplitViewColumnWidth(min: 240, ideal: 320, max: 400)
-            } detail: {
-                if viewModel.currentChat == nil {
-                    ChatPlaceholderView()
-                } else {
-                    ChatView().navigationSplitViewColumnWidth(min: 400, ideal: 600)
-                }
+        NavigationSplitView {
+            ChatListView().navigationSplitViewColumnWidth(min: 240, ideal: 320, max: 400)
+        } detail: {
+            if viewModel.currentChat == nil {
+                ChatPlaceholderView()
+            } else {
+                ChatView().navigationSplitViewColumnWidth(min: 400, ideal: 600)
             }
-            .navigationTitle(viewModel.currentChat?.name ?? "Ollama Chat")
-            .onChange(of: appearsActive) { newValue in
-                if newValue == true {
-                    log.debug("Refresh Models")
-                    Task {
-                        do {
-                            _ = try await fetchOllamaModels(timeout: 5)
-                        } catch {
-                            print(error.localizedDescription)
-                        }
+        }
+        .navigationTitle(viewModel.currentChat?.name ?? "Ollama Chat")
+        .onChange(of: appearsActive) { newValue in
+            if newValue == true {
+                log.debug("Refresh Models")
+                Task {
+                    do {
+                        _ = try await fetchOllamaModels(timeout: 5)
+                    } catch {
+                        print(error.localizedDescription)
                     }
                 }
             }
-        #else
-            NavigationStack {
-                ChatListView()
-                    .navigationTitle("Chats")
-            }
-            .onChange(of: scenePhase) { newValue in
-                onScenePhaseChanged(newValue)
-            }
-        #endif
-    }
-    
-    func onScenePhaseChanged(_ phase: ScenePhase) {
-        switch phase {
-        case .active:
-            print("Scene is now active")
-        case .background:
-            print("Scene is now in background")
-        case .inactive:
-            print("Scene is now inactive")
-        @unknown default:
-            print("Scene @unknown default")
         }
     }
 }

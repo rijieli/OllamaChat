@@ -61,14 +61,10 @@ struct MessageEditorView: View {
                         }
                         .frame(height: 32)
                         .maxWidth(alignment: .trailing)
-                        #if os(iOS)
-                        .buttonStyle(.borderedProminent)
-                        #endif
                     }
                     .padding(12)
                 }
                 .maxFrame()
-                .padding(.top, CurrentOS.isiOS ? 24 : 0)
             }
         }
         .frame(minWidth: 360, minHeight: 300, idealHeight: 300)

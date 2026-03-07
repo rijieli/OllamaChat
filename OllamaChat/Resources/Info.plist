@@ -4,11 +4,6 @@
 <dict>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
-	<key>UILaunchScreen</key>
-	<dict>
-		<key>UIImageName</key>
-		<string></string>
-	</dict>
 	<key>SUFeedURL</key>
 	<string>https://raw.githubusercontent.com/rijieli/OllamaChat/main/appcast.xml</string>
 	<key>SUEnableAutomaticChecks</key>

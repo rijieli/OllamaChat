@@ -36,11 +36,7 @@ class ChatViewModel: ObservableObject {
         chatOptions = Self.globalChatOptions()
 
         let lastChat: SingleChat?
-        #if os(macOS)
         lastChat = SingleChat.fetchLastCreated()
-        #else
-        lastChat = nil
-        #endif
         if let lastChat {
             messages = lastChat.messages
             currentChat = lastChat

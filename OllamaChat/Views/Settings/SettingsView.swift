@@ -4,11 +4,8 @@
 //
 //  Created by Karim ElGhandour on 14.10.23.
 //
-
-#if os(macOS)
-import AVFoundation
-import SwiftUI
 import AppKit
+import SwiftUI
 
 struct SettingsView: View {
 
@@ -147,5 +144,3 @@ struct SettingsView: View {
         }
     }
 }
-
-#endif

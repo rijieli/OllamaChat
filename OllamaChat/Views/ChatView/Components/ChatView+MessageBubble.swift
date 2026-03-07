@@ -6,6 +6,7 @@
 //  Copyright © 2024 IdeasForm. All rights reserved.
 //
 
+import AppKit
 import MarkdownUI
 import SwiftUI
 
@@ -73,7 +74,7 @@ extension ChatView {
                     TextSpeechCenter.shared.read(message.content)
                 }
                 #endif
-                if #available(macOS 14.4, iOS 17.4, *) {
+                if #available(macOS 14.4, *) {
                     MessageBubbleButton("Translate", "translate") {
                         showTranslation = true
                     }
@@ -82,14 +83,9 @@ extension ChatView {
                     viewModel.editMessage(message)
                 }
                 MessageBubbleButton("Copy", "doc.on.doc") {
-                    #if os(macOS)
                     let pasteboard = NSPasteboard.general
-                    pasteboard.clearContents()  // Clears the pasteboard before writing
+                    pasteboard.clearContents()
                     pasteboard.setString(message.content, forType: .string)
-                    #else
-                    let pasteboard = UIPasteboard.general
-                    pasteboard.string = message.content
-                    #endif
                 }
             }
         }
@@ -117,7 +113,6 @@ struct MessageBubbleButton: View {
         Button {
             action?()
         } label: {
-            #if os(macOS)
             ZStack {
                 if hovered {
                     RoundedRectangle(cornerRadius: 6)
@@ -131,9 +126,6 @@ struct MessageBubbleButton: View {
             .frame(width: 24, height: 24)
             .contentShape(Rectangle())
             .onHover { hovered = $0 }
-            #else
-            Label(title, systemImage: systemName)
-            #endif
         }
         .buttonStyle(.simpleVisualEffect)
         .help(title)

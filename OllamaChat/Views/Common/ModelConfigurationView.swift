@@ -5,8 +5,6 @@
 //  Created by Roger on 2026/3/7.
 //  Copyright © 2026 IdeasForm. All rights reserved.
 //
-
-
 import SwiftUI
 
 struct ModelConfigurationView: View {
@@ -58,12 +56,7 @@ struct ModelConfigurationView: View {
         .padding(.horizontal, 12)
         .padding(.top, 16)
         .padding(.bottom, 12)
-        #if os(macOS)
         .frame(width: 500, height: 600)
-        #else
-        .frame(minHeight: 500, idealHeight: 500)
-        #endif
-        .padding(.top, CurrentOS.isiOS ? 24 : 0)
         .task {
             systemPrompt =
                 viewModel.messages.first(where: { $0.role == .system })?.content ?? ""
@@ -130,9 +123,6 @@ struct ModelConfigurationView: View {
         }
         .frame(height: 32)
         .maxWidth(alignment: .trailing)
-        #if os(iOS)
-        .buttonStyle(.borderedProminent)
-        #endif
     }
 
     private func dismiss() {
