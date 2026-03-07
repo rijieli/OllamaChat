@@ -38,6 +38,7 @@ extension ChatView {
                 Color.clear.frame(height: 40)
                     .id(bottomID)
             }
+            .scrollViewClipsToBounds(false)
             .maxFrame()
             //.defaultScrollAnchor(.bottom)
             .overlay(alignment: .bottom) {

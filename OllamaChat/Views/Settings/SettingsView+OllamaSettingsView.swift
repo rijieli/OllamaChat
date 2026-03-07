@@ -47,7 +47,7 @@ extension SettingsView {
                             .padding(.horizontal, 24)
                     }
                 }
-                .ifScrollClipDisabled(true)
+                .scrollViewClipsToBounds(false)
             }
         }
     }

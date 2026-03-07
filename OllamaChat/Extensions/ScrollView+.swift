@@ -7,15 +7,23 @@
 //
 
 import SwiftUI
+import SwiftUIIntrospect
+
+extension View {
+    public func introspectScrollView(scope: IntrospectionScope? = nil, customize: @escaping (NSScrollView) -> ()) -> some View {
+        introspect(.scrollView, on: .macOS(.v13, .v14, .v15, .v26), scope: scope, customize: customize)
+    }
+}
 
 extension ScrollView {
-    
-    func ifScrollClipDisabled(_ value: Bool) -> some View {
+    @ViewBuilder
+    func scrollViewClipsToBounds(_ bool: Bool) -> some View {
         if #available(macOS 14, *) {
-            return self.scrollClipDisabled(value)
+            self.scrollClipDisabled(!bool)
         } else {
-            return self
+            self.introspectScrollView { v in
+                v.clipsToBounds = bool
+            }
         }
     }
-    
 }

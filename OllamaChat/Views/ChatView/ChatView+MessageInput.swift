@@ -61,9 +61,12 @@ extension ChatView {
         .onChange(of: viewModel.unavailableCurrentChatModelName) { unavailableModel in
             promptFieldIsFocused = unavailableModel == nil && !viewModel.waitingResponse
         }
-        .padding(.bottom, ChatView.padding)
         .maxFrame()
         .frame(height: 160)
+        .padding(.bottom, ChatView.padding)
+        .background(alignment: .bottom) {
+            Color.ocPrimaryBackground.frame(height: 50)
+        }
     }
     
     var allowSubmitNewMessage: Bool {
