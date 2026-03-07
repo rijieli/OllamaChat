@@ -98,4 +98,120 @@ final class OllamaChatTests: XCTestCase {
         }
     }
 
+    func testOllamaThinkingResponseDecodesThinkingOnlyChunk() throws {
+        let data = """
+        {
+          "model": "qwen3",
+          "created_at": "2026-03-07T00:00:00Z",
+          "done": false,
+          "message": {
+            "role": "assistant",
+            "thinking": "Working through the answer"
+          }
+        }
+        """.data(using: .utf8)!
+
+        let response = try JSONDecoder().decode(ResponseModel.self, from: data)
+
+        XCTAssertEqual(response.message.role, .assistant)
+        XCTAssertEqual(response.message.content, "")
+        XCTAssertEqual(response.message.thinking, "Working through the answer")
+        XCTAssertEqual(
+            response.chatStreamChunk,
+            ChatStreamChunk(content: "", thinking: "Working through the answer")
+        )
+    }
+
+    func testOllamaThinkingResponseDecodesContentAndThinkingChunk() throws {
+        let data = """
+        {
+          "model": "qwen3",
+          "created_at": "2026-03-07T00:00:00Z",
+          "done": false,
+          "message": {
+            "role": "assistant",
+            "content": "Final answer",
+            "thinking": "Reasoning text"
+          }
+        }
+        """.data(using: .utf8)!
+
+        let response = try JSONDecoder().decode(ResponseModel.self, from: data)
+
+        XCTAssertEqual(response.message.content, "Final answer")
+        XCTAssertEqual(response.message.thinking, "Reasoning text")
+    }
+
+    func testChatMessageRoundTripPreservesThinking() throws {
+        let original = [
+            ChatMessage(role: .assistant, content: "Final answer", thinking: "Reasoning text")
+        ]
+
+        let data = try JSONEncoder().encode(original)
+        let decoded = try JSONDecoder().decode([ChatMessage].self, from: data)
+
+        XCTAssertEqual(decoded.first?.content, "Final answer")
+        XCTAssertEqual(decoded.first?.thinking, "Reasoning text")
+    }
+
+    func testChatMessageDecodesOldHistoryWithoutThinking() throws {
+        let data = """
+        [
+          {
+            "role": "assistant",
+            "content": "Legacy response"
+          }
+        ]
+        """.data(using: .utf8)!
+
+        let decoded = try JSONDecoder().decode([ChatMessage].self, from: data)
+
+        XCTAssertEqual(decoded.first?.content, "Legacy response")
+        XCTAssertNil(decoded.first?.thinking)
+    }
+
+    func testAutomaticThinkModeOmitsThinkKey() throws {
+        let request = ChatModel(
+            model: "qwen3",
+            messages: [ChatMessage(role: .user, content: "Hello")],
+            options: .defaultValue,
+            think: OllamaThinkMode.automatic.requestValue
+        )
+
+        let json = try jsonObject(from: JSONEncoder().encode(request))
+
+        XCTAssertNil(json["think"])
+    }
+
+    func testBooleanThinkModeEncodesBoolean() throws {
+        let request = ChatModel(
+            model: "qwen3",
+            messages: [ChatMessage(role: .user, content: "Hello")],
+            options: .defaultValue,
+            think: OllamaThinkMode.enabled.requestValue
+        )
+
+        let json = try jsonObject(from: JSONEncoder().encode(request))
+
+        XCTAssertEqual(json["think"] as? Bool, true)
+    }
+
+    func testLevelThinkModeEncodesStringLevel() throws {
+        let request = ChatModel(
+            model: "gpt-oss:20b",
+            messages: [ChatMessage(role: .user, content: "Hello")],
+            options: .defaultValue,
+            think: OllamaThinkMode.medium.requestValue
+        )
+
+        let json = try jsonObject(from: JSONEncoder().encode(request))
+
+        XCTAssertEqual(json["think"] as? String, "medium")
+    }
+
+}
+
+private func jsonObject(from data: Data) throws -> [String: Any] {
+    let jsonObject = try JSONSerialization.jsonObject(with: data)
+    return try XCTUnwrap(jsonObject as? [String: Any])
 }

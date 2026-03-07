@@ -47,6 +47,19 @@ extension SingleChat {
         return NSFetchRequest<SingleChat>(entityName: "SingleChat")
     }
 
+    public class func fetch(by id: UUID) -> SingleChat? {
+        let fetchRequest: NSFetchRequest<SingleChat> = SingleChat.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+        fetchRequest.fetchLimit = 1
+
+        do {
+            return try CoreDataStack.shared.context.fetch(fetchRequest).first
+        } catch {
+            print("Failed to fetch SingleChat by id: \(error)")
+            return nil
+        }
+    }
+
     public class func fetchLastCreated() -> SingleChat? {
         let fetchRequest: NSFetchRequest<SingleChat> = SingleChat.fetchRequest()
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "createdAt", ascending: false)]

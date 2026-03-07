@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		DB093D8C2D50E6A200EFD525 /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = DB093D8B2D50E6A200EFD525 /* MarkdownUI */; };
-		DB59E7072D630519002A99E1 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = DB59E7062D630519002A99E1 /* Sparkle */; };
+		DB59E7072D630519002A99E1 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; platformFilters = (macos, ); productRef = DB59E7062D630519002A99E1 /* Sparkle */; };
 		DB5B94DF2B7FB76600273FFA /* SwiftUIIntrospect in Frameworks */ = {isa = PBXBuildFile; productRef = DB5B94DE2B7FB76600273FFA /* SwiftUIIntrospect */; };
 		DBF592C62B872B3E0085D1BF /* Hue in Frameworks */ = {isa = PBXBuildFile; productRef = DBF592C52B872B3E0085D1BF /* Hue */; };
 /* End PBXBuildFile section */

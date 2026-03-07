@@ -56,9 +56,6 @@
     "Add Connection" : {
 
     },
-    "Add New Configuration" : {
-
-    },
     "Add your first API connection to get started" : {
 
     },
@@ -109,6 +106,9 @@
           }
         }
       }
+    },
+    "Auto uses the model default. Low, Medium, and High only apply to models that support think levels, such as GPT-OSS." : {
+
     },
     "Automatic apply to each chat." : {
       "localizations" : {
@@ -543,6 +543,9 @@
         }
       }
     },
+    "No AI configuration available. Please set up a provider in settings." : {
+      "comment" : "Error message when no AI configuration is available"
+    },
     "No API Connections" : {
 
     },
@@ -677,6 +680,9 @@
         }
       }
     },
+    "Request was cancelled." : {
+      "comment" : "Error message for cancelled request"
+    },
     "Reset to Default" : {
       "localizations" : {
         "zh-Hans" : {
@@ -764,6 +770,15 @@
           }
         }
       }
+    },
+    "The AI provider is not available." : {
+      "comment" : "Error message when provider is unavailable"
+    },
+    "The current configuration is invalid." : {
+      "comment" : "Error message for invalid configuration"
+    },
+    "The selected model is not available." : {
+      "comment" : "Error message for unavailable model"
     },
     "Thinking" : {
 

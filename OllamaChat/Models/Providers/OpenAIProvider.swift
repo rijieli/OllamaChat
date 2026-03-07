@@ -17,7 +17,7 @@ class OpenAIProvider: ObservableObject, ChatCompletionAbility {
         self.configuration = configuration
     }
 
-    func send(messages: [ChatMessage]) async throws -> AsyncThrowingStream<String, Error> {
+    func send(messages: [ChatMessage]) async throws -> AsyncThrowingStream<ChatStreamChunk, Error> {
         return AsyncThrowingStream { continuation in
             let task = Task {
                 do {
@@ -42,7 +42,7 @@ class OpenAIProvider: ObservableObject, ChatCompletionAbility {
 
     private func processMessages(
         _ messages: [ChatMessage],
-        continuation: AsyncThrowingStream<String, Error>.Continuation
+        continuation: AsyncThrowingStream<ChatStreamChunk, Error>.Continuation
     ) async throws {
         guard let apiKey = configuration.apiKey, !apiKey.isEmpty else {
             throw ChatCompletionError.invalidConfiguration("API key is required for OpenAI")
@@ -127,7 +127,7 @@ class OpenAIProvider: ObservableObject, ChatCompletionAbility {
                 do {
                     let chunk = try JSONDecoder().decode(OpenAIChunk.self, from: jsonData)
                     if let content = chunk.choices.first?.delta.content {
-                        continuation.yield(content)
+                        continuation.yield(ChatStreamChunk(content: content))
                     }
                 } catch {
                     // Continue processing other lines if one fails

@@ -134,7 +134,9 @@ class LLMAgent: ObservableObject {
                 // Process stream
                 for try await chunk in stream {
                     guard !Task.isCancelled else { throw LLMAgentError.requestCancelled }
-                    receivingMessage?.content += chunk
+                    guard !chunk.isEmpty, var receivingMessage else { continue }
+                    receivingMessage.append(chunk)
+                    self.receivingMessage = receivingMessage
                 }
 
                 // Add complete assistant message to history

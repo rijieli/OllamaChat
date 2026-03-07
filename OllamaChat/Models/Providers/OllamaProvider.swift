@@ -17,7 +17,7 @@ class OllamaProvider: ObservableObject, ChatCompletionAbility {
         self.configuration = configuration
     }
     
-    func send(messages: [ChatMessage]) async throws -> AsyncThrowingStream<String, Error> {
+    func send(messages: [ChatMessage]) async throws -> AsyncThrowingStream<ChatStreamChunk, Error> {
         return AsyncThrowingStream { continuation in
             let task = Task {
                 do {
@@ -42,7 +42,7 @@ class OllamaProvider: ObservableObject, ChatCompletionAbility {
     
     private func processMessages(
         _ messages: [ChatMessage],
-        continuation: AsyncThrowingStream<String, Error>.Continuation
+        continuation: AsyncThrowingStream<ChatStreamChunk, Error>.Continuation
     ) async throws {
         // Parse the endpoint to extract host and port
         guard let url = URL(string: configuration.endpoint) else {
@@ -59,36 +59,26 @@ class OllamaProvider: ObservableObject, ChatCompletionAbility {
             throw ChatCompletionError.invalidConfiguration("Cannot build API endpoint URL")
         }
         
+        let chatViewModel = ChatViewModel.shared
+
         // Prepare the request
         var request = URLRequest(url: requestURL)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        
-        // Convert messages to Ollama format
-        let ollamaMessages = messages.map { message in
-            [
-                "role": message.role == .user ? "user" : "assistant",
-                "content": message.content,
-            ]
-        }
-        
-        // Prepare request body
-        let requestBody: [String: Any] = [
-            "model": configuration.selectedModel,
-            "messages": ollamaMessages,
-            "stream": true,
-        ]
 
-        guard let jsonData = try? JSONSerialization.data(withJSONObject: requestBody) else {
-            throw ChatCompletionError.invalidConfiguration("Cannot serialize request body")
-        }
-        
-        request.httpBody = jsonData
+        let requestBody = ChatModel(
+            model: configuration.selectedModel,
+            messages: messages,
+            options: chatViewModel.chatOptions,
+            think: chatViewModel.ollamaThinkRequestValue
+        )
+        let encoder = JSONEncoder()
+        request.httpBody = try encoder.encode(requestBody)
         
         // Create URLSession with custom configuration for streaming
         let sessionConfig = URLSessionConfiguration.default
-        sessionConfig.timeoutIntervalForRequest = 60
-        sessionConfig.timeoutIntervalForResource = 604800  // Long timeout for long-running responses
+        sessionConfig.timeoutIntervalForRequest = Double(chatViewModel.timeoutRequest) ?? 60
+        sessionConfig.timeoutIntervalForResource = Double(chatViewModel.timeoutResource) ?? 604800
         let session = URLSession(configuration: sessionConfig)
         
         // Make the streaming request - use bytes(for:) for streaming responses
@@ -121,8 +111,10 @@ class OllamaProvider: ObservableObject, ChatCompletionAbility {
             
             do {
                 let decoded = try decoder.decode(ResponseModel.self, from: lineData)
-                // Extract the content from the message
-                continuation.yield(decoded.message.content)
+                let chunk = decoded.chatStreamChunk
+                if !chunk.isEmpty {
+                    continuation.yield(chunk)
+                }
             } catch {
                 // Continue processing other lines if one fails
                 continue

@@ -33,6 +33,8 @@ class ChatViewModel: ObservableObject {
     @AppStorage("port") var port = "11434"
     @AppStorage("timeoutRequest") var timeoutRequest = "60"
     @AppStorage("timeoutResource") var timeoutResource = "604800"
+    @AppStorage("ChatViewModel.OllamaThinkMode")
+    private var ollamaThinkModeRawValue = OllamaThinkMode.automatic.rawValue
     
     @Published var chatOptions: ChatOptions = {
         UserDefaults.standard.getCodable(forKey: "ChatViewModel.ChatOptions") ?? .defaultValue
@@ -54,6 +56,21 @@ class ChatViewModel: ObservableObject {
     @Published var showSettingsView = false
     
     @Published var current = ChatMessage(role: .user, content: "")
+
+    var ollamaThinkMode: OllamaThinkMode {
+        get {
+            let thinkMode = OllamaThinkMode(rawValue: ollamaThinkModeRawValue)
+            assert(thinkMode != nil, "Unknown Ollama think mode: \(ollamaThinkModeRawValue)")
+            return thinkMode ?? .automatic
+        }
+        set {
+            ollamaThinkModeRawValue = newValue.rawValue
+        }
+    }
+
+    var ollamaThinkRequestValue: OllamaThinkRequestValue? {
+        ollamaThinkMode.requestValue
+    }
     
     var model: String {
         // First try to get from current chat
@@ -137,9 +154,13 @@ class ChatViewModel: ObservableObject {
                         break
                     }
 
+                    if chunk.isEmpty {
+                        continue
+                    }
+
                     // Update message content
                     if let index = messages.lastIndex(where: { $0.id == assistantMessage.id }) {
-                        messages[index].content += chunk
+                        messages[index].append(chunk)
                         scrollThrottler.call {
                             self.scrollToBottom()
                         }
@@ -194,7 +215,8 @@ class ChatViewModel: ObservableObject {
                 let chatHistory = ChatModel(
                     model: filterdModel,
                     messages: messages,
-                    options: chatOptions
+                    options: chatOptions,
+                    think: ollamaThinkRequestValue
                 )
 
                 let endpoint = APIEndPoint + "chat"
@@ -232,7 +254,8 @@ class ChatViewModel: ObservableObject {
                 }
 
                 let decoder = JSONDecoder()
-                let message = ChatMessage(role: .assistant, content: "")
+                let assistantMessage = ChatMessage(role: .assistant, content: "")
+                messages.append(assistantMessage)
                 for try await line in data.lines {
                     guard !line.isEmpty else { continue }
 
@@ -241,13 +264,14 @@ class ChatViewModel: ObservableObject {
                         break
                     }
 
-                    if messages.last?.id != message.id {
-                        messages.append(message)
-                    }
                     let data = line.data(using: .utf8)!
-                    let decoded = try! decoder.decode(ResponseModel.self, from: data)
-                    if let index = self.messages.lastIndex(where: { $0.id == message.id }) {
-                        self.messages[index].content += decoded.message.content
+                    let decoded = try decoder.decode(ResponseModel.self, from: data)
+                    let chunk = decoded.chatStreamChunk
+                    if chunk.isEmpty {
+                        continue
+                    }
+                    if let index = self.messages.lastIndex(where: { $0.id == assistantMessage.id }) {
+                        self.messages[index].append(chunk)
                     }
                     scrollThrottler.call {
                         self.scrollToBottom()

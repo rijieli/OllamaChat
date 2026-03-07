@@ -34,6 +34,12 @@ struct ResponseModel: Decodable, Hashable {
         case evalDuration = "eval_duration"
     }
 
+    var chatStreamChunk: ChatStreamChunk {
+        ChatStreamChunk(
+            content: message.content,
+            thinking: message.thinking ?? ""
+        )
+    }
 }
 
 struct DownloadResponseModel: Decodable, Hashable {

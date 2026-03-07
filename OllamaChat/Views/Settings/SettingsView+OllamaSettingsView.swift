@@ -407,6 +407,13 @@ struct ChatOptionsView: View {
     @ObservedObject var viewModel: ChatViewModel = .shared
     @AppStorage("ChatOptionsView.showAdvancedSettings")
     private var showAdvancedSettings = false
+
+    private var thinkModeBinding: Binding<OllamaThinkMode> {
+        Binding(
+            get: { viewModel.ollamaThinkMode },
+            set: { viewModel.ollamaThinkMode = $0 }
+        )
+    }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -426,8 +433,23 @@ struct ChatOptionsView: View {
                 
                 Button("Reset to Default") {
                     viewModel.chatOptions = .defaultValue
+                    viewModel.ollamaThinkMode = .automatic
                 }
             }
+
+            LabeledContent("Thinking") {
+                Picker("Thinking", selection: thinkModeBinding) {
+                    ForEach(OllamaThinkMode.allCases) { thinkMode in
+                        Text(thinkMode.displayName)
+                            .tag(thinkMode)
+                    }
+                }
+                .pickerStyle(.menu)
+            }
+
+            Text("Auto uses the model default. Low, Medium, and High only apply to models that support think levels, such as GPT-OSS.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
             
             LabeledContent("Temperature (\(viewModel.chatOptions.temperature, specifier: "%.2f"))")
             {

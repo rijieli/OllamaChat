@@ -17,7 +17,7 @@ class GeminiProvider: ObservableObject, ChatCompletionAbility {
         self.configuration = configuration
     }
 
-    func send(messages: [ChatMessage]) async throws -> AsyncThrowingStream<String, Error> {
+    func send(messages: [ChatMessage]) async throws -> AsyncThrowingStream<ChatStreamChunk, Error> {
         return AsyncThrowingStream { continuation in
             let task = Task {
                 do {
@@ -42,7 +42,7 @@ class GeminiProvider: ObservableObject, ChatCompletionAbility {
 
     private func processMessages(
         _ messages: [ChatMessage],
-        continuation: AsyncThrowingStream<String, Error>.Continuation
+        continuation: AsyncThrowingStream<ChatStreamChunk, Error>.Continuation
     ) async throws {
         guard let apiKey = configuration.apiKey, !apiKey.isEmpty else {
             throw ChatCompletionError.invalidConfiguration("API key is required for Gemini")
@@ -163,7 +163,7 @@ class GeminiProvider: ObservableObject, ChatCompletionAbility {
                        let content = candidate.content,
                        let part = content.parts.first,
                        let text = part.text {
-                        continuation.yield(text)
+                        continuation.yield(ChatStreamChunk(content: text))
                     }
 
                     // Check if this is the final response

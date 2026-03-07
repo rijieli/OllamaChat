@@ -9,8 +9,17 @@
 import SwiftUI
 
 protocol ChatCompletionAbility {
-    func send(messages: [ChatMessage]) async throws -> AsyncThrowingStream<String, Error>
+    func send(messages: [ChatMessage]) async throws -> AsyncThrowingStream<ChatStreamChunk, Error>
     func cancel() async
+}
+
+struct ChatStreamChunk: Equatable {
+    var content: String = ""
+    var thinking: String = ""
+
+    var isEmpty: Bool {
+        content.isEmpty && thinking.isEmpty
+    }
 }
 
 enum ChatCompletionError: Error, LocalizedError {

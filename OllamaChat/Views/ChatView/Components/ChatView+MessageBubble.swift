@@ -23,6 +23,7 @@ extension ChatView {
         var body: some View {
             VStack(spacing: 0) {
                 MarkdownTextView(
+                    message: message,
                     content: message.markdownContent
                 )
                 .padding(.horizontal, 10)
@@ -202,17 +203,20 @@ private struct CollapsibleThinkBlock: View {
 
 private struct MarkdownTextView: View {
     @StateObject var viewModel = ChatViewModel.shared
+    let message: ChatMessage
     let content: MarkdownContent
+
+    private var showsLiveThinkingIndicator: Bool {
+        viewModel.waitingResponse
+            && message.role == .assistant
+            && viewModel.messages.last?.id == message.id
+    }
     
     var body: some View {
-        if !content.think.isEmpty {
-            let isThinking =
-                content.isIncomplete
-                && viewModel.waitingResponse
-            
+        if content.hasThinkContent {
             CollapsibleThinkBlock(
                 content: content,
-                isThinking: isThinking
+                isThinking: showsLiveThinkingIndicator
             )
             .markdownTheme(.assistantTheme)
             .frame(minHeight: 24)
@@ -251,18 +255,19 @@ extension MarkdownUI.Theme {
 struct MarkdownContent: Hashable {
     let think: String
     let message: String
-    let isIncomplete: Bool
     let isUser: Bool
+
+    var hasThinkContent: Bool {
+        !think.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
 }
 
 extension ChatMessage {
     
     var markdownContent: MarkdownContent {
-        let (think, message, isIncomplete) = ThinkBlockParser.parse(markdownString: content)
         return MarkdownContent(
-            think: think,
-            message: message,
-            isIncomplete: isIncomplete,
+            think: thinking ?? "",
+            message: content,
             isUser: role == .user
         )
     }
