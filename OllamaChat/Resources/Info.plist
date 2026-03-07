@@ -6,6 +6,8 @@
 	<false/>
 	<key>SUFeedURL</key>
 	<string>https://raw.githubusercontent.com/rijieli/OllamaChat/main/appcast.xml</string>
+	<key>SUPublicEDKey</key>
+	<string>Pt0I8mcAgPHqs6ofLZYpoMVwDvbvfIe4RQMBizRDDWo=</string>
 	<key>SUEnableAutomaticChecks</key>
 	<true/>
 </dict>

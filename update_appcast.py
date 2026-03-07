@@ -2,11 +2,12 @@
 
 from __future__ import annotations
 
+import argparse
+import os
 import plistlib
-import re
+import shutil
 import subprocess
 import sys
-from dataclasses import dataclass
 from pathlib import Path
 from typing import NoReturn
 
@@ -15,15 +16,12 @@ ROOT = Path(__file__).resolve().parent
 ARCHIVES_DIR = ROOT / "Archives"
 TEMPLATE_FILE = ROOT / "appcast.template.xml"
 OUTPUT_FILE = ROOT / "appcast.xml"
-IDENTITY_RE = re.compile(r'^\s*\d+\)\s+([0-9A-F]+)\s+"([^"]+)"$')
-TEAM_RE = re.compile(r"\(([A-Z0-9]+)\)$")
-
-
-@dataclass(frozen=True)
-class SigningIdentity:
-    fingerprint: str
-    name: str
-    team_id: str
+DEFAULT_PRIVATE_KEY_FILE = Path.home() / "sparkle_private_key_ollamachat"
+DERIVED_DATA_DIR = Path.home() / "Library" / "Developer" / "Xcode" / "DerivedData"
+SIGN_UPDATE_PATTERNS = (
+    "*/SourcePackages/artifacts/sparkle/Sparkle/bin/sign_update",
+    "*/SourcePackages/checkouts/Sparkle/bin/sign_update",
+)
 
 
 def fail(message: str) -> NoReturn:
@@ -31,7 +29,31 @@ def fail(message: str) -> NoReturn:
     raise SystemExit(1)
 
 
-def find_app_bundle() -> Path:
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Update Sparkle appcast.xml for an existing DMG and app bundle."
+    )
+    parser.add_argument(
+        "--app-bundle",
+        type=Path,
+        help="Path to the .app bundle used to extract version information.",
+    )
+    parser.add_argument(
+        "--dmg-path",
+        type=Path,
+        help="Path to the DMG file that should be signed and published in appcast.xml.",
+    )
+    return parser.parse_args()
+
+
+def find_app_bundle(app_bundle: Path | None) -> Path:
+    if app_bundle is not None:
+        resolved_app_bundle = app_bundle.expanduser().resolve()
+        if resolved_app_bundle.is_dir() and resolved_app_bundle.suffix == ".app":
+            print(f"Using app bundle: {resolved_app_bundle.stem}")
+            return resolved_app_bundle
+        fail(f"Error: App bundle not found at {resolved_app_bundle}")
+
     if not ARCHIVES_DIR.is_dir():
         fail(f"Error: Archives directory not found at {ARCHIVES_DIR}")
 
@@ -44,75 +66,93 @@ def find_app_bundle() -> Path:
     return app_bundle
 
 
-def find_signing_identities() -> list[SigningIdentity]:
-    result = subprocess.run(
-        ["security", "find-identity", "-v", "-p", "codesigning"],
-        check=False,
-        capture_output=True,
-        text=True,
-    )
-    if result.returncode != 0:
-        details = result.stderr.strip() or result.stdout.strip() or "unknown error"
-        fail(f"Error: Failed to list local code signing identities: {details}")
+def find_dmg_path(dmg_path: Path | None, app_bundle: Path) -> Path:
+    if dmg_path is not None:
+        resolved_dmg_path = dmg_path.expanduser().resolve()
+        if resolved_dmg_path.is_file():
+            return resolved_dmg_path
+        fail(f"Error: DMG not found at {resolved_dmg_path}")
 
-    identities: list[SigningIdentity] = []
-    for line in result.stdout.splitlines():
-        identity_match = IDENTITY_RE.match(line)
-        if identity_match is None:
-            continue
+    fallback_dmg_path = (ROOT / f"{app_bundle.stem}.dmg").resolve()
+    if not fallback_dmg_path.is_file():
+        fail(f"Error: DMG not found at {fallback_dmg_path}")
+    return fallback_dmg_path
 
-        fingerprint, name = identity_match.groups()
-        if not name.startswith("Developer ID Application:"):
-            continue
 
-        team_match = TEAM_RE.search(name)
-        if team_match is None:
-            fail(f"Error: Could not parse team ID from signing identity '{name}'")
+def find_sign_update() -> Path:
+    sign_update_env = os.environ.get("SPARKLE_SIGN_UPDATE")
+    if sign_update_env:
+        sign_update_path = Path(sign_update_env).expanduser()
+        if sign_update_path.is_file():
+            return sign_update_path
+        fail(f"Error: SPARKLE_SIGN_UPDATE points to a missing file: {sign_update_path}")
 
-        identities.append(
-            SigningIdentity(
-                fingerprint=fingerprint,
-                name=name,
-                team_id=team_match.group(1),
-            )
+    for executable_name in ("sign_update", "sign-update"):
+        sign_update_on_path = shutil.which(executable_name)
+        if sign_update_on_path:
+            return Path(sign_update_on_path)
+
+    candidates: list[Path] = []
+    if DERIVED_DATA_DIR.is_dir():
+        for pattern in SIGN_UPDATE_PATTERNS:
+            candidates.extend(path for path in DERIVED_DATA_DIR.glob(pattern) if path.is_file())
+
+    if not candidates:
+        fail(
+            "Error: Could not locate Sparkle's sign_update tool. "
+            "Set SPARKLE_SIGN_UPDATE or resolve the Sparkle package in Xcode first."
         )
 
-    if not identities:
-        fail("Error: No 'Developer ID Application' signing identities were found in Keychain.")
-
-    return identities
+    candidates.sort(key=lambda path: path.stat().st_mtime, reverse=True)
+    return candidates[0]
 
 
-def choose_signing_identity(identities: list[SigningIdentity]) -> SigningIdentity:
-    print("Available Developer ID signing identities:")
-    for index, identity in enumerate(identities, start=1):
-        print(f"{index}. {identity.team_id}  {identity.name}")
+def find_private_key_file() -> Path | None:
+    private_key_file = os.environ.get("SPARKLE_PRIVATE_KEY_FILE")
+    if private_key_file:
+        private_key_path = Path(private_key_file).expanduser()
+        if private_key_path.is_file():
+            return private_key_path
+        fail(f"Error: SPARKLE_PRIVATE_KEY_FILE points to a missing file: {private_key_path}")
 
-    while True:
-        choice = input("Select identity number for DMG signing: ").strip()
-        if not choice.isdigit():
-            print("Enter a number from the list.", file=sys.stderr)
-            continue
+    if DEFAULT_PRIVATE_KEY_FILE.is_file():
+        return DEFAULT_PRIVATE_KEY_FILE
 
-        selection = int(choice)
-        if 1 <= selection <= len(identities):
-            identity = identities[selection - 1]
-            print(f"Using signing identity: {identity.name}")
-            return identity
-
-        print("Selection is out of range.", file=sys.stderr)
+    return None
 
 
-def sign_dmg(dmg_path: Path, identity: SigningIdentity) -> None:
+def sign_dmg(dmg_path: Path) -> str:
+    command = [str(find_sign_update()), "-p"]
+
+    private_key_path = find_private_key_file()
+    if private_key_path:
+        command.extend(["--ed-key-file", str(private_key_path)])
+    else:
+        account = os.environ.get("SPARKLE_KEYCHAIN_ACCOUNT")
+        if account:
+            command.extend(["--account", account])
+
+    command.append(str(dmg_path))
+
     result = subprocess.run(
-        ["codesign", "--force", "--sign", identity.name, "--timestamp", str(dmg_path)],
+        command,
         check=False,
         capture_output=True,
         text=True,
     )
     if result.returncode != 0:
         details = result.stderr.strip() or result.stdout.strip() or "unknown error"
-        fail(f"Error: Failed to sign DMG with '{identity.name}': {details}")
+        fail(f"Error: Failed to create Sparkle signature for '{dmg_path.name}': {details}")
+
+    signature_lines = result.stdout.strip().splitlines()
+    if not signature_lines:
+        fail(f"Error: Sparkle did not return a signature for '{dmg_path.name}'")
+
+    signature = signature_lines[-1].strip()
+    if not signature:
+        fail(f"Error: Sparkle did not return a signature for '{dmg_path.name}'")
+
+    return signature
 
 
 def load_bundle_versions(plist_path: Path) -> tuple[str, str]:
@@ -130,7 +170,7 @@ def load_bundle_versions(plist_path: Path) -> tuple[str, str]:
     return str(version), str(build)
 
 
-def render_appcast(version: str, build: str, length: int) -> str:
+def render_appcast(version: str, build: str, signature: str, length: int) -> str:
     if not TEMPLATE_FILE.is_file():
         fail(f"Error: Template file {TEMPLATE_FILE.name} not found")
 
@@ -138,22 +178,20 @@ def render_appcast(version: str, build: str, length: int) -> str:
     return (
         template.replace("{version}", version)
         .replace("{build}", build)
+        .replace("{edsign_signature}", signature)
         .replace("{edsign_length}", str(length))
     )
 
 
 def main() -> None:
-    app_bundle = find_app_bundle()
-    dmg_path = ROOT / f"{app_bundle.stem}.dmg"
-    if not dmg_path.is_file():
-        fail(f"Error: DMG not found at {dmg_path}")
-
-    signing_identity = choose_signing_identity(find_signing_identities())
-    sign_dmg(dmg_path, signing_identity)
+    args = parse_args()
+    app_bundle = find_app_bundle(args.app_bundle)
+    dmg_path = find_dmg_path(args.dmg_path, app_bundle)
 
     plist_path = app_bundle / "Contents" / "Info.plist"
     version, build = load_bundle_versions(plist_path)
-    appcast = render_appcast(version, build, dmg_path.stat().st_size)
+    signature = sign_dmg(dmg_path)
+    appcast = render_appcast(version, build, signature, dmg_path.stat().st_size)
     OUTPUT_FILE.write_text(appcast, encoding="utf-8")
 
     print(f"Updated appcast.xml with version {version} (build {build})")
