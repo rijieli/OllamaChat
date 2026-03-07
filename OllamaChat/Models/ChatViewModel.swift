@@ -82,7 +82,6 @@ class ChatViewModel: ObservableObject {
         }
 
         if let fallbackModel = UnifiedModelRegistry.shared.models.first?.name {
-            assert(false, "Falling back to the first available Ollama model.")
             return fallbackModel
         }
 
