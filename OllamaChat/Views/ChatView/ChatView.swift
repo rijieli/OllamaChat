@@ -19,6 +19,9 @@ struct ChatView: View {
     @FocusState var promptFieldIsFocused: Bool
 
     @Namespace var bottomID
+    
+    static let maxWidth: CGFloat = 800
+    static let padding: CGFloat = 16
 
     var statusTitle: LocalizedStringKey {
         viewModel.errorModel == nil ? "Connected" : "Error"
@@ -28,6 +31,8 @@ struct ChatView: View {
         VStack(spacing: 0) {
             messagesList
             messageInput
+                .padding(.horizontal, ChatView.padding)
+                .frame(maxWidth: ChatView.maxWidth)
         }
         .frame(minWidth: 400, idealWidth: 700, minHeight: 500, idealHeight: 800)
         .background(Color.ocPrimaryBackground)
