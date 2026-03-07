@@ -43,34 +43,16 @@ enum ChatCompletionError: Error, LocalizedError {
     }
 }
 
-struct ModelMetadata: Codable {
-    var fileSize: String? = nil
-    var family: String? = nil
-    var format: String? = nil
-    var quantizationLevel: String? = nil
-    var source: String? = nil
-    var parameters: String? = nil
-}
-
 struct OllamaConfiguration: Codable {
     var endpoint: String
     var selectedModel: String
-    var models: [String]
-    var lastUsed: Date?
-    var metadata: ModelMetadata?
 
     init(
         endpoint: String,
-        selectedModel: String,
-        models: [String] = [],
-        lastUsed: Date? = nil,
-        metadata: ModelMetadata? = nil
+        selectedModel: String
     ) {
         self.endpoint = endpoint
         self.selectedModel = selectedModel
-        self.models = models
-        self.lastUsed = lastUsed
-        self.metadata = metadata
     }
 
     var isValid: Bool {
@@ -80,7 +62,6 @@ struct OllamaConfiguration: Codable {
 
     static let `default` = OllamaConfiguration(
         endpoint: "http://127.0.0.1:11434",
-        selectedModel: "",
-        models: []
+        selectedModel: ""
     )
 }

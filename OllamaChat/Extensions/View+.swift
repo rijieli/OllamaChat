@@ -153,3 +153,20 @@ extension View {
     }
     
 }
+
+
+extension View {
+    /// 用于根据系统版本差异应用修饰符
+    /// ```Swift
+    /// Rectangle().transformByOS { v in
+    ///     if #available(iOS 26, *) {
+    ///         v.glassEffect()
+    ///     } else {
+    ///         v.background()
+    ///     }
+    /// }
+    /// ```
+    public func transformByOS(@ViewBuilder _ content: (_ view: Self) -> some View) -> some View {
+        content(self)
+    }
+}

@@ -36,18 +36,20 @@ extension ButtonStyle where Self == SimpleVisualEffectButtonStyle {
 
 struct RoundedPlainButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .background {
-                Group {
-                    if #available(macOS 26, *) {
-                        Capsule()
-                            .fill(Color.ocSecondaryBackground)
-                    } else {
+        configuration
+            .label
+            .transformByOS { inner in
+                if #available(macOS 26, *) {
+                    inner.glassEffect(.regular, in: .capsule)
+                } else {
+                    inner.background {
                         RoundedRectangle(cornerRadius: 8)
                             .fill(Color.ocSecondaryBackground)
                     }
+                    .compositingGroup()
+                    .opacity(configuration.isPressed ? 0.8 : 1)
                 }
             }
-            .opacity(configuration.isPressed ? 0.8 : 1)
+            .contentShape(.rect)
     }
 }

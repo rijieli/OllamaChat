@@ -43,14 +43,8 @@ extension SettingsView {
                         ModelConfigView()
                             .padding(.horizontal, 24)
                     case .chatOptions:
-                        VStack(alignment: .leading, spacing: 12) {
-                            SettingsSectionHeader(
-                                "New Chat Defaults",
-                                subtitle: "Used only when a new chat is created."
-                            )
-                            ModelEditingView(chatOptions: $viewModel.defaultChatOptions)
-                        }
-                        .padding(.horizontal, 24)
+                        ModelEditingView(chatOptions: $viewModel.defaultChatOptions)
+                            .padding(.horizontal, 24)
                     }
                 }
                 .ifScrollClipDisabled(true)
@@ -102,8 +96,6 @@ private struct ModelConfigView: View {
                 }
             }
             .labeledContentStyle(.settings)
-
-            DefaultModelPickerView()
 
             HStack(spacing: 8) {
                 Button(action: testConnection) {
@@ -164,65 +156,6 @@ private struct ModelConfigView: View {
                 }
             }
         }
-    }
-}
-
-private struct DefaultModelPickerView: View {
-    @ObservedObject private var apiManager = APIManager.shared
-    @ObservedObject private var modelRegistry = UnifiedModelRegistry.shared
-
-    private var defaultModelBinding: Binding<String> {
-        Binding(
-            get: { apiManager.selectedModel },
-            set: { apiManager.updateSelectedModel($0) }
-        )
-    }
-
-    private var availableModelNames: [String] {
-        let modelNames = modelRegistry.models.map(\.name)
-        guard !apiManager.selectedModel.isEmpty,
-            !modelNames.contains(apiManager.selectedModel)
-        else {
-            return modelNames
-        }
-
-        return [apiManager.selectedModel] + modelNames
-    }
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            SettingsSectionHeader(
-                "New Chat Model",
-                subtitle: "Changing the model inside a chat does not change this default."
-            )
-
-            if availableModelNames.isEmpty {
-                Text("Refresh the model list to choose a default model for new chats.")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            } else {
-                LabeledContent("Default Model:") {
-                    Picker("Default Model:", selection: defaultModelBinding) {
-                        ForEach(availableModelNames, id: \.self) { modelName in
-                            Text(label(for: modelName))
-                                .tag(modelName)
-                        }
-                    }
-                    .pickerStyle(.menu)
-                    .labelsHidden()
-                }
-                .labeledContentStyle(.settings)
-            }
-        }
-    }
-
-    private func label(for modelName: String) -> String {
-        let knownModelNames = Set(modelRegistry.models.map(\.name))
-        guard !knownModelNames.contains(modelName) else {
-            return modelName
-        }
-
-        return "\(modelName) (Unavailable)"
     }
 }
 

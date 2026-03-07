@@ -83,11 +83,6 @@ class ChatViewModel: ObservableObject {
             return chatModel
         }
 
-        let configuredModel = APIManager.shared.selectedModel
-        if !configuredModel.isEmpty {
-            return configuredModel
-        }
-
         if let fallbackModel = UnifiedModelRegistry.shared.models.first?.name {
             assert(false, "Falling back to the first available Ollama model.")
             return fallbackModel
@@ -193,7 +188,6 @@ class ChatViewModel: ObservableObject {
                 }
 
                 CoreDataStack.shared.saveContext()
-                APIManager.shared.updateLastUsed()
             } catch {
                 handleError(error)
             }
@@ -279,11 +273,12 @@ class ChatViewModel: ObservableObject {
     }
     
     func newChat() {
-        var modelName = APIManager.shared.selectedModel
-        if modelName.isEmpty,
-           let fallbackModel = UnifiedModelRegistry.shared.models.first?.name {
-            assert(false, "Falling back to the first available Ollama model for a new chat.")
-            modelName = fallbackModel
+        let modelName: String
+        if let firstModel = UnifiedModelRegistry.shared.models.first?.name {
+            modelName = firstModel
+        } else {
+            assert(false, "Creating a new chat without an available Ollama model.")
+            modelName = ""
         }
 
         let modelConfiguration = Self.globalChatOptions()
@@ -353,7 +348,6 @@ class ChatViewModel: ObservableObject {
             currentChat.model = model
             currentChat.modelConfiguration = currentModelConfiguration.encodedModelConfiguration()
             CoreDataStack.shared.saveContext()
-            APIManager.shared.updateLastUsed()
         } else {
             assert(false, "Cannot select a model without an active chat.")
         }

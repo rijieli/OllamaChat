@@ -76,10 +76,6 @@ extension ChatView {
             return currentModel
         }
 
-        if !apiManager.selectedModel.isEmpty {
-            return apiManager.selectedModel
-        }
-
         return nil
     }
 

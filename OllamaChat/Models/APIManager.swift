@@ -37,10 +37,6 @@ class APIManager: ObservableObject {
         }
     }
 
-    var selectedModel: String {
-        configuration.selectedModel
-    }
-
     var endpoint: String {
         configuration.endpoint
     }
@@ -49,28 +45,6 @@ class APIManager: ObservableObject {
         let normalizedEndpoint = normalizeEndpoint(endpoint)
         guard configuration.endpoint != normalizedEndpoint else { return }
         configuration.endpoint = normalizedEndpoint
-    }
-
-    func updateSelectedModel(_ selectedModel: String) {
-        guard configuration.selectedModel != selectedModel else { return }
-        configuration.selectedModel = selectedModel
-    }
-
-    func replaceAvailableModels(_ models: [String]) {
-        configuration.models = models
-
-        if configuration.selectedModel.isEmpty, let fallbackModel = models.first {
-            assert(false, "Falling back to the first available Ollama model.")
-            configuration.selectedModel = fallbackModel
-        }
-    }
-
-    func updateMetadata(_ metadata: ModelMetadata) {
-        configuration.metadata = metadata
-    }
-
-    func updateLastUsed() {
-        configuration.lastUsed = Date()
     }
 
     private func normalizeEndpoint(_ endpoint: String) -> String {

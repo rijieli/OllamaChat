@@ -103,17 +103,11 @@ class UnifiedModelRegistry: ObservableObject {
         self.models = models
         hasResolvedModels = true
 
-        let modelNames = models.map(\.name)
-        APIManager.shared.replaceAvailableModels(modelNames)
-
         if models.isEmpty {
             ChatViewModel.shared.errorModel = noModelsError(error: nil)
             return
         }
 
-        APIManager.shared.updateMetadata(
-            ModelMetadata(source: "ollama")
-        )
         ChatViewModel.shared.clearError()
     }
 }

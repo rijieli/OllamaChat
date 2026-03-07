@@ -116,9 +116,6 @@
         }
       }
     },
-    "Changing the model inside a chat does not change this default." : {
-
-    },
     "Chat Options" : {
       "localizations" : {
         "zh-Hans" : {
@@ -199,9 +196,6 @@
           }
         }
       }
-    },
-    "Default Model:" : {
-
     },
     "Delete" : {
       "localizations" : {
@@ -482,12 +476,6 @@
         }
       }
     },
-    "New Chat Defaults" : {
-
-    },
-    "New Chat Model" : {
-
-    },
     "No chat selected" : {
       "localizations" : {
         "zh-Hans" : {
@@ -582,9 +570,6 @@
           }
         }
       }
-    },
-    "Refresh the model list to choose a default model for new chats." : {
-
     },
     "Rename" : {
       "localizations" : {
@@ -753,9 +738,6 @@
           }
         }
       }
-    },
-    "Used only when a new chat is created." : {
-
     },
     "Used only when creating a new chat." : {
 
