@@ -17,8 +17,28 @@ struct SettingsiOSView: View {
     @State var localIP: NetworkAddresses? = nil
 
     @StateObject var chatViewModel: ChatViewModel = .shared
+    @StateObject var apiManager: APIManager = .shared
     
     @State private var globalSystemPrompt = AppSettings.globalSystem
+
+    private var defaultModelBinding: Binding<String> {
+        Binding(
+            get: { apiManager.selectedModel },
+            set: { apiManager.updateSelectedModel($0) }
+        )
+    }
+
+    private var availableModelNames: [String] {
+        let liveModelNames = chatViewModel.tags.models.map(\.name)
+        let modelNames = liveModelNames.isEmpty ? apiManager.configuration.models : liveModelNames
+        guard !apiManager.selectedModel.isEmpty,
+              !modelNames.contains(apiManager.selectedModel)
+        else {
+            return modelNames
+        }
+
+        return [apiManager.selectedModel] + modelNames
+    }
 
     var body: some View {
         NavigationStack {
@@ -62,13 +82,35 @@ struct SettingsiOSView: View {
                                 }
                             }
                         }
+
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("New Chat Model")
+                                .font(.headline)
+                            Text("Changing the model inside a chat does not change this default.")
+                                .font(.footnote)
+                                .foregroundStyle(.secondary)
+
+                            if availableModelNames.isEmpty {
+                                Text("Refresh the model list to choose a default model for new chats.")
+                                    .font(.footnote)
+                                    .foregroundStyle(.secondary)
+                            } else {
+                                Picker("Default Model", selection: defaultModelBinding) {
+                                    ForEach(availableModelNames, id: \.self) { modelName in
+                                        Text(defaultModelLabel(for: modelName))
+                                            .tag(modelName)
+                                    }
+                                }
+                                .pickerStyle(.menu)
+                            }
+                        }
                         
                         VStack(alignment: .leading) {
                             HStack {
                                 VStack(alignment: .leading) {
                                     Text("Global System Prompt:")
                                         .font(.headline)
-                                    Text("Automatic apply to each chat.")
+                                    Text("Used only when creating a new chat.")
                                         .font(.footnote)
                                 }
                                 Spacer()
@@ -109,6 +151,16 @@ struct SettingsiOSView: View {
                 localIP = UIApplication.shared.getNetworkAddresses()
             }
         }
+    }
+
+    private func defaultModelLabel(for modelName: String) -> String {
+        let knownModelNames = Set(chatViewModel.tags.models.map(\.name))
+            .union(apiManager.configuration.models)
+        guard !knownModelNames.contains(modelName) else {
+            return modelName
+        }
+
+        return "\(modelName) (Unavailable)"
     }
 
 }

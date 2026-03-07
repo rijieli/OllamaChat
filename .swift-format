@@ -1,14 +1,17 @@
 {
     "version": 1,
-    "lineLength": 100,
+    "lineLength": 200,
     "indentation": {
         "spaces": 4
     },
     "maximumBlankLines": 1,
     "respectsExistingLineBreaks": true,
     "lineBreakBeforeControlFlowKeywords": false,
-    "lineBreakBeforeEachArgument": true,
+    "lineBreakBeforeEachArgument": false,
     "lineBreakBetweenDeclarationAttributes": false,
-    "indentBlankLines": true,
+    "indentBlankLines": false,
     "indentConditionalCompilationBlocks": false,
+    "rules": {
+        "UseEarlyExits": true
+    },
 }

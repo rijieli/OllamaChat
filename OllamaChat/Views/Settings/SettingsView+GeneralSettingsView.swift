@@ -10,7 +10,7 @@ import AVFoundation
 import SwiftUI
 
 extension SettingsView {
-    
+
     struct GeneralSettingsView: View {
         @State private var voiceGenderPreference = TextSpeechCenter.shared.voiceGenderPreference
         @State private var globalSystemPrompt = AppSettings.globalSystem
@@ -21,7 +21,7 @@ extension SettingsView {
                     HStack {
                         SettingsSectionHeader(
                             "Global System Prompt:",
-                            subtitle: "Automatic apply to each chat."
+                            subtitle: "Used only when creating a new chat."
                         )
                         Spacer(minLength: 0)
                         Button("Save") {
@@ -54,7 +54,7 @@ extension SettingsView {
             }
             .padding(24)
         }
-        
+
     }
-    
+
 }

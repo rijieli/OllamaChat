@@ -99,6 +99,7 @@
 
     },
     "Automatic apply to each chat." : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -117,6 +118,9 @@
           }
         }
       }
+    },
+    "Changing the model inside a chat does not change this default." : {
+
     },
     "Chat Options" : {
       "localizations" : {
@@ -204,6 +208,9 @@
     "Current Local IPv6:" : {
 
     },
+    "Default Model:" : {
+
+    },
     "Delete" : {
       "localizations" : {
         "zh-Hans" : {
@@ -288,6 +295,7 @@
 
     },
     "Find more models: [Models](https://ollama.com/library)" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -296,6 +304,9 @@
           }
         }
       }
+    },
+    "Find more models: [Models](https://ollama.com/search)" : {
+
     },
     "General" : {
       "localizations" : {
@@ -480,6 +491,12 @@
         }
       }
     },
+    "New Chat Defaults" : {
+
+    },
+    "New Chat Model" : {
+
+    },
     "No chat selected" : {
       "localizations" : {
         "zh-Hans" : {
@@ -575,6 +592,9 @@
           }
         }
       }
+    },
+    "Refresh the model list to choose a default model for new chats." : {
+
     },
     "Rename" : {
       "localizations" : {
@@ -748,6 +768,12 @@
           }
         }
       }
+    },
+    "Used only when a new chat is created." : {
+
+    },
+    "Used only when creating a new chat." : {
+
     },
     "v%@ (%@)" : {
       "localizations" : {

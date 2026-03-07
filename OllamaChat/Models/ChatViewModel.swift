@@ -9,10 +9,6 @@
 import SwiftUI
 
 class ChatViewModel: ObservableObject {
-    enum Constants {
-        static let chatOptionsStorageKey = "ChatViewModel.ChatOptions"
-    }
-
     static let shared = ChatViewModel()
     
     @Published var tags = OllamaModelGroup(models: []) {
@@ -49,7 +45,7 @@ class ChatViewModel: ObservableObject {
             messages = lastChat.messages
             currentChat = lastChat
         } else {
-            messages = [.globalSystem]
+            messages = Self.defaultMessages()
         }
 
         restoreActiveModelConfiguration(for: lastChat)
@@ -62,7 +58,6 @@ class ChatViewModel: ObservableObject {
         didSet {
             guard !isApplyingStoredModelConfiguration else { return }
 
-            UserDefaults.standard.setCodable(chatOptions, forKey: Constants.chatOptionsStorageKey)
             persistCurrentChatModelConfiguration()
         }
     }
@@ -138,10 +133,6 @@ class ChatViewModel: ObservableObject {
                     ollamaService = nil
                 }
 
-                if messages.isEmpty {
-                    messages.append(.globalSystem)
-                }
-
                 if !current.content.isEmpty {
                     self.messages.append(current)
                     scrollToBottom()
@@ -155,9 +146,14 @@ class ChatViewModel: ObservableObject {
                     return
                 }
 
-                APIManager.shared.updateSelectedModel(selectedModel)
-                let configuration = APIManager.shared.configuration
-                let service = OllamaService(configuration: configuration)
+                var configuration = APIManager.shared.configuration
+                configuration.selectedModel = selectedModel
+                let service = OllamaService(
+                    configuration: configuration,
+                    chatOptions: currentModelConfiguration,
+                    timeoutRequest: Double(timeoutRequest) ?? 60,
+                    timeoutResource: Double(timeoutResource) ?? 604800
+                )
                 ollamaService = service
 
                 print("[Sending] <\(configuration.selectedModel)> \(messages.last?.content.count ?? 0)")
@@ -276,7 +272,7 @@ class ChatViewModel: ObservableObject {
             messages = chat.messages
             currentChat = chat
         } else {
-            messages = [.globalSystem]
+            messages = Self.defaultMessages()
             currentChat = nil
         }
 
@@ -294,7 +290,7 @@ class ChatViewModel: ObservableObject {
 
         let modelConfiguration = Self.globalChatOptions()
         let newChat = SingleChat.createNewSingleChat(
-            messages: [],
+            messages: Self.defaultMessages(),
             model: modelName,
             modelConfiguration: modelConfiguration.encodedModelConfiguration()
         )
@@ -365,13 +361,13 @@ class ChatViewModel: ObservableObject {
             return
         }
 
-        APIManager.shared.updateSelectedModel(model)
-        APIManager.shared.updateLastUsed()
-
         if let currentChat {
             currentChat.model = model
             currentChat.modelConfiguration = currentModelConfiguration.encodedModelConfiguration()
             CoreDataStack.shared.saveContext()
+            APIManager.shared.updateLastUsed()
+        } else {
+            assert(false, "Cannot select a model without an active chat.")
         }
 
         refreshMissingSelectedModelState()
@@ -380,8 +376,7 @@ class ChatViewModel: ObservableObject {
 
     @MainActor
     func openModelSettings() {
-        SettingsViewModel.shared.selectedTab = .ollama
-        SettingsViewModel.shared.selectedOllamaSubTab = .models
+        SettingsViewModel.shared.selectedTab = .models
         showSettingsView = true
     }
 
@@ -390,7 +385,13 @@ class ChatViewModel: ObservableObject {
     }
 
     private static func globalChatOptions() -> ChatOptions {
-        UserDefaults.standard.getCodable(forKey: Constants.chatOptionsStorageKey) ?? .defaultValue
+        AppSettings.defaultChatOptions
+    }
+
+    private static func defaultMessages() -> [ChatMessage] {
+        let systemPrompt = AppSettings.globalSystem
+        guard !systemPrompt.isEmpty else { return [] }
+        return [.init(role: .system, content: systemPrompt)]
     }
 
     private func restoreActiveModelConfiguration(for chat: SingleChat?) {

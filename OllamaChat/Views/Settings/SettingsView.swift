@@ -11,15 +11,17 @@ import SwiftUI
 import AppKit
 
 struct SettingsView: View {
-    
+
     enum SettingsTab: String, CaseIterable, Identifiable {
         case general
         case ollama
-        
+        case models
+
         var id: String { rawValue }
         var title: LocalizedStringKey {
             switch self {
             case .ollama: "Ollama"
+            case .models: "Models"
             case .general: "General"
             }
         }
@@ -27,29 +29,28 @@ struct SettingsView: View {
             switch self {
             case .ollama: "server.rack"
             case .general: "gearshape"
+            case .models: "cube"
             }
         }
     }
-    
+
     enum OllamaSubTab: String, CaseIterable, Identifiable {
         case general
-        case models
         case chatOptions
-        
+
         var id: String { rawValue }
         var title: LocalizedStringKey {
             switch self {
             case .general: "General"
-            case .models: "Models"
             case .chatOptions: "Chat Options"
             }
         }
     }
-    
+
     @Environment(\.isDarkMode) var isDarkMode
-    
+
     @StateObject var viewModel = SettingsViewModel.shared
-    
+
     var body: some View {
         HStack(spacing: 0) {
             VStack(spacing: 0) {
@@ -64,7 +65,7 @@ struct SettingsView: View {
                 }
                 .foregroundStyle(.primary)
                 .padding(.top, 24)
-                
+
                 ScrollView {
                     VStack(spacing: 0) {
                         ForEach(SettingsTab.allCases) { tab in
@@ -80,7 +81,7 @@ struct SettingsView: View {
                                         .aspectRatio(contentMode: .fit)
                                         .frame(width: 20)
                                         .fontWeight(.semibold)
-                                    
+
                                     Text(tab.title)
                                         .maxWidth(alignment: .leading)
                                 }
@@ -104,7 +105,7 @@ struct SettingsView: View {
                     .padding(8)
                 }
                 .maxFrame()
-                
+
                 ZStack {
                     HStack(spacing: 4) {
                         Text(verbatim: "IdeasForm")
@@ -124,11 +125,13 @@ struct SettingsView: View {
                     .frame(width: 0.5)
                     .ignoresSafeArea()
             }
-            
+
             VStack(spacing: 0) {
                 switch viewModel.selectedTab {
                 case .ollama:
                     OllamaSettingsView()
+                case .models:
+                    ManageModelsView()
                 case .general:
                     GeneralSettingsView()
                 }

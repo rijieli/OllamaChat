@@ -16,5 +16,10 @@ class SettingsViewModel: ObservableObject {
     
     @Published var selectedTab = SettingsView.SettingsTab.general
     @Published var selectedOllamaSubTab = SettingsView.OllamaSubTab.general
+    @Published var defaultChatOptions = AppSettings.defaultChatOptions {
+        didSet {
+            AppSettings.defaultChatOptions = defaultChatOptions
+        }
+    }
     
 }

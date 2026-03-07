@@ -8,13 +8,18 @@
 import SwiftUI
 
 struct ModelEditingView: View {
-    @ObservedObject var viewModel: ChatViewModel = .shared
+    @Binding private var chatOptions: ChatOptions
     var showsResetButton = true
+
+    init(chatOptions: Binding<ChatOptions>, showsResetButton: Bool = true) {
+        _chatOptions = chatOptions
+        self.showsResetButton = showsResetButton
+    }
     
     private var thinkModeBinding: Binding<OllamaThinkMode> {
         Binding(
-            get: { viewModel.chatOptions.think },
-            set: { viewModel.chatOptions.think = $0 }
+            get: { chatOptions.think },
+            set: { chatOptions.think = $0 }
         )
     }
     
@@ -36,7 +41,7 @@ struct ModelEditingView: View {
                 
                 if showsResetButton {
                     Button("Reset to Default") {
-                        viewModel.chatOptions = .defaultValue
+                        chatOptions = .defaultValue
                     }
                 }
             }
@@ -58,51 +63,51 @@ struct ModelEditingView: View {
             .font(.caption)
             .foregroundStyle(.secondary)
             
-            LabeledContent("Temperature (\(viewModel.chatOptions.temperature, specifier: "%.2f"))")
+            LabeledContent("Temperature (\(chatOptions.temperature, specifier: "%.2f"))")
             {
-                Slider(value: $viewModel.chatOptions.temperature, in: 0...2, step: 0.1)
+                Slider(value: $chatOptions.temperature, in: 0...2, step: 0.1)
             }
             
-            LabeledContent("Top P (\(viewModel.chatOptions.topP, specifier: "%.2f"))") {
-                Slider(value: $viewModel.chatOptions.topP, in: 0...1, step: 0.05)
+            LabeledContent("Top P (\(chatOptions.topP, specifier: "%.2f"))") {
+                Slider(value: $chatOptions.topP, in: 0...1, step: 0.05)
             }
             
             LabeledContent(
-                "Repeat Penalty (\(viewModel.chatOptions.repeatPenalty, specifier: "%.2f"))"
+                "Repeat Penalty (\(chatOptions.repeatPenalty, specifier: "%.2f"))"
             ) {
-                Slider(value: $viewModel.chatOptions.repeatPenalty, in: 0...2, step: 0.05)
+                Slider(value: $chatOptions.repeatPenalty, in: 0...2, step: 0.05)
             }
             
             LabeledContent("Repeat Last N") {
-                TextField("", value: $viewModel.chatOptions.repeatLastN, format: .number)
+                TextField("", value: $chatOptions.repeatLastN, format: .number)
             }
             
             SettingsSectionHeader("Advanced Settings")
             
             VStack(alignment: .leading, spacing: 12) {
-                Picker("Mirostat Mode", selection: $viewModel.chatOptions.mirostat) {
+                Picker("Mirostat Mode", selection: $chatOptions.mirostat) {
                     Text("Disabled").tag(0)
                     Text("Mirostat 1.0").tag(1)
                     Text("Mirostat 2.0").tag(2)
                 }
                 .pickerStyle(.segmented)
                 
-                if viewModel.chatOptions.mirostat > 0 {
+                if chatOptions.mirostat > 0 {
                     LabeledContent(
-                        "Eta (\(viewModel.chatOptions.mirostatEta, specifier: "%.2f"))"
+                        "Eta (\(chatOptions.mirostatEta, specifier: "%.2f"))"
                     ) {
                         Slider(
-                            value: $viewModel.chatOptions.mirostatEta,
+                            value: $chatOptions.mirostatEta,
                             in: 0...1,
                             step: 0.05
                         )
                     }
                     
                     LabeledContent(
-                        "Tau (\(viewModel.chatOptions.mirostatTau, specifier: "%.2f"))"
+                        "Tau (\(chatOptions.mirostatTau, specifier: "%.2f"))"
                     ) {
                         Slider(
-                            value: $viewModel.chatOptions.mirostatTau,
+                            value: $chatOptions.mirostatTau,
                             in: 0...10,
                             step: 0.1
                         )
@@ -110,25 +115,25 @@ struct ModelEditingView: View {
                 }
                 
                 LabeledContent("Context Window") {
-                    TextField("", value: $viewModel.chatOptions.numCtx, format: .number)
+                    TextField("", value: $chatOptions.numCtx, format: .number)
                 }
                 
                 LabeledContent("Max tokens to predict") {
-                    TextField("", value: $viewModel.chatOptions.numPredict, format: .number)
+                    TextField("", value: $chatOptions.numPredict, format: .number)
                 }
                 
-                LabeledContent("Top K (\(viewModel.chatOptions.topK))") {
-                    TextField("", value: $viewModel.chatOptions.topK, format: .number)
+                LabeledContent("Top K (\(chatOptions.topK))") {
+                    TextField("", value: $chatOptions.topK, format: .number)
                 }
                 
-                LabeledContent("Min P (\(viewModel.chatOptions.minP, specifier: "%.2f"))") {
-                    Slider(value: $viewModel.chatOptions.minP, in: 0...1, step: 0.05)
+                LabeledContent("Min P (\(chatOptions.minP, specifier: "%.2f"))") {
+                    Slider(value: $chatOptions.minP, in: 0...1, step: 0.05)
                 }
             }
             .maxWidth(alignment: .leading)
         }
         .labeledContentStyle(.settings)
         .maxWidth()
-        .animation(.default, value: viewModel.chatOptions.mirostat)
+        .animation(.default, value: chatOptions.mirostat)
     }
 }

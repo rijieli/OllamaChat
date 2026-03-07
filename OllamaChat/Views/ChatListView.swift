@@ -220,7 +220,7 @@ extension ChatListView {
                 .foregroundStyle(selected ? Color.accentColor : Color.secondary)
         }
         .overlay {
-            Text("\(item.messages.count)")
+            Text("\(item.messages.filter { $0.role != .system }.count)")
                 .font(.system(size: 13, weight: .regular))
                 .maxWidth(alignment: .trailing)
                 .foregroundStyle(selected ? Color.accentColor : Color.secondary)

@@ -10,10 +10,21 @@ import Foundation
 
 final class OllamaService: ObservableObject {
     private let configuration: OllamaConfiguration
+    private let chatOptions: ChatOptions
+    private let timeoutRequest: TimeInterval
+    private let timeoutResource: TimeInterval
     private var currentTask: Task<Void, Never>?
     
-    init(configuration: OllamaConfiguration) {
+    init(
+        configuration: OllamaConfiguration,
+        chatOptions: ChatOptions,
+        timeoutRequest: TimeInterval,
+        timeoutResource: TimeInterval
+    ) {
         self.configuration = configuration
+        self.chatOptions = chatOptions
+        self.timeoutRequest = timeoutRequest
+        self.timeoutResource = timeoutResource
     }
     
     func send(messages: [ChatMessage]) async throws -> AsyncThrowingStream<ChatStreamChunk, Error> {
@@ -58,8 +69,6 @@ final class OllamaService: ObservableObject {
             throw ChatCompletionError.invalidConfiguration("Cannot build API endpoint URL")
         }
         
-        let chatViewModel = ChatViewModel.shared
-
         // Prepare the request
         var request = URLRequest(url: requestURL)
         request.httpMethod = "POST"
@@ -68,15 +77,15 @@ final class OllamaService: ObservableObject {
         let requestBody = ChatModel(
             model: configuration.selectedModel,
             messages: messages,
-            options: chatViewModel.chatOptions
+            options: chatOptions
         )
         let encoder = JSONEncoder()
         request.httpBody = try encoder.encode(requestBody)
         
         // Create URLSession with custom configuration for streaming
         let sessionConfig = URLSessionConfiguration.default
-        sessionConfig.timeoutIntervalForRequest = Double(chatViewModel.timeoutRequest) ?? 60
-        sessionConfig.timeoutIntervalForResource = Double(chatViewModel.timeoutResource) ?? 604800
+        sessionConfig.timeoutIntervalForRequest = timeoutRequest
+        sessionConfig.timeoutIntervalForResource = timeoutResource
         let session = URLSession(configuration: sessionConfig)
         
         // Make the streaming request - use bytes(for:) for streaming responses

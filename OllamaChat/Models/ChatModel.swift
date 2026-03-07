@@ -340,10 +340,6 @@ struct ChatMessage: Identifiable, Codable, Equatable, Hashable {
         "\(role.rawValue) : \(content)"
     }
 
-    static var globalSystem: Self {
-        ChatMessage(role: .system, content: AppSettings.globalSystem)
-    }
-
     mutating func append(_ chunk: ChatStreamChunk) {
         if !chunk.content.isEmpty {
             content += chunk.content
