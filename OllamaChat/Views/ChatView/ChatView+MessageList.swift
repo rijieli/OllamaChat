@@ -68,7 +68,7 @@ extension ChatView {
             }
             
             actionButton("gearshape.fill") {
-                viewModel.showSystemConfig = true
+                viewModel.showModelConfiguration = true
             }
             
             if CurrentOS.isiOS, allowSubmitNewMessage {

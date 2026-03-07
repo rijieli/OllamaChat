@@ -5,6 +5,7 @@
         <attribute name="history" optional="YES" attributeType="String"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="model" optional="YES" attributeType="String"/>
+        <attribute name="modelConfiguration" optional="YES" attributeType="String"/>
         <attribute name="name" optional="YES" attributeType="String"/>
     </entity>
 </model>

@@ -44,11 +44,11 @@ func fetchOllamaModels(timeout: Double? = nil) async throws -> OllamaModelGroup 
 
         await MainActor.run {
             APIManager.shared.replaceAvailableModels(modelNames)
+            ChatViewModel.shared.updateAvailableModels(decoded)
+
             if decoded.models.count == 0 {
                 ChatViewModel.shared.errorModel = noModelsError(error: nil)
             } else {
-                ChatViewModel.shared.tags = decoded
-                ChatViewModel.shared.currentChat?.model = ChatViewModel.shared.model
                 APIManager.shared.updateMetadata(
                     ModelMetadata(source: "ollama")
                 )

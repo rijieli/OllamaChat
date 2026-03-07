@@ -73,8 +73,9 @@ class APIManager: ObservableObject {
     func replaceAvailableModels(_ models: [String]) {
         configuration.models = models
 
-        if !models.isEmpty && !models.contains(configuration.selectedModel) {
-            configuration.selectedModel = models[0]
+        if configuration.selectedModel.isEmpty, let fallbackModel = models.first {
+            assert(false, "Falling back to the first available Ollama model.")
+            configuration.selectedModel = fallbackModel
         }
     }
 

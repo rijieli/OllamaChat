@@ -68,8 +68,7 @@ final class OllamaService: ObservableObject {
         let requestBody = ChatModel(
             model: configuration.selectedModel,
             messages: messages,
-            options: chatViewModel.chatOptions,
-            think: chatViewModel.ollamaThinkRequestValue
+            options: chatViewModel.chatOptions
         )
         let encoder = JSONEncoder()
         request.httpBody = try encoder.encode(requestBody)

@@ -99,11 +99,7 @@ extension ChatView {
     }
 
     private func selectOllamaModel(_ model: String) {
-        apiManager.updateSelectedModel(model)
-        apiManager.updateLastUsed()
-        viewModel.currentChat?.model = model
-        CoreDataStack.shared.saveContext()
-        viewModel.objectWillChange.send()
+        viewModel.selectAvailableModel(model)
     }
 }
 

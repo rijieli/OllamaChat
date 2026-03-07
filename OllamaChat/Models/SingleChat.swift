@@ -14,6 +14,7 @@ class SingleChat: NSManagedObject, Identifiable {
     @NSManaged public var history: String
     @NSManaged public var id: UUID
     @NSManaged public var model: String
+    @NSManaged public var modelConfiguration: String?
     @NSManaged public var name: String
     @NSManaged public var createdAt: Date
 
@@ -34,10 +35,25 @@ class SingleChat: NSManagedObject, Identifiable {
             let encoder = JSONEncoder()
             do {
                 let data = try encoder.encode(newValue)
-                history = String(data: data, encoding: .utf8) ?? "[]"
+                guard let historyString = String(data: data, encoding: .utf8) else {
+                    assert(false, "Failed to convert encoded chat history into a UTF-8 string.")
+                    history = "[]"
+                    return
+                }
+
+                history = historyString
             } catch {
                 print("Failed to encode messages: \(error)")
             }
+        }
+    }
+
+    public var chatModelConfiguration: ChatOptions? {
+        get {
+            ChatOptions.decodeModelConfiguration(from: modelConfiguration)
+        }
+        set {
+            modelConfiguration = newValue?.encodedModelConfiguration()
         }
     }
 }
@@ -78,7 +94,11 @@ extension SingleChat {
         return (try? CoreDataStack.shared.context.count(for: fetchRequest)) ?? 0
     }
 
-    public class func createNewSingleChat(messages: [ChatMessage], model: String) -> SingleChat {
+    public class func createNewSingleChat(
+        messages: [ChatMessage],
+        model: String,
+        modelConfiguration: String?
+    ) -> SingleChat {
         let context = CoreDataStack.shared.context
         let chatCount = chatCount
 
@@ -87,6 +107,7 @@ extension SingleChat {
         newChat.id = UUID()
         newChat.name = "Chat \(chatCount + 1)"  // Automatically set name based on chat count
         newChat.model = model
+        newChat.modelConfiguration = modelConfiguration
         newChat.createdAt = Date()
         newChat.messages = messages
 
@@ -102,6 +123,7 @@ extension SingleChat {
         newChat.id = UUID()
         newChat.name = "Name\(chatCount + 1)"  // Automatically set name based on chat count
         newChat.model = chat.model
+        newChat.modelConfiguration = chat.modelConfiguration
         newChat.createdAt = Date()
         newChat.messages = chat.messages
 

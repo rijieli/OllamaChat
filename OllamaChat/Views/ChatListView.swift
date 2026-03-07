@@ -103,8 +103,8 @@ struct ChatListView: View {
             }
             Button("Cancel", role: .cancel) {}
         }
-        .sheet(isPresented: $chatViewModel.showSystemConfig) {
-            SystemEditorView(viewModel: chatViewModel)
+        .sheet(isPresented: $chatViewModel.showModelConfiguration) {
+            ModelConfigurationView(viewModel: chatViewModel)
             #if os(iOS)
             .presentationDetents([.medium, .large])
             #endif

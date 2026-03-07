@@ -20,12 +20,12 @@ struct ContentView: View {
     var body: some View {
         #if os(macOS)
             NavigationSplitView {
-                ChatListView()
+                ChatListView().navigationSplitViewColumnWidth(min: 240, ideal: 320, max: 400)
             } detail: {
                 if viewModel.currentChat == nil {
                     ChatPlaceholderView()
                 } else {
-                    ChatView()
+                    ChatView().navigationSplitViewColumnWidth(min: 400, ideal: 600)
                 }
             }
             .navigationTitle(viewModel.currentChat?.name ?? "Ollama Chat")

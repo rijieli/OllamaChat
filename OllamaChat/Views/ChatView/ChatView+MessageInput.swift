@@ -18,12 +18,15 @@ extension ChatView {
                 .onSubmit {
                     allowSubmitNewMessage ? viewModel.send() : nil
                 }
-                .disabled(viewModel.waitingResponse)
+                .disabled(viewModel.waitingResponse || viewModel.requiresModelSelectionOverlay)
                 .focused($promptFieldIsFocused)
                 .modifier(BorderDecoratedStyleModifier())
                 .overlay(alignment: .trailing) {
                     ZStack {
-                        if CurrentOS.ismacOS && allowSubmitNewMessage {
+                        if CurrentOS.ismacOS
+                            && allowSubmitNewMessage
+                            && !viewModel.requiresModelSelectionOverlay
+                        {
                             Button {
                                 viewModel.send()
                                 promptFieldIsFocused = false
@@ -43,10 +46,19 @@ extension ChatView {
                 }
                 .animation(.smooth(duration: 0.3), value: allowSubmitNewMessage)
                 .onChange(of: viewModel.waitingResponse) { newValue in
-                    if newValue == false {
+                    if newValue == false, !viewModel.requiresModelSelectionOverlay {
                         promptFieldIsFocused = true
                     }
                 }
+
+            if viewModel.requiresModelSelectionOverlay {
+                missingModelOverlay
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 16)
+            }
+        }
+        .onChange(of: viewModel.unavailableCurrentChatModelName) { unavailableModel in
+            promptFieldIsFocused = unavailableModel == nil && !viewModel.waitingResponse
         }
         .padding(.horizontal, 12)
         .padding(.bottom, 12)
@@ -56,9 +68,75 @@ extension ChatView {
     }
     
     var allowSubmitNewMessage: Bool {
+        guard !viewModel.requiresModelSelectionOverlay else { return false }
         guard !viewModel.current.content.isEmpty else { return false }
         guard !viewModel.waitingResponse else { return false }
         return viewModel.current.content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
             == false
+    }
+
+    private var missingModelOverlay: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(alignment: .top, spacing: 10) {
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .font(.title3)
+                    .foregroundStyle(.orange)
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Model unavailable")
+                        .font(.headline)
+
+                    if let unavailableModelName = viewModel.unavailableCurrentChatModelName {
+                        Text(overlayMessage(for: unavailableModelName))
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+
+                Spacer(minLength: 0)
+            }
+
+            HStack(spacing: 8) {
+                if !viewModel.availableReplacementModels.isEmpty {
+                    Menu {
+                        ForEach(viewModel.availableReplacementModels, id: \.name) { model in
+                            Button(model.name) {
+                                viewModel.selectAvailableModel(model.name)
+                            }
+                        }
+                    } label: {
+                        Label("Choose Model", systemImage: "server.rack")
+                    }
+                    .buttonStyle(.borderedProminent)
+                }
+
+                Button {
+                    promptFieldIsFocused = false
+                    viewModel.openModelSettings()
+                } label: {
+                    Label("Open Settings", systemImage: "gearshape")
+                }
+                .buttonStyle(.bordered)
+            }
+        }
+        .padding(16)
+        .maxFrame(alignment: .topLeading)
+        .background(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .fill(Color.ocPrimaryBackground.opacity(0.98))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        .strokeBorder(Color.ocDividerColor, lineWidth: 1)
+                )
+        )
+        .contentShape(Rectangle())
+    }
+
+    private func overlayMessage(for unavailableModelName: String) -> String {
+        if viewModel.availableReplacementModels.isEmpty {
+            return "\"\(unavailableModelName)\" is no longer available. No models are installed right now."
+        }
+
+        return "\"\(unavailableModelName)\" is no longer available. Choose an existing model to keep chatting."
     }
 }

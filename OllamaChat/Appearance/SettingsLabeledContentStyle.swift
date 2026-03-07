@@ -14,7 +14,7 @@ struct SettingsLabeledContentStyle: LabeledContentStyle {
             configuration.label
                 .frame(maxWidth: 200, alignment: .leading)
             configuration.content
-                .maxWidth()
+                .maxWidth(alignment: .trailing)
         }
     }
 }
