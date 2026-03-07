@@ -5,21 +5,21 @@
         <link>https://github.com/rijieli/OllamaChat/releases</link>
         <description>Latest updates for OllamaChat</description>
         <item>
-            <title>Version 1.5.9</title>
-            <sparkle:version>115</sparkle:version>
-            <sparkle:shortVersionString>1.5.9</sparkle:shortVersionString>
+            <title>Version 1.6</title>
+            <sparkle:version>141</sparkle:version>
+            <sparkle:shortVersionString>1.6</sparkle:shortVersionString>
             <enclosure
-                url="https://github.com/rijieli/OllamaChat/releases/download/1.5.9/OllamaChat.dmg"
-                sparkle:version="115"
-                sparkle:shortVersionString="1.5.9"
+                url="https://github.com/rijieli/OllamaChat/releases/download/1.6/OllamaChat.dmg"
+                sparkle:version="141"
+                sparkle:shortVersionString="1.6"
                 type="application/octet-stream"
-                sparkle:edSignature="hagQA2C36UMtGoki9dnrET/V2McBiz2cROtK0atkZ0urSwqZLZZtMaf0Wz1VO3NzNOXoKVHQ6bcMgUFs1KJ3BQ=="
-                length="2573613"
+                sparkle:edSignature="3cRhrSd1ySj6KDkSC3NqbDY3bqq4Y7VJEUQoCYVXRK09hY+qSpYxujEYdP7nJXckwuFi0sywASJHd1vI/UcpDg=="
+                length="2640819"
             />
             <description><![CDATA[
-                <h2>Changes in version 1.5.9:</h2>
+                <h2>Changes in version 1.6:</h2>
                 <ul>
-                    <li> Fix chat model settings not being saved </li>
+                    <li> - </li>
                 </ul>
             ]]></description>
         </item>
