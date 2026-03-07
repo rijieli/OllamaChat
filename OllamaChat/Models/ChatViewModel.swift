@@ -8,14 +8,10 @@
 
 import SwiftUI
 
+@MainActor
 class ChatViewModel: ObservableObject {
     static let shared = ChatViewModel()
-    
-    @Published var tags = OllamaModelGroup(models: []) {
-        didSet {
-            refreshMissingSelectedModelState()
-        }
-    }
+
     @Published var host: String {
         didSet {
             syncConfigurationEndpoint()
@@ -64,14 +60,21 @@ class ChatViewModel: ObservableObject {
     
     var editingCellIndex: Int? = nil
     
-    @Published var currentChat: SingleChat? = nil {
-        didSet {
-            refreshMissingSelectedModelState()
-        }
-    }
+    @Published var currentChat: SingleChat? = nil
     
     @Published var showSettingsView = false
-    @Published private(set) var unavailableCurrentChatModelName: String? = nil
+
+    var unavailableCurrentChatModelName: String? {
+        guard UnifiedModelRegistry.shared.hasResolvedModels,
+              let chatModel = currentChat?.model,
+              !chatModel.isEmpty
+        else {
+            return nil
+        }
+
+        let availableModels = Set(UnifiedModelRegistry.shared.models.map(\.name))
+        return availableModels.contains(chatModel) ? nil : chatModel
+    }
     
     @Published var current = ChatMessage(role: .user, content: "")
     
@@ -85,7 +88,7 @@ class ChatViewModel: ObservableObject {
             return configuredModel
         }
 
-        if let fallbackModel = tags.models.first?.name {
+        if let fallbackModel = UnifiedModelRegistry.shared.models.first?.name {
             assert(false, "Falling back to the first available Ollama model.")
             return fallbackModel
         }
@@ -98,7 +101,7 @@ class ChatViewModel: ObservableObject {
     }
 
     var availableReplacementModels: [OllamaLanguageModel] {
-        tags.models
+        UnifiedModelRegistry.shared.models
     }
     
     @Published var messages: [ChatMessage]
@@ -113,7 +116,6 @@ class ChatViewModel: ObservableObject {
     
     private var chatTask: Task<Void, Never>?
     private var ollamaService: OllamaService?
-    private var hasResolvedAvailableModelList = false
     
     @MainActor
     func send() {
@@ -273,13 +275,13 @@ class ChatViewModel: ObservableObject {
         }
 
         restoreActiveModelConfiguration(for: chat)
-        refreshMissingSelectedModelState()
         TextSpeechCenter.shared.stopImmediate()
     }
     
     func newChat() {
         var modelName = APIManager.shared.selectedModel
-        if modelName.isEmpty, let fallbackModel = tags.models.first?.name {
+        if modelName.isEmpty,
+           let fallbackModel = UnifiedModelRegistry.shared.models.first?.name {
             assert(false, "Falling back to the first available Ollama model for a new chat.")
             modelName = fallbackModel
         }
@@ -296,14 +298,10 @@ class ChatViewModel: ObservableObject {
     }
 
     private func syncConfigurationEndpoint() {
-        invalidateAvailableModelList()
         APIManager.shared.updateEndpoint(
             Self.processBaseEndPoint(host: host, port: port)
         )
-
-        Task { @MainActor in
-            UnifiedModelRegistry.shared.clearCache()
-        }
+        UnifiedModelRegistry.shared.invalidateModels()
     }
     
     @MainActor
@@ -345,14 +343,8 @@ class ChatViewModel: ObservableObject {
     }
 
     @MainActor
-    func updateAvailableModels(_ modelGroup: OllamaModelGroup) {
-        hasResolvedAvailableModelList = true
-        tags = modelGroup
-    }
-
-    @MainActor
     func selectAvailableModel(_ model: String) {
-        guard tags.models.contains(where: { $0.name == model }) else {
+        guard UnifiedModelRegistry.shared.models.contains(where: { $0.name == model }) else {
             assert(false, "Selected replacement model is not in the current Ollama model list.")
             return
         }
@@ -366,7 +358,6 @@ class ChatViewModel: ObservableObject {
             assert(false, "Cannot select a model without an active chat.")
         }
 
-        refreshMissingSelectedModelState()
         objectWillChange.send()
     }
 
@@ -410,24 +401,5 @@ class ChatViewModel: ObservableObject {
 
         currentChat.modelConfiguration = currentModelConfiguration.encodedModelConfiguration()
         CoreDataStack.shared.saveContext()
-    }
-
-    private func invalidateAvailableModelList() {
-        hasResolvedAvailableModelList = false
-        unavailableCurrentChatModelName = nil
-        tags = OllamaModelGroup(models: [])
-    }
-
-    private func refreshMissingSelectedModelState() {
-        guard hasResolvedAvailableModelList,
-              let chatModel = currentChat?.model,
-              !chatModel.isEmpty
-        else {
-            unavailableCurrentChatModelName = nil
-            return
-        }
-
-        let availableModels = Set(tags.models.map(\.name))
-        unavailableCurrentChatModelName = availableModels.contains(chatModel) ? nil : chatModel
     }
 }

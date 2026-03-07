@@ -47,10 +47,6 @@ extension ChatViewModel {
         return components.url?.absoluteString ?? defaultBaseEndPoint
     }
 
-    static func processAPIEndPoint(host: String, port: String) -> String {
-        processBaseEndPoint(host: host, port: port) + "/api/"
-    }
-
     static func endpointComponents(from endpoint: String) -> (host: String, port: String) {
         guard let url = URL(string: endpoint), let endpointHost = url.host else {
             assert(false, "Invalid stored Ollama endpoint: \(endpoint)")
@@ -70,9 +66,5 @@ extension ChatViewModel {
         }
 
         return (host, port)
-    }
-    
-    var apiEndPoint: String {
-        Self.processAPIEndPoint(host: host, port: port)
     }
 }

@@ -26,9 +26,6 @@ class APIManager: ObservableObject {
         }
     }
 
-    @Published var isLoadingModels = false
-    @Published var modelFetchError: Error?
-
     private init() {
         let storedConfiguration = APIManager.storage
         if storedConfiguration.isValid {
@@ -57,17 +54,6 @@ class APIManager: ObservableObject {
     func updateSelectedModel(_ selectedModel: String) {
         guard configuration.selectedModel != selectedModel else { return }
         configuration.selectedModel = selectedModel
-    }
-
-    @MainActor
-    func refreshAllModels() async {
-        isLoadingModels = true
-        modelFetchError = nil
-
-        defer { isLoadingModels = false }
-
-        await UnifiedModelRegistry.shared.refreshModels()
-        modelFetchError = UnifiedModelRegistry.shared.error
     }
 
     func replaceAvailableModels(_ models: [String]) {

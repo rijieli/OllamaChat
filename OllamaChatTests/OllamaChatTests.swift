@@ -209,6 +209,67 @@ final class OllamaChatTests: XCTestCase {
         XCTAssertEqual(json["think"] as? String, "medium")
     }
 
+    func testListModelsResponseDecodesCurrentTagsSchema() throws {
+        let data = """
+        {
+          "models": [
+            {
+              "name": "gemma3",
+              "model": "gemma3",
+              "remote_model": "library/gemma3",
+              "remote_host": "https://ollama.com",
+              "modified_at": "2025-10-03T23:34:03.409490317-07:00",
+              "size": 3338801804,
+              "digest": "a2af6cc3eb7fa8be8504abaf9b04e88f17a119ec3f04a3addf55f92841195f5a",
+              "details": {
+                "format": "gguf",
+                "family": "gemma",
+                "families": ["gemma"],
+                "parameter_size": "4.3B",
+                "quantization_level": "Q4_K_M"
+              }
+            }
+          ]
+        }
+        """.data(using: .utf8)!
+
+        let response = try JSONDecoder().decode(OllamaModelGroup.self, from: data)
+        let model = try XCTUnwrap(response.models.first)
+
+        XCTAssertEqual(model.name, "gemma3")
+        XCTAssertEqual(model.model, "gemma3")
+        XCTAssertEqual(model.remoteModel, "library/gemma3")
+        XCTAssertEqual(model.remoteHost, "https://ollama.com")
+        XCTAssertEqual(model.details?.format, "gguf")
+        XCTAssertEqual(model.details?.family, "gemma")
+        XCTAssertEqual(model.details?.families, ["gemma"])
+        XCTAssertEqual(model.details?.parameterSize, "4.3B")
+        XCTAssertEqual(model.details?.quantizationLevel, "Q4_K_M")
+    }
+
+    func testListModelsResponseDecodesWithoutDetailsObject() throws {
+        let data = """
+        {
+          "models": [
+            {
+              "name": "llama3.2",
+              "model": "llama3.2",
+              "modified_at": "2026-03-07T00:00:00Z",
+              "size": 2019393189,
+              "digest": "deadbeef"
+            }
+          ]
+        }
+        """.data(using: .utf8)!
+
+        let response = try JSONDecoder().decode(OllamaModelGroup.self, from: data)
+        let model = try XCTUnwrap(response.models.first)
+
+        XCTAssertEqual(model.name, "llama3.2")
+        XCTAssertNil(model.details)
+        XCTAssertEqual(model.modelInfo.modelName, "Llama3.2")
+    }
+
 }
 
 private func jsonObject(from data: Data) throws -> [String: Any] {

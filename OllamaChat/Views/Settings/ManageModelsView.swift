@@ -10,7 +10,7 @@ import SwiftUI
 
 struct ManageModelsView: View {
 
-    @ObservedObject var chatViewModel = ChatViewModel.shared
+    @ObservedObject private var modelRegistry = UnifiedModelRegistry.shared
 
     @State private var errorModel: ErrorModel = ErrorModel(
         showError: false,
@@ -23,14 +23,9 @@ struct ManageModelsView: View {
     @State private var totalSize: Double = 0
     @State private var completedSoFar: Double = 0
 
-    var tags: OllamaModelGroup {
-        chatViewModel.tags
+    var models: [OllamaLanguageModel] {
+        modelRegistry.models
     }
-
-    var host: String { chatViewModel.host }
-    var port: String { chatViewModel.port }
-    var timeoutRequest: String { chatViewModel.timeoutRequest }
-    var timeoutResource: String { chatViewModel.timeoutResource }
 
     @State private var modelToDelete: OllamaLanguageModel?
     @State private var showModelDeletionAlert = false
@@ -79,7 +74,7 @@ struct ManageModelsView: View {
                 }
             }
 
-            if tags.models.count == 0 {
+            if models.isEmpty {
                 HStack {
                     Label("Error", systemImage: "exclamationmark.triangle")
                         .foregroundStyle(.red)
@@ -88,7 +83,7 @@ struct ManageModelsView: View {
                     )
                 }
             }
-            List(tags.models, id: \.self) { model in
+            List(models, id: \.self) { model in
                 HStack(spacing: 0) {
                     Text(model.name)
                         .padding(.trailing, 10)
@@ -153,8 +148,8 @@ struct ManageModelsView: View {
         Task {
             do {
                 errorModel.showError = false
-                _ = try await fetchOllamaModels()
-                if tags.models.count == 0 {
+                _ = try await modelRegistry.fetchOllamaModels()
+                if models.isEmpty {
                     errorModel = noModelsError(error: nil)
                 }
             } catch {

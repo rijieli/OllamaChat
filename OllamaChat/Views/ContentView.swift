@@ -25,10 +25,9 @@ struct ContentView: View {
         .navigationTitle(viewModel.currentChat?.name ?? "Ollama Chat")
         .onChange(of: appearsActive) { newValue in
             if newValue == true {
-                log.debug("Refresh Models")
                 Task {
                     do {
-                        _ = try await fetchOllamaModels(timeout: 5)
+                        _ = try await UnifiedModelRegistry.shared.fetchOllamaModels(timeout: 5)
                     } catch {
                         print(error.localizedDescription)
                     }

@@ -149,7 +149,7 @@ private struct ModelConfigView: View {
 
         Task {
             do {
-                _ = try await fetchOllamaModels(timeout: 5)
+                _ = try await UnifiedModelRegistry.shared.fetchOllamaModels(timeout: 5)
                 DispatchQueue.main.async {
                     self.testResult = (
                         true, "Connected: \(APIEndPoint)"
@@ -169,7 +169,7 @@ private struct ModelConfigView: View {
 
 private struct DefaultModelPickerView: View {
     @ObservedObject private var apiManager = APIManager.shared
-    @ObservedObject private var chatViewModel = ChatViewModel.shared
+    @ObservedObject private var modelRegistry = UnifiedModelRegistry.shared
 
     private var defaultModelBinding: Binding<String> {
         Binding(
@@ -179,8 +179,7 @@ private struct DefaultModelPickerView: View {
     }
 
     private var availableModelNames: [String] {
-        let liveModelNames = chatViewModel.tags.models.map(\.name)
-        let modelNames = liveModelNames.isEmpty ? apiManager.configuration.models : liveModelNames
+        let modelNames = modelRegistry.models.map(\.name)
         guard !apiManager.selectedModel.isEmpty,
             !modelNames.contains(apiManager.selectedModel)
         else {
@@ -218,8 +217,7 @@ private struct DefaultModelPickerView: View {
     }
 
     private func label(for modelName: String) -> String {
-        let knownModelNames = Set(chatViewModel.tags.models.map(\.name))
-            .union(apiManager.configuration.models)
+        let knownModelNames = Set(modelRegistry.models.map(\.name))
         guard !knownModelNames.contains(modelName) else {
             return modelName
         }

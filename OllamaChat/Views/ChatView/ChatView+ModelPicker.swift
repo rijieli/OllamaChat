@@ -43,13 +43,13 @@ extension ChatView {
 
     @ViewBuilder
     private func ollamaSection() -> some View {
-        if viewModel.tags.models.isEmpty {
+        if modelRegistry.models.isEmpty {
             Text("Ollama service not running")
                 .font(.caption)
                 .foregroundColor(.secondary)
                 .italic()
         } else {
-            ForEach(viewModel.tags.models, id: \.name) { model in
+            ForEach(modelRegistry.models, id: \.name) { model in
                 Button(action: {
                     selectOllamaModel(model.name)
                 }) {
@@ -86,7 +86,7 @@ extension ChatView {
     private func displayName(for modelName: String?) -> String? {
         guard let modelName, !modelName.isEmpty else { return nil }
 
-        if let ollamaModel = viewModel.tags.models.first(where: { $0.name == modelName }) {
+        if let ollamaModel = modelRegistry.models.first(where: { $0.name == modelName }) {
             let displayInfo = ollamaModel.modelInfo
             var displayName = displayInfo.modelName
             if let scale = displayInfo.modelScale {

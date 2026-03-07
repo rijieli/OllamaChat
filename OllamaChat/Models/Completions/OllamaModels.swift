@@ -9,56 +9,7 @@
 import Foundation
 
 var APIEndPoint: String {
-    ChatViewModel.shared.apiEndPoint
-}
-
-func fetchOllamaModels(timeout: Double? = nil) async throws -> OllamaModelGroup {
-    let endpoint = APIEndPoint + "tags"
-
-    guard let url = URL(string: endpoint) else {
-        throw NetError.invalidURL(error: nil)
-    }
-
-    let data: Data
-    let response: URLResponse
-
-    let timeoutRequest = ChatViewModel.shared.timeoutRequest
-    let timeoutResource = ChatViewModel.shared.timeoutResource
-
-    do {
-        let sessionConfig = URLSessionConfiguration.default
-        sessionConfig.timeoutIntervalForRequest = timeout ?? Double(timeoutRequest) ?? 60
-        sessionConfig.timeoutIntervalForResource = Double(timeoutResource) ?? 604800
-        (data, response) = try await URLSession(configuration: sessionConfig).data(from: url)
-    } catch {
-        throw NetError.unreachable(error: error)
-    }
-
-    guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
-        throw NetError.invalidResponse(error: nil)
-    }
-    let decoder = JSONDecoder()
-    do {
-        let decoded = try decoder.decode(OllamaModelGroup.self, from: data)
-        let modelNames = decoded.models.map(\.name)
-
-        await MainActor.run {
-            APIManager.shared.replaceAvailableModels(modelNames)
-            ChatViewModel.shared.updateAvailableModels(decoded)
-
-            if decoded.models.count == 0 {
-                ChatViewModel.shared.errorModel = noModelsError(error: nil)
-            } else {
-                APIManager.shared.updateMetadata(
-                    ModelMetadata(source: "ollama")
-                )
-                ChatViewModel.shared.clearError()
-            }
-        }
-        return decoded
-    } catch {
-        throw NetError.invalidData(error: error)
-    }
+    APIManager.shared.endpoint + "/api/"
 }
 
 struct OllamaModelGroup: Decodable, Hashable {
@@ -66,15 +17,13 @@ struct OllamaModelGroup: Decodable, Hashable {
 }
 
 struct OllamaModelParameter: Codable, Hashable {
-    let parentModel: String
-    let format: String
-    let family: String
+    let format: String?
+    let family: String?
     let families: [String]?
-    let parameterSize: String
-    let quantizationLevel: String
+    let parameterSize: String?
+    let quantizationLevel: String?
 
     enum CodingKeys: String, CodingKey {
-        case parentModel = "parent_model"
         case format
         case family
         case families
@@ -82,29 +31,23 @@ struct OllamaModelParameter: Codable, Hashable {
         case quantizationLevel = "quantization_level"
     }
 
-    static var emptyDetails: OllamaModelParameter {
-        OllamaModelParameter(
-            parentModel: "",
-            format: "",
-            family: "",
-            families: nil,
-            parameterSize: "",
-            quantizationLevel: ""
-        )
-    }
 }
 
 struct OllamaLanguageModel: Codable, Hashable {
     let name: String
     let model: String
+    let remoteModel: String?
+    let remoteHost: String?
     let modifiedAt: String
     let size: Int
     let digest: String
-    let details: OllamaModelParameter
+    let details: OllamaModelParameter?
 
     enum CodingKeys: String, CodingKey {
         case name
         case model
+        case remoteModel = "remote_model"
+        case remoteHost = "remote_host"
         case modifiedAt = "modified_at"
         case size
         case digest
@@ -114,10 +57,12 @@ struct OllamaLanguageModel: Codable, Hashable {
     static let emptyModel = OllamaLanguageModel(
         name: "",
         model: "",
+        remoteModel: nil,
+        remoteHost: nil,
         modifiedAt: "",
         size: 0,
         digest: "",
-        details: .emptyDetails
+        details: nil
     )
 
     var modelInfo: ModelDisplayInfo {
@@ -166,8 +111,8 @@ struct OllamaLanguageModel: Codable, Hashable {
         }
 
         // Add parameter size from details if available
-        if !details.parameterSize.isEmpty {
-            cleanModelName += "(\(details.parameterSize))"
+        if let parameterSize = details?.parameterSize, !parameterSize.isEmpty {
+            cleanModelName += "(\(parameterSize))"
         }
 
         return ModelDisplayInfo(

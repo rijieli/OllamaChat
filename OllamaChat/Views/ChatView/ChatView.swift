@@ -14,6 +14,7 @@ struct ChatView: View {
     @StateObject var viewModel = ChatViewModel.shared
     @StateObject var apiManager = APIManager.shared
     @StateObject var speechCenter = TextSpeechCenter.shared
+    @ObservedObject var modelRegistry = UnifiedModelRegistry.shared
 
     @FocusState var promptFieldIsFocused: Bool
 
