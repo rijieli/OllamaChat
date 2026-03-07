@@ -48,9 +48,9 @@ class SingleChat: NSManagedObject, Identifiable {
         }
     }
 
-    public var chatModelConfiguration: ChatOptions? {
+    public var chatConfiguration: ChatConfiguration? {
         get {
-            ChatOptions.decodeModelConfiguration(from: modelConfiguration)
+            ChatConfiguration.decodeModelConfiguration(from: modelConfiguration)
         }
         set {
             modelConfiguration = newValue?.encodedModelConfiguration()
@@ -97,7 +97,7 @@ extension SingleChat {
     public class func createNewSingleChat(
         messages: [ChatMessage],
         model: String,
-        modelConfiguration: String?
+        chatConfiguration: ChatConfiguration?
     ) -> SingleChat {
         let context = CoreDataStack.shared.context
         let chatCount = chatCount
@@ -107,7 +107,7 @@ extension SingleChat {
         newChat.id = UUID()
         newChat.name = "Chat \(chatCount + 1)"  // Automatically set name based on chat count
         newChat.model = model
-        newChat.modelConfiguration = modelConfiguration
+        newChat.chatConfiguration = chatConfiguration
         newChat.createdAt = Date()
         newChat.messages = messages
 

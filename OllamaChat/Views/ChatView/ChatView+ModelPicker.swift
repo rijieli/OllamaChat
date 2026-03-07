@@ -9,7 +9,7 @@
 import SwiftUI
 
 extension ChatView {
-    
+
     func modelPicker() -> some View {
         Menu {
             ollamaSection()
@@ -23,11 +23,11 @@ extension ChatView {
                         ? "Select a model" : String(selectedModelDisplayName.prefix(16))
                 )
                 .foregroundColor(hasSelectedModel ? .primary : .secondary)
-                
+
                 Spacer()
 
                 StatusIndicator(isValid: apiManager.configuration.isValid)
-                
+
                 Image(systemName: "chevron.down")
                     .font(.caption)
                     .foregroundColor(.secondary)
@@ -104,7 +104,7 @@ extension ChatView {
 struct OllamaModelRow: View {
     let model: OllamaLanguageModel
     let isSelected: Bool
-    
+
     private var displayName: String {
         let displayInfo = model.modelInfo
         var name = displayInfo.modelName
@@ -113,7 +113,7 @@ struct OllamaModelRow: View {
         }
         return name
     }
-    
+
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 2) {
@@ -121,28 +121,11 @@ struct OllamaModelRow: View {
                     Text(displayName)
                         .font(.body)
                         .foregroundColor(isSelected ? .primary : .primary)
-                    
-                    if isSelected {
-                        Text("Selected")
-                            .font(.caption2)
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 1)
-                            .background(Color.blue.opacity(0.2))
-                            .cornerRadius(3)
-                    }
                 }
-                
-                Text("Local Ollama")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                
-                Text("Local model")
-                    .font(.caption2)
-                    .foregroundColor(.secondary)
             }
-            
+
             Spacer()
-            
+
             if isSelected {
                 Image(systemName: "checkmark")
                     .foregroundColor(.blue)
@@ -154,7 +137,7 @@ struct OllamaModelRow: View {
 
 struct StatusIndicator: View {
     let isValid: Bool
-    
+
     var body: some View {
         Circle()
             .fill(isValid ? Color.green : Color.red)

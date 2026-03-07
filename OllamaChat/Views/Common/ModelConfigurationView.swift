@@ -102,7 +102,7 @@ struct ModelConfigurationView: View {
 
     private var configurationTab: some View {
         ScrollView(.vertical, showsIndicators: false) {
-            ModelEditingView(chatOptions: $viewModel.chatOptions)
+            ModelEditingView(chatConfiguration: $viewModel.chatConfiguration)
                 .padding(.top, 4)
                 .padding(.bottom, 8)
         }

@@ -43,7 +43,7 @@ extension SettingsView {
                         ModelConfigView()
                             .padding(.horizontal, 24)
                     case .chatOptions:
-                        ModelEditingView(chatOptions: $viewModel.defaultChatOptions)
+                        ModelEditingView(chatConfiguration: $viewModel.defaultChatConfiguration)
                             .padding(.horizontal, 24)
                     }
                 }

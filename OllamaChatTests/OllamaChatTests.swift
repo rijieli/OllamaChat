@@ -174,8 +174,7 @@ final class OllamaChatTests: XCTestCase {
         let request = ChatModel(
             model: "qwen3",
             messages: [ChatMessage(role: .user, content: "Hello")],
-            options: .defaultValue,
-            think: OllamaThinkMode.automatic.requestValue
+            configuration: .defaultValue
         )
 
         let json = try jsonObject(from: JSONEncoder().encode(request))
@@ -187,8 +186,7 @@ final class OllamaChatTests: XCTestCase {
         let request = ChatModel(
             model: "qwen3",
             messages: [ChatMessage(role: .user, content: "Hello")],
-            options: .defaultValue,
-            think: OllamaThinkMode.enabled.requestValue
+            configuration: ChatConfiguration(think: .enabled, options: .defaultValue)
         )
 
         let json = try jsonObject(from: JSONEncoder().encode(request))
@@ -200,13 +198,25 @@ final class OllamaChatTests: XCTestCase {
         let request = ChatModel(
             model: "gpt-oss:20b",
             messages: [ChatMessage(role: .user, content: "Hello")],
-            options: .defaultValue,
-            think: OllamaThinkMode.medium.requestValue
+            configuration: ChatConfiguration(think: .medium, options: .defaultValue)
         )
 
         let json = try jsonObject(from: JSONEncoder().encode(request))
 
         XCTAssertEqual(json["think"] as? String, "medium")
+    }
+
+    func testRequestOmitsEmptyStopArray() throws {
+        let request = ChatModel(
+            model: "qwen3",
+            messages: [ChatMessage(role: .user, content: "Hello")],
+            configuration: .defaultValue
+        )
+
+        let json = try jsonObject(from: JSONEncoder().encode(request))
+        let options = try XCTUnwrap(json["options"] as? [String: Any])
+
+        XCTAssertNil(options["stop"])
     }
 
     func testListModelsResponseDecodesCurrentTagsSchema() throws {

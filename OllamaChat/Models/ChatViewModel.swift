@@ -29,7 +29,7 @@ class ChatViewModel: ObservableObject {
         let endpointComponents = Self.endpointComponents(from: APIManager.shared.endpoint)
         host = endpointComponents.host
         port = endpointComponents.port
-        chatOptions = Self.globalChatOptions()
+        chatConfiguration = Self.globalChatConfiguration()
 
         let lastChat: SingleChat?
         lastChat = SingleChat.fetchLastCreated()
@@ -46,11 +46,11 @@ class ChatViewModel: ObservableObject {
     @AppStorage("timeoutRequest") var timeoutRequest = "60"
     @AppStorage("timeoutResource") var timeoutResource = "604800"
     
-    @Published var chatOptions: ChatOptions {
+    @Published var chatConfiguration: ChatConfiguration {
         didSet {
             guard !isApplyingStoredModelConfiguration else { return }
 
-            persistCurrentChatModelConfiguration()
+            persistCurrentChatConfiguration()
         }
     }
     
@@ -143,7 +143,7 @@ class ChatViewModel: ObservableObject {
                 configuration.selectedModel = selectedModel
                 let service = OllamaService(
                     configuration: configuration,
-                    chatOptions: currentModelConfiguration,
+                    chatConfiguration: currentChatConfiguration,
                     timeoutRequest: Double(timeoutRequest) ?? 60,
                     timeoutResource: Double(timeoutResource) ?? 604800
                 )
@@ -177,12 +177,12 @@ class ChatViewModel: ObservableObject {
                 if let currentChat {
                     currentChat.messages = messages
                     currentChat.model = configuration.selectedModel
-                    currentChat.modelConfiguration = currentModelConfiguration.encodedModelConfiguration()
+                    currentChat.chatConfiguration = currentChatConfiguration
                 } else {
                     let newChat = SingleChat.createNewSingleChat(
                         messages: messages,
                         model: configuration.selectedModel,
-                        modelConfiguration: currentModelConfiguration.encodedModelConfiguration()
+                        chatConfiguration: currentChatConfiguration
                     )
                     currentChat = newChat
                 }
@@ -254,7 +254,7 @@ class ChatViewModel: ObservableObject {
             chat.messages = messages
             let persistedModel = chat.model.isEmpty ? model : chat.model
             chat.model = persistedModel
-            chat.modelConfiguration = currentModelConfiguration.encodedModelConfiguration()
+            chat.chatConfiguration = currentChatConfiguration
             CoreDataStack.shared.saveContext()
         }
     }
@@ -281,11 +281,11 @@ class ChatViewModel: ObservableObject {
             modelName = ""
         }
 
-        let modelConfiguration = Self.globalChatOptions()
+        let chatConfiguration = Self.globalChatConfiguration()
         let newChat = SingleChat.createNewSingleChat(
             messages: Self.defaultMessages(),
             model: modelName,
-            modelConfiguration: modelConfiguration.encodedModelConfiguration()
+            chatConfiguration: chatConfiguration
         )
 
         CoreDataStack.shared.saveContext()
@@ -346,7 +346,7 @@ class ChatViewModel: ObservableObject {
 
         if let currentChat {
             currentChat.model = model
-            currentChat.modelConfiguration = currentModelConfiguration.encodedModelConfiguration()
+            currentChat.chatConfiguration = currentChatConfiguration
             CoreDataStack.shared.saveContext()
         } else {
             assert(false, "Cannot select a model without an active chat.")
@@ -361,12 +361,12 @@ class ChatViewModel: ObservableObject {
         showSettingsView = true
     }
 
-    private var currentModelConfiguration: ChatOptions {
-        chatOptions
+    private var currentChatConfiguration: ChatConfiguration {
+        chatConfiguration
     }
 
-    private static func globalChatOptions() -> ChatOptions {
-        AppSettings.defaultChatOptions
+    private static func globalChatConfiguration() -> ChatConfiguration {
+        AppSettings.defaultChatConfiguration
     }
 
     private static func defaultMessages() -> [ChatMessage] {
@@ -376,24 +376,24 @@ class ChatViewModel: ObservableObject {
     }
 
     private func restoreActiveModelConfiguration(for chat: SingleChat?) {
-        if let chatModelConfiguration = chat?.chatModelConfiguration {
-            applyModelConfiguration(chatModelConfiguration)
+        if let chatConfiguration = chat?.chatConfiguration {
+            applyModelConfiguration(chatConfiguration)
             return
         }
 
-        applyModelConfiguration(Self.globalChatOptions())
+        applyModelConfiguration(Self.globalChatConfiguration())
     }
 
-    private func applyModelConfiguration(_ modelConfiguration: ChatOptions) {
+    private func applyModelConfiguration(_ modelConfiguration: ChatConfiguration) {
         isApplyingStoredModelConfiguration = true
-        chatOptions = modelConfiguration
+        chatConfiguration = modelConfiguration
         isApplyingStoredModelConfiguration = false
     }
 
-    private func persistCurrentChatModelConfiguration() {
+    private func persistCurrentChatConfiguration() {
         guard let currentChat else { return }
 
-        currentChat.modelConfiguration = currentModelConfiguration.encodedModelConfiguration()
+        currentChat.chatConfiguration = currentChatConfiguration
         CoreDataStack.shared.saveContext()
     }
 }

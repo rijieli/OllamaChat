@@ -8,19 +8,12 @@
 import SwiftUI
 
 struct ModelEditingView: View {
-    @Binding private var chatOptions: ChatOptions
+    @Binding private var chatConfiguration: ChatConfiguration
     var showsResetButton = true
 
-    init(chatOptions: Binding<ChatOptions>, showsResetButton: Bool = true) {
-        _chatOptions = chatOptions
+    init(chatConfiguration: Binding<ChatConfiguration>, showsResetButton: Bool = true) {
+        _chatConfiguration = chatConfiguration
         self.showsResetButton = showsResetButton
-    }
-    
-    private var thinkModeBinding: Binding<OllamaThinkMode> {
-        Binding(
-            get: { chatOptions.think },
-            set: { chatOptions.think = $0 }
-        )
     }
     
     var body: some View {
@@ -32,7 +25,7 @@ struct ModelEditingView: View {
                         "View Parameters Documentation",
                         destination: URL(
                             string:
-                                "https://github.com/ollama/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values"
+                                "https://github.com/ollama/ollama/blob/main/docs/modelfile.mdx#valid-parameters-and-values"
                         )!
                     )
                 }
@@ -41,13 +34,13 @@ struct ModelEditingView: View {
                 
                 if showsResetButton {
                     Button("Reset to Default") {
-                        chatOptions = .defaultValue
+                        chatConfiguration = .defaultValue
                     }
                 }
             }
             
             LabeledContent("Thinking") {
-                Picker("Thinking", selection: thinkModeBinding) {
+                Picker("Thinking", selection: $chatConfiguration.think) {
                     ForEach(OllamaThinkMode.allCases) { thinkMode in
                         Text(thinkMode.displayName)
                             .tag(thinkMode)
@@ -63,77 +56,59 @@ struct ModelEditingView: View {
             .font(.caption)
             .foregroundStyle(.secondary)
             
-            LabeledContent("Temperature (\(chatOptions.temperature, specifier: "%.2f"))")
+            LabeledContent("Temperature (\(chatConfiguration.options.temperature, specifier: "%.2f"))")
             {
-                Slider(value: $chatOptions.temperature, in: 0...2, step: 0.1)
+                Slider(value: $chatConfiguration.options.temperature, in: 0...2, step: 0.1)
             }
             
-            LabeledContent("Top P (\(chatOptions.topP, specifier: "%.2f"))") {
-                Slider(value: $chatOptions.topP, in: 0...1, step: 0.05)
+            LabeledContent("Top P (\(chatConfiguration.options.topP, specifier: "%.2f"))") {
+                Slider(value: $chatConfiguration.options.topP, in: 0...1, step: 0.05)
             }
             
             LabeledContent(
-                "Repeat Penalty (\(chatOptions.repeatPenalty, specifier: "%.2f"))"
+                "Repeat Penalty (\(chatConfiguration.options.repeatPenalty, specifier: "%.2f"))"
             ) {
-                Slider(value: $chatOptions.repeatPenalty, in: 0...2, step: 0.05)
+                Slider(value: $chatConfiguration.options.repeatPenalty, in: 0...2, step: 0.05)
+            }
+
+            LabeledContent(
+                "Presence Penalty (\(chatConfiguration.options.presencePenalty, specifier: "%.2f"))"
+            ) {
+                Slider(value: $chatConfiguration.options.presencePenalty, in: 0...2, step: 0.05)
+            }
+
+            LabeledContent(
+                "Frequency Penalty (\(chatConfiguration.options.frequencyPenalty, specifier: "%.2f"))"
+            ) {
+                Slider(value: $chatConfiguration.options.frequencyPenalty, in: 0...2, step: 0.05)
             }
             
             LabeledContent("Repeat Last N") {
-                TextField("", value: $chatOptions.repeatLastN, format: .number)
+                TextField("", value: $chatConfiguration.options.repeatLastN, format: .number)
             }
             
             SettingsSectionHeader("Advanced Settings")
             
             VStack(alignment: .leading, spacing: 12) {
-                Picker("Mirostat Mode", selection: $chatOptions.mirostat) {
-                    Text("Disabled").tag(0)
-                    Text("Mirostat 1.0").tag(1)
-                    Text("Mirostat 2.0").tag(2)
-                }
-                .pickerStyle(.segmented)
-                
-                if chatOptions.mirostat > 0 {
-                    LabeledContent(
-                        "Eta (\(chatOptions.mirostatEta, specifier: "%.2f"))"
-                    ) {
-                        Slider(
-                            value: $chatOptions.mirostatEta,
-                            in: 0...1,
-                            step: 0.05
-                        )
-                    }
-                    
-                    LabeledContent(
-                        "Tau (\(chatOptions.mirostatTau, specifier: "%.2f"))"
-                    ) {
-                        Slider(
-                            value: $chatOptions.mirostatTau,
-                            in: 0...10,
-                            step: 0.1
-                        )
-                    }
-                }
-                
                 LabeledContent("Context Window") {
-                    TextField("", value: $chatOptions.numCtx, format: .number)
+                    TextField("", value: $chatConfiguration.options.numCtx, format: .number)
                 }
                 
                 LabeledContent("Max tokens to predict") {
-                    TextField("", value: $chatOptions.numPredict, format: .number)
+                    TextField("", value: $chatConfiguration.options.numPredict, format: .number)
                 }
                 
-                LabeledContent("Top K (\(chatOptions.topK))") {
-                    TextField("", value: $chatOptions.topK, format: .number)
+                LabeledContent("Top K (\(chatConfiguration.options.topK))") {
+                    TextField("", value: $chatConfiguration.options.topK, format: .number)
                 }
                 
-                LabeledContent("Min P (\(chatOptions.minP, specifier: "%.2f"))") {
-                    Slider(value: $chatOptions.minP, in: 0...1, step: 0.05)
+                LabeledContent("Min P (\(chatConfiguration.options.minP, specifier: "%.2f"))") {
+                    Slider(value: $chatConfiguration.options.minP, in: 0...1, step: 0.05)
                 }
             }
             .maxWidth(alignment: .leading)
         }
         .labeledContentStyle(.settings)
         .maxWidth()
-        .animation(.default, value: chatOptions.mirostat)
     }
 }

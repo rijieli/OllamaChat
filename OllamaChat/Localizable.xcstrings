@@ -60,28 +60,6 @@
         }
       }
     },
-    "API Key (optional)" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "API 密钥（可选）"
-          }
-        }
-      }
-    },
-    "Are you sure you want to delete '%@'?" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "确认删除 %@?"
-          }
-        }
-      }
-    },
     "Are you sure you want to delete the model?" : {
       "localizations" : {
         "zh-Hans" : {
@@ -93,15 +71,11 @@
       }
     },
     "Auto uses the model default. Low, Medium, and High only apply to models that support think levels, such as GPT-OSS." : {
-
-    },
-    "Automatic apply to each chat." : {
-      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "自动应用到每个新的对话"
+            "value" : "自动使用模型默认设置。低、中、高仅适用于支持思考级别的模型，例如 GPT-OSS。"
           }
         }
       }
@@ -126,17 +100,6 @@
         }
       }
     },
-    "Chats" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "对话"
-          }
-        }
-      }
-    },
     "Check for updates... " : {
       "localizations" : {
         "zh-Hans" : {
@@ -148,13 +111,34 @@
       }
     },
     "Choose Model" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "选择模型"
+          }
+        }
+      }
     },
     "Close" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关闭"
+          }
+        }
+      }
     },
     "Configuration" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "配置"
+          }
+        }
+      }
     },
     "Connected" : {
       "localizations" : {
@@ -186,44 +170,12 @@
         }
       }
     },
-    "Create" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "创建"
-          }
-        }
-      }
-    },
     "Delete" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "删除"
-          }
-        }
-      }
-    },
-    "Disabled" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "禁用"
-          }
-        }
-      }
-    },
-    "Done" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "完成"
           }
         }
       }
@@ -278,21 +230,17 @@
         }
       }
     },
-    "Eta (%.2f)" : {
-
-    },
-    "Find more models: [Models](https://ollama.com/library)" : {
-      "extractionState" : "stale",
+    "Find more models: [Models](https://ollama.com/search)" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "寻找更多模型: [Ollama Library](https://ollama.com/library)"
+            "value" : "寻找更多模型: [Models](https://ollama.com/search)"
           }
         }
       }
     },
-    "Find more models: [Models](https://ollama.com/search)" : {
+    "Frequency Penalty (%.2f)" : {
 
     },
     "General" : {
@@ -328,17 +276,6 @@
         }
       }
     },
-    "Host IP:" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "服务 IP："
-          }
-        }
-      }
-    },
     "Host:" : {
       "localizations" : {
         "zh-Hans" : {
@@ -359,9 +296,6 @@
         }
       }
     },
-    "Local model" : {
-
-    },
     "Local Models:" : {
       "localizations" : {
         "zh-Hans" : {
@@ -372,44 +306,11 @@
         }
       }
     },
-    "Local Ollama" : {
-
-    },
     "Max tokens to predict" : {
 
     },
     "Min P (%.2f)" : {
 
-    },
-    "Mirostat 1.0" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mirostat 1.0"
-          }
-        }
-      }
-    },
-    "Mirostat 2.0" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mirostat 2.0"
-          }
-        }
-      }
-    },
-    "Mirostat Mode" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mirostat 采样"
-          }
-        }
-      }
     },
     "Model name. e.g. llama3" : {
       "localizations" : {
@@ -432,15 +333,11 @@
       }
     },
     "Model unavailable" : {
-
-    },
-    "Model:" : {
-      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "模型："
+            "value" : "模型不可用"
           }
         }
       }
@@ -451,17 +348,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "模型设置"
-          }
-        }
-      }
-    },
-    "Name" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "名称"
           }
         }
       }
@@ -487,21 +373,17 @@
       }
     },
     "No models downloaded locally. Add a model by typing the name in the field at the bottom of the page." : {
-
-    },
-    "OK" : {
-      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "OK"
+            "value" : "本地未下载任何模型。在页面底部的输入框中输入模型名称以添加模型。"
           }
         }
       }
     },
     "Ollama" : {
-
+      "shouldTranslate" : false
     },
     "Ollama Service" : {
       "localizations" : {
@@ -513,22 +395,25 @@
         }
       }
     },
-    "Ollama Service Config" : {
-      "extractionState" : "stale",
+    "Ollama service not running" : {
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ollama 服务设置"
+            "value" : "Ollama 服务未运行"
           }
         }
       }
     },
-    "Ollama service not running" : {
-
-    },
     "Open Settings" : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开设置"
+          }
+        }
+      }
     },
     "Please select a chat from the list or create a new one" : {
       "localizations" : {
@@ -536,17 +421,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "从列表选择或创建一个新的对话"
-          }
-        }
-      }
-    },
-    "Port:" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "端口："
           }
         }
       }
@@ -560,6 +434,9 @@
           }
         }
       }
+    },
+    "Presence Penalty (%.2f)" : {
+
     },
     "Read" : {
       "localizations" : {
@@ -637,20 +514,6 @@
         }
       }
     },
-    "Selected" : {
-
-    },
-    "Settings" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "设置"
-          }
-        }
-      }
-    },
     "Speech Settings" : {
       "localizations" : {
         "zh-Hans" : {
@@ -670,9 +533,6 @@
           }
         }
       }
-    },
-    "Tau (%.2f)" : {
-
     },
     "Temperature (%.2f)" : {
 
@@ -740,7 +600,14 @@
       }
     },
     "Used only when creating a new chat." : {
-
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "仅在创建新对话时使用。"
+          }
+        }
+      }
     },
     "v%@ (%@)" : {
       "localizations" : {

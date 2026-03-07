@@ -10,19 +10,19 @@ import Foundation
 
 final class OllamaService: ObservableObject {
     private let configuration: OllamaConfiguration
-    private let chatOptions: ChatOptions
+    private let chatConfiguration: ChatConfiguration
     private let timeoutRequest: TimeInterval
     private let timeoutResource: TimeInterval
     private var currentTask: Task<Void, Never>?
     
     init(
         configuration: OllamaConfiguration,
-        chatOptions: ChatOptions,
+        chatConfiguration: ChatConfiguration,
         timeoutRequest: TimeInterval,
         timeoutResource: TimeInterval
     ) {
         self.configuration = configuration
-        self.chatOptions = chatOptions
+        self.chatConfiguration = chatConfiguration
         self.timeoutRequest = timeoutRequest
         self.timeoutResource = timeoutResource
     }
@@ -77,7 +77,7 @@ final class OllamaService: ObservableObject {
         let requestBody = ChatModel(
             model: configuration.selectedModel,
             messages: messages,
-            options: chatOptions
+            configuration: chatConfiguration
         )
         let encoder = JSONEncoder()
         request.httpBody = try encoder.encode(requestBody)
