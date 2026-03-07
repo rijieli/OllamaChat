@@ -1,5 +1,5 @@
 //
-//  ChatCompletion+Ollama.swift
+//  OllamaModels.swift
 //  OllamaChat
 //
 //  Created by Roger on 2025/3/1.
@@ -40,12 +40,18 @@ func fetchOllamaModels(timeout: Double? = nil) async throws -> OllamaModelGroup 
     let decoder = JSONDecoder()
     do {
         let decoded = try decoder.decode(OllamaModelGroup.self, from: data)
+        let modelNames = decoded.models.map(\.name)
+
         await MainActor.run {
+            APIManager.shared.replaceAvailableModels(modelNames)
             if decoded.models.count == 0 {
                 ChatViewModel.shared.errorModel = noModelsError(error: nil)
             } else {
                 ChatViewModel.shared.tags = decoded
                 ChatViewModel.shared.currentChat?.model = ChatViewModel.shared.model
+                APIManager.shared.updateMetadata(
+                    ModelMetadata(source: "ollama")
+                )
                 ChatViewModel.shared.clearError()
             }
         }

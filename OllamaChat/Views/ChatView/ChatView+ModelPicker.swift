@@ -12,56 +12,21 @@ extension ChatView {
     
     func modelPicker() -> some View {
         Menu {
-            // Show Ollama models separately from configurations
-            Section(header: providerHeader(for: .ollama)) {
-                ollamaLegacySection()
-            }
-            
-            // Grouped configurations by provider (excluding Ollama)
-            ForEach(
-                groupedConfigurations.filter { $0.provider != .ollama },
-                id: \.provider.rawValue
-            ) { group in
-                Section(header: providerHeader(for: group.provider)) {
-                    ForEach(group.configurations, id: \.id) { config in
-                        Button(action: {
-                            selectConfiguration(config)
-                        }) {
-                            ConfigurationRow(config: config)
-                        }
-                    }
-                }
-            }
+            ollamaSection()
         } label: {
             HStack {
-                // Provider icon
-                if let config = APIManager.shared.defaultCompletion {
-                    providerIcon(for: config.provider)
-                        .foregroundColor(.primary)
-                }
-                
-                // Model name
+                Image(systemName: "server.rack")
+                    .foregroundColor(.primary)
+
                 Text(
-                    selectedConfigurationName.isEmpty
-                        ? "Select a configuration" : selectedConfigurationName.prefix(16)
+                    selectedModelDisplayName.isEmpty
+                        ? "Select a model" : String(selectedModelDisplayName.prefix(16))
                 )
-                .foregroundColor(hasSelectedConfiguration ? .primary : .secondary)
+                .foregroundColor(hasSelectedModel ? .primary : .secondary)
                 
                 Spacer()
-                
-                // Status indicator
-                if let config = APIManager.shared.defaultCompletion {
-                    StatusIndicator(isValid: config.isValid)
-                    
-                    if config.isDefault {
-                        Text("Default")
-                            .font(.caption2)
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 2)
-                            .background(Color.blue.opacity(0.2))
-                            .cornerRadius(4)
-                    }
-                }
+
+                StatusIndicator(isValid: apiManager.configuration.isValid)
                 
                 Image(systemName: "chevron.down")
                     .font(.caption)
@@ -75,108 +40,16 @@ extension ChatView {
         }
         .menuStyle(.borderedButton)
     }
-    
-    private var groupedConfigurations: [(provider: ModelProvider, configurations: [ChatCompletion])]
-    {
-        let grouped = Dictionary(
-            grouping: APIManager.shared.enabledConfigurations,
-            by: { $0.provider }
-        )
-        return ModelProvider.allCases.compactMap { provider in
-            guard let configurations = grouped[provider], !configurations.isEmpty else {
-                return nil
-            }
-            // Ensure all configurations in this group have the correct provider
-            let validConfigs = configurations.filter { $0.provider == provider }
-            guard !validConfigs.isEmpty else { return nil }
-            return (provider, validConfigs)
-        }
-    }
-    
+
     @ViewBuilder
-    private func providerHeader(for provider: ModelProvider) -> some View {
-        HStack {
-            providerIcon(for: provider)
-            Text(provider.displayName)
-        }
-        .id("header-\(provider.rawValue)")  // Explicit ID to prevent view reuse issues
-    }
-    
-    private func providerIcon(for provider: ModelProvider) -> some View {
-        Image(systemName: systemIcon(for: provider))
-            .foregroundColor(.primary)
-    }
-    
-    private func systemIcon(for provider: ModelProvider) -> String {
-        switch provider {
-        case .ollama: return "server.rack"
-        case .openai: return "brain.head.profile"
-        case .anthropic: return "atom"
-        case .gemini: return "star.fill"
-        case .openrouter: return "network"
-        }
-    }
-    
-    private var selectedConfigurationName: String {
-        // First check if current model is an Ollama model
-        let currentModel = viewModel.model
-        
-        // Try to find the Ollama model and use its processed display name
-        if let ollamaModel = ChatViewModel.shared.tags.models.first(where: {
-            $0.name == currentModel
-        }) {
-            // Use the processed model name from modelInfo
-            let displayInfo = ollamaModel.modelInfo
-            var displayName = displayInfo.modelName
-            if let scale = displayInfo.modelScale {
-                displayName += ":\(scale)"
-            }
-            return displayName
-        }
-        
-        // Then check if there's a default configuration
-        guard let config = APIManager.shared.defaultCompletion else {
-            return "Select a configuration"
-        }
-        
-        // For Ollama configuration, try to find and use processed name
-        if config.provider == .ollama {
-            if let ollamaModel = ChatViewModel.shared.tags.models.first(where: {
-                $0.name == config.selectedModel
-            }) {
-                let displayInfo = ollamaModel.modelInfo
-                var displayName = displayInfo.modelName
-                if let scale = displayInfo.modelScale {
-                    displayName += ":\(scale)"
-                }
-                return displayName
-            }
-            // Fallback to raw model name if not found
-            return config.selectedModel
-        }
-        
-        // For other providers, show the configuration display name
-        return config.displayName
-    }
-    
-    private var hasSelectedConfiguration: Bool {
-        return APIManager.shared.defaultCompletion != nil
-    }
-    
-    @ViewBuilder
-    private func ollamaLegacySection() -> some View {
-        let ollamaModels = ChatViewModel.shared.tags.models
-        
-        if ollamaModels.isEmpty {
-            // Show error when no models are available
+    private func ollamaSection() -> some View {
+        if viewModel.tags.models.isEmpty {
             Text("Ollama service not running")
                 .font(.caption)
                 .foregroundColor(.secondary)
                 .italic()
-                .onAppear {}
         } else {
-            // Show individual Ollama models with processed display names
-            ForEach(ollamaModels, id: \.name) { model in
+            ForEach(viewModel.tags.models, id: \.name) { model in
                 Button(action: {
                     selectOllamaModel(model.name)
                 }) {
@@ -188,112 +61,53 @@ extension ChatView {
             }
         }
     }
-    
+
+    private var selectedModelDisplayName: String {
+        displayName(for: selectedOllamaModel) ?? ""
+    }
+
+    private var hasSelectedModel: Bool {
+        selectedOllamaModel != nil
+    }
+
     private var selectedOllamaModel: String? {
-        // Get the selected model from ChatViewModel
         let currentModel = viewModel.model
-        
-        // Check if current model is an Ollama model
-        let ollamaModels = ChatViewModel.shared.tags.models.map { $0.name }
-        if ollamaModels.contains(currentModel) {
+        if !currentModel.isEmpty {
             return currentModel
         }
-        
-        // Check if there's a default Ollama configuration
-        if let ollamaConfig = APIManager.shared.defaultCompletion,
-            ollamaConfig.provider == .ollama
-        {
-            return ollamaConfig.selectedModel
+
+        if !apiManager.selectedModel.isEmpty {
+            return apiManager.selectedModel
         }
-        
+
         return nil
     }
-    
+
+    private func displayName(for modelName: String?) -> String? {
+        guard let modelName, !modelName.isEmpty else { return nil }
+
+        if let ollamaModel = viewModel.tags.models.first(where: { $0.name == modelName }) {
+            let displayInfo = ollamaModel.modelInfo
+            var displayName = displayInfo.modelName
+            if let scale = displayInfo.modelScale {
+                displayName += ":\(scale)"
+            }
+            return displayName
+        }
+
+        return modelName
+    }
+
     private func selectOllamaModel(_ model: String) {
-        // Update ChatViewModel directly for Ollama models
+        apiManager.updateSelectedModel(model)
+        apiManager.updateLastUsed()
         viewModel.currentChat?.model = model
         CoreDataStack.shared.saveContext()
-        viewModel.objectWillChange.send()
-        
-        // Also update any existing Ollama configuration if present
-        let apiManager = APIManager.shared
-        if let ollamaConfigIndex = apiManager.completions.firstIndex(where: {
-            $0.provider == .ollama
-        }) {
-            var updatedConfig = apiManager.completions[ollamaConfigIndex]
-            updatedConfig.selectedModel = model
-            
-            do {
-                try apiManager.updateConfiguration(updatedConfig)
-                apiManager.setDefaultConfiguration(updatedConfig)
-                apiManager.updateLastUsed(id: updatedConfig.id)
-            } catch {
-                print("Error updating Ollama configuration: \(error)")
-            }
-        }
-    }
-    
-    private func selectConfiguration(_ config: ChatCompletion) {
-        // Update APIManager
-        APIManager.shared.setDefaultConfiguration(config)
-        APIManager.shared.updateLastUsed(id: config.id)
-        
-        // Update chat
-        viewModel.currentChat?.model = config.selectedModel
-        CoreDataStack.shared.saveContext()
-        
-        // Update ChatViewModel by triggering objectWillChange
-        // The model property is computed and will reflect the change
         viewModel.objectWillChange.send()
     }
 }
 
 // MARK: - Supporting Views
-
-struct ConfigurationRow: View {
-    let config: ChatCompletion
-    
-    var body: some View {
-        HStack {
-            VStack(alignment: .leading, spacing: 2) {
-                HStack {
-                    Text(config.displayName)
-                        .font(.body)
-                    if config.isDefault {
-                        Text("Default")
-                            .font(.caption2)
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 1)
-                            .background(Color.blue.opacity(0.2))
-                            .cornerRadius(3)
-                    }
-                }
-                
-                Text(config.selectedModel)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                
-                HStack(spacing: 8) {
-                    StatusIndicator(isValid: config.isValid)
-                    
-                    if let lastUsed = config.lastUsed {
-                        Text("Last used: \(lastUsed, style: .relative) ago")
-                            .font(.caption2)
-                            .foregroundColor(.secondary)
-                    }
-                }
-            }
-            
-            Spacer()
-            
-            if !config.isValid {
-                Image(systemName: "exclamationmark.triangle.fill")
-                    .foregroundColor(.orange)
-                    .font(.caption)
-            }
-        }
-    }
-}
 
 struct OllamaModelRow: View {
     let model: OllamaLanguageModel
@@ -330,14 +144,9 @@ struct OllamaModelRow: View {
                     .font(.caption)
                     .foregroundColor(.secondary)
                 
-                HStack(spacing: 8) {
-                    // Always show green indicator for local models
-                    StatusIndicator(isValid: true)
-                    
-                    Text("Local model")
-                        .font(.caption2)
-                        .foregroundColor(.secondary)
-                }
+                Text("Local model")
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
             }
             
             Spacer()

@@ -53,12 +53,6 @@
         }
       }
     },
-    "Add Connection" : {
-
-    },
-    "Add your first API connection to get started" : {
-
-    },
     "Advanced Settings" : {
       "localizations" : {
         "zh-Hans" : {
@@ -80,9 +74,6 @@
         }
       }
     },
-    "API Key *" : {
-
-    },
     "Are you sure you want to delete '%@'?" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -93,9 +84,6 @@
           }
         }
       }
-    },
-    "Are you sure you want to delete '%@'? This action cannot be undone." : {
-
     },
     "Are you sure you want to delete the model?" : {
       "localizations" : {
@@ -170,9 +158,6 @@
         }
       }
     },
-    "Connection Name" : {
-
-    },
     "Context Window" : {
       "localizations" : {
         "zh-Hans" : {
@@ -182,9 +167,6 @@
           }
         }
       }
-    },
-    "Context: %@ tokens" : {
-
     },
     "Copy" : {
       "localizations" : {
@@ -207,16 +189,10 @@
         }
       }
     },
-    "Create Connection" : {
-
-    },
     "Current Local IPv4:" : {
 
     },
     "Current Local IPv6:" : {
-
-    },
-    "Default" : {
 
     },
     "Delete" : {
@@ -228,9 +204,6 @@
           }
         }
       }
-    },
-    "Delete API Connection" : {
-
     },
     "Disabled" : {
       "localizations" : {
@@ -272,12 +245,6 @@
         }
       }
     },
-    "e.g., gpt-4, claude-3-sonnet" : {
-
-    },
-    "e.g., My OpenAI API" : {
-
-    },
     "Edit" : {
       "localizations" : {
         "zh-Hans" : {
@@ -287,27 +254,6 @@
           }
         }
       }
-    },
-    "Edit API Connection" : {
-
-    },
-    "Endpoint URL (optional)" : {
-
-    },
-    "Endpoint URL *" : {
-
-    },
-    "Enter manually" : {
-
-    },
-    "Enter model name" : {
-
-    },
-    "Enter model name manually or fetch from API" : {
-
-    },
-    "Enter your API key" : {
-
     },
     "Enter your name" : {
       "localizations" : {
@@ -330,15 +276,6 @@
       }
     },
     "Eta (%.2f)" : {
-
-    },
-    "Failed to fetch models" : {
-
-    },
-    "Fetch Models" : {
-
-    },
-    "Fetching available models..." : {
 
     },
     "Find more models: [Models](https://ollama.com/library)" : {
@@ -417,9 +354,6 @@
         }
       }
     },
-    "Last used: %@ ago" : {
-
-    },
     "Local model" : {
 
     },
@@ -434,9 +368,6 @@
       }
     },
     "Local Ollama" : {
-
-    },
-    "Manage your API configurations" : {
 
     },
     "Max tokens to predict" : {
@@ -474,9 +405,6 @@
           }
         }
       }
-    },
-    "Model *" : {
-
     },
     "Model name. e.g. llama3" : {
       "localizations" : {
@@ -530,9 +458,6 @@
         }
       }
     },
-    "New API Connection" : {
-
-    },
     "New Chat" : {
       "localizations" : {
         "zh-Hans" : {
@@ -542,12 +467,6 @@
           }
         }
       }
-    },
-    "No AI configuration available. Please set up a provider in settings." : {
-      "comment" : "Error message when no AI configuration is available"
-    },
-    "No API Connections" : {
-
     },
     "No chat selected" : {
       "localizations" : {
@@ -563,6 +482,7 @@
 
     },
     "OK" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -680,9 +600,6 @@
         }
       }
     },
-    "Request was cancelled." : {
-      "comment" : "Error message for cancelled request"
-    },
     "Reset to Default" : {
       "localizations" : {
         "zh-Hans" : {
@@ -716,13 +633,7 @@
         }
       }
     },
-    "Save Changes" : {
-
-    },
     "Selected" : {
-
-    },
-    "Set as default" : {
 
     },
     "Settings" : {
@@ -770,15 +681,6 @@
           }
         }
       }
-    },
-    "The AI provider is not available." : {
-      "comment" : "Error message when provider is unavailable"
-    },
-    "The current configuration is invalid." : {
-      "comment" : "Error message for invalid configuration"
-    },
-    "The selected model is not available." : {
-      "comment" : "Error message for unavailable model"
     },
     "Thinking" : {
 
@@ -861,15 +763,6 @@
           }
         }
       }
-    },
-    "Web API" : {
-
-    },
-    "Web API Connections" : {
-
-    },
-    "Your API key is stored securely and never shared" : {
-
     }
   },
   "version" : "1.0"

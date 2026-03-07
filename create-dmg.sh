@@ -2,7 +2,7 @@
 
 # Usage:
 # Step1: ./create-dmg.sh "AppName"
-# Step2: sparkle-sign "AppName" "AppName.dmg"
+# Step2: codesign --sign "Developer ID Application: ..." --timestamp "AppName.dmg"
 
 # Check if app name is provided or try to find it in Archives
 if [ -z "$1" ]; then

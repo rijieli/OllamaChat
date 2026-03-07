@@ -1,5 +1,5 @@
 //
-//  OllamaProvider.swift
+//  OllamaService.swift
 //  OllamaChat
 //
 //  Created by Roger on 2025/3/1.
@@ -8,12 +8,11 @@
 
 import Foundation
 
-@MainActor
-class OllamaProvider: ObservableObject, ChatCompletionAbility {
-    private let configuration: ChatCompletion
+final class OllamaService: ObservableObject {
+    private let configuration: OllamaConfiguration
     private var currentTask: Task<Void, Never>?
     
-    init(configuration: ChatCompletion) {
+    init(configuration: OllamaConfiguration) {
         self.configuration = configuration
     }
     
@@ -89,7 +88,9 @@ class OllamaProvider: ObservableObject, ChatCompletionAbility {
         }
         
         guard httpResponse.statusCode == 200 else {
-            if httpResponse.statusCode == 401 {
+            if httpResponse.statusCode == 404 {
+                throw ChatCompletionError.modelNotAvailable(configuration.selectedModel)
+            } else if httpResponse.statusCode == 401 {
                 throw ChatCompletionError.authenticationError
             } else if httpResponse.statusCode == 429 {
                 throw ChatCompletionError.rateLimitError

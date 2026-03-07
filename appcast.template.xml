@@ -13,7 +13,6 @@
                 sparkle:version="{build}"
                 sparkle:shortVersionString="{version}"
                 type="application/octet-stream"
-                sparkle:edSignature="{edsign_signature}"
                 length="{edsign_length}"
             />
             <description><![CDATA[

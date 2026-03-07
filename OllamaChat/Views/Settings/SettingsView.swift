@@ -15,21 +15,18 @@ struct SettingsView: View {
     enum SettingsTab: String, CaseIterable, Identifiable {
         case general
         case ollama
-        case webAPI
         
         var id: String { rawValue }
         var title: LocalizedStringKey {
             switch self {
             case .ollama: "Ollama"
             case .general: "General"
-            case .webAPI: "Web API"
             }
         }
         var sfSymbol: String {
             switch self {
             case .ollama: "server.rack"
             case .general: "gearshape"
-            case .webAPI: "network"
             }
         }
     }
@@ -134,12 +131,6 @@ struct SettingsView: View {
                     OllamaSettingsView()
                 case .general:
                     GeneralSettingsView()
-                case .webAPI:
-                    ScrollView(.vertical, showsIndicators: false) {
-                        WebAPISettingsView()
-                            .padding(.horizontal, 24)
-                            .padding(.vertical, 24)
-                    }
                 }
             }
             .maxFrame()

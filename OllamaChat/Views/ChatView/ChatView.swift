@@ -12,6 +12,7 @@ import SwiftUIIntrospect
 struct ChatView: View {
 
     @StateObject var viewModel = ChatViewModel.shared
+    @StateObject var apiManager = APIManager.shared
     @StateObject var speechCenter = TextSpeechCenter.shared
 
     @FocusState var promptFieldIsFocused: Bool
@@ -30,11 +31,7 @@ struct ChatView: View {
         .frame(minWidth: 400, idealWidth: 700, minHeight: 500, idealHeight: 800)
         .background(Color.ocPrimaryBackground)
         .task {
-            // Initialize model registry and fetch all models
             await UnifiedModelRegistry.shared.fetchAllModels()
-
-            // Note: viewModel.model is computed and will automatically reflect
-            // the default configuration when needed
         }
         .toolbar {
             ToolbarItemGroup(placement: .automatic) {
@@ -70,7 +67,7 @@ struct ChatView: View {
 
                 Button {
                     Task {
-                        await UnifiedModelRegistry.shared.fetchAllModels()
+                        await UnifiedModelRegistry.shared.refreshModels()
                     }
                 } label: {
                     Image(systemName: "arrow.clockwise")
@@ -80,4 +77,3 @@ struct ChatView: View {
         }
     }
 }
-

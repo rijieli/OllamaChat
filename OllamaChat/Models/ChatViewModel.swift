@@ -12,7 +12,23 @@ class ChatViewModel: ObservableObject {
     
     static let shared = ChatViewModel()
     
+    @Published var tags = OllamaModelGroup(models: [])
+    @Published var host: String {
+        didSet {
+            syncConfigurationEndpoint()
+        }
+    }
+    @Published var port: String {
+        didSet {
+            syncConfigurationEndpoint()
+        }
+    }
+
     private init() {
+        let endpointComponents = Self.endpointComponents(from: APIManager.shared.endpoint)
+        host = endpointComponents.host
+        port = endpointComponents.port
+
         let lastChat: SingleChat?
         #if os(macOS)
         lastChat = SingleChat.fetchLastCreated()
@@ -27,10 +43,6 @@ class ChatViewModel: ObservableObject {
         }
     }
     
-    @Published var tags = OllamaModelGroup(models: [])
-    
-    @AppStorage("host") var host = "http://127.0.0.1"
-    @AppStorage("port") var port = "11434"
     @AppStorage("timeoutRequest") var timeoutRequest = "60"
     @AppStorage("timeoutResource") var timeoutResource = "604800"
     @AppStorage("ChatViewModel.OllamaThinkMode")
@@ -73,18 +85,25 @@ class ChatViewModel: ObservableObject {
     }
     
     var model: String {
-        // First try to get from current chat
         if let chatModel = currentChat?.model, !chatModel.isEmpty {
-            return chatModel
+            let availableModels = Set(tags.models.map(\.name))
+            if availableModels.isEmpty || availableModels.contains(chatModel) {
+                return chatModel
+            }
+            assert(false, "Current chat model is unavailable in the current Ollama model list.")
         }
 
-        // Then try to get from default configuration
-        if let defaultConfig = APIManager.shared.defaultCompletion {
-            return defaultConfig.selectedModel
+        let configuredModel = APIManager.shared.selectedModel
+        if !configuredModel.isEmpty {
+            return configuredModel
         }
 
-        // Fallback to tags for backward compatibility
-        return tags.models.first?.name ?? ""
+        if let fallbackModel = tags.models.first?.name {
+            assert(false, "Falling back to the first available Ollama model.")
+            return fallbackModel
+        }
+
+        return ""
     }
     
     @Published var messages: [ChatMessage]
@@ -98,32 +117,24 @@ class ChatViewModel: ObservableObject {
     private let scrollThrottler = Throttler(interval: 0.1)
     
     private var chatTask: Task<Void, Never>?
+    private var ollamaService: OllamaService?
     
     @MainActor
     func send() {
-        // Check if we have a default configuration to use with provider system
-        if let defaultConfig = APIManager.shared.defaultCompletion {
-            sendWithProvider(defaultConfig)
-        } else {
-            // Fallback to legacy Ollama direct API
-            sendLegacy()
-        }
-    }
-
-    @MainActor
-    private func sendWithProvider(_ configuration: ChatCompletion) {
         chatTask = Task {
             guard let chatID = currentChat?.id else { return }
             do {
                 self.errorModel = nil
                 waitingResponse = true
+                defer {
+                    waitingResponse = false
+                    ollamaService = nil
+                }
 
-                // Add system message if needed
                 if messages.isEmpty {
                     messages.append(.globalSystem)
                 }
 
-                // Add user message if not empty
                 if !current.content.isEmpty {
                     self.messages.append(current)
                     scrollToBottom()
@@ -131,24 +142,25 @@ class ChatViewModel: ObservableObject {
 
                 current = .init(role: .user, content: "")
 
-                // Update configuration with last used
-                APIManager.shared.updateLastUsed(id: configuration.id)
+                let selectedModel = model
+                if selectedModel.isEmpty {
+                    errorModel = noModelsError(error: nil)
+                    return
+                }
 
-                // Create provider
-                let provider = try await APIManager.shared.createProvider(for: configuration)
+                APIManager.shared.updateSelectedModel(selectedModel)
+                let configuration = APIManager.shared.configuration
+                let service = OllamaService(configuration: configuration)
+                ollamaService = service
 
-                print("[Sending] <\(configuration.selectedModel)> via \(configuration.provider.displayName)")
+                print("[Sending] <\(configuration.selectedModel)> \(messages.last?.content.count ?? 0)")
 
-                // Create streaming response
-                let stream = try await provider.send(messages: messages)
+                let stream = try await service.send(messages: messages)
 
-                // Create assistant message
                 let assistantMessage = ChatMessage(role: .assistant, content: "")
                 messages.append(assistantMessage)
 
-                // Process stream
                 for try await chunk in stream {
-                    // Check if chat is still active
                     if chatID != currentChat?.id {
                         CoreDataStack.shared.saveContext()
                         break
@@ -158,7 +170,6 @@ class ChatViewModel: ObservableObject {
                         continue
                     }
 
-                    // Update message content
                     if let index = messages.lastIndex(where: { $0.id == assistantMessage.id }) {
                         messages[index].append(chunk)
                         scrollThrottler.call {
@@ -167,9 +178,6 @@ class ChatViewModel: ObservableObject {
                     }
                 }
 
-                waitingResponse = false
-
-                // Update chat
                 if let currentChat {
                     currentChat.messages = messages
                     currentChat.model = configuration.selectedModel
@@ -179,115 +187,7 @@ class ChatViewModel: ObservableObject {
                 }
 
                 CoreDataStack.shared.saveContext()
-            } catch {
-                handleError(error)
-            }
-        }
-    }
-
-    @MainActor
-    private func sendLegacy() {
-        chatTask = Task {
-            guard let chatID = currentChat?.id else { return }
-            do {
-                self.errorModel = nil
-                waitingResponse = true
-
-                if messages.isEmpty {
-                    messages.append(.globalSystem)
-                }
-
-                if !current.content.isEmpty {
-                    self.messages.append(current)
-                    scrollToBottom()
-                }
-
-                current = .init(role: .user, content: "")
-
-                let filterdModel = self.model
-
-                if filterdModel.isEmpty {
-                    waitingResponse = false
-                    errorModel = noModelsError(error: nil)
-                    return
-                }
-
-                let chatHistory = ChatModel(
-                    model: filterdModel,
-                    messages: messages,
-                    options: chatOptions,
-                    think: ollamaThinkRequestValue
-                )
-
-                let endpoint = APIEndPoint + "chat"
-
-                guard let url = URL(string: endpoint) else {
-                    throw NetError.invalidURL(error: nil)
-                }
-
-                var request = URLRequest(url: url)
-                request.httpMethod = "POST"
-                request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-
-                let encoder = JSONEncoder()
-                let httpBody = try encoder.encode(chatHistory)
-                request.httpBody = httpBody
-
-                print("[Sending] <\(chatHistory.model)> \(messages.last?.content.count ?? 0)")
-
-                let data: URLSession.AsyncBytes
-                let response: URLResponse
-
-                do {
-                    let sessionConfig = URLSessionConfiguration.default
-                    sessionConfig.timeoutIntervalForRequest = Double(timeoutRequest) ?? 60
-                    sessionConfig.timeoutIntervalForResource = Double(timeoutResource) ?? 604800
-                    (data, response) = try await URLSession(configuration: sessionConfig).bytes(
-                        for: request
-                    )
-                } catch {
-                    throw NetError.unreachable(error: error)
-                }
-
-                guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
-                    throw NetError.invalidResponse(error: nil)
-                }
-
-                let decoder = JSONDecoder()
-                let assistantMessage = ChatMessage(role: .assistant, content: "")
-                messages.append(assistantMessage)
-                for try await line in data.lines {
-                    guard !line.isEmpty else { continue }
-
-                    if chatID != currentChat?.id {
-                        CoreDataStack.shared.saveContext()
-                        break
-                    }
-
-                    let data = line.data(using: .utf8)!
-                    let decoded = try decoder.decode(ResponseModel.self, from: data)
-                    let chunk = decoded.chatStreamChunk
-                    if chunk.isEmpty {
-                        continue
-                    }
-                    if let index = self.messages.lastIndex(where: { $0.id == assistantMessage.id }) {
-                        self.messages[index].append(chunk)
-                    }
-                    scrollThrottler.call {
-                        self.scrollToBottom()
-                    }
-                }
-
-                waitingResponse = false
-                if let currentChat {
-                    currentChat.messages = messages
-                    currentChat.model = filterdModel
-                } else {
-                    let newChat = SingleChat.createNewSingleChat(messages: messages, model: model)
-                    newChat.model = filterdModel
-                    currentChat = newChat
-                }
-                CoreDataStack.shared.saveContext()
+                APIManager.shared.updateLastUsed()
             } catch {
                 handleError(error)
             }
@@ -310,6 +210,9 @@ class ChatViewModel: ObservableObject {
     
     func cancelTask() {
         chatTask?.cancel()
+        Task {
+            await ollamaService?.cancel()
+        }
         waitingResponse = false
         clearError()
     }
@@ -365,18 +268,29 @@ class ChatViewModel: ObservableObject {
     }
     
     func newChat() {
-        // Use default configuration's model if available
-        let modelName = APIManager.shared.defaultCompletion?.selectedModel ?? tags.models.first?.name ?? ""
+        var modelName = APIManager.shared.selectedModel
+        if modelName.isEmpty, let fallbackModel = tags.models.first?.name {
+            assert(false, "Falling back to the first available Ollama model for a new chat.")
+            modelName = fallbackModel
+        }
+
         let newChat = SingleChat.createNewSingleChat(
             messages: [],
             model: modelName
         )
 
-        // Note: providerId will be stored in currentChat when messages are sent
-        // This requires Core Data schema migration for full persistence
-
         CoreDataStack.shared.saveContext()
         loadChat(newChat)
+    }
+
+    private func syncConfigurationEndpoint() {
+        APIManager.shared.updateEndpoint(
+            Self.processBaseEndPoint(host: host, port: port)
+        )
+
+        Task { @MainActor in
+            UnifiedModelRegistry.shared.clearCache()
+        }
     }
     
     @MainActor
