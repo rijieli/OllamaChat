@@ -5,19 +5,19 @@
         <link>https://github.com/rijieli/OllamaChat/releases</link>
         <description>Latest updates for OllamaChat</description>
         <item>
-            <title>Version 1.6</title>
-            <sparkle:version>141</sparkle:version>
-            <sparkle:shortVersionString>1.6</sparkle:shortVersionString>
+            <title>Version 1.6.1</title>
+            <sparkle:version>148</sparkle:version>
+            <sparkle:shortVersionString>1.6.1</sparkle:shortVersionString>
             <enclosure
-                url="https://github.com/rijieli/OllamaChat/releases/download/1.6/OllamaChat.dmg"
-                sparkle:version="141"
-                sparkle:shortVersionString="1.6"
+                url="https://github.com/rijieli/OllamaChat/releases/download/1.6.1/OllamaChat.dmg"
+                sparkle:version="148"
+                sparkle:shortVersionString="1.6.1"
                 type="application/octet-stream"
-                sparkle:edSignature="3cRhrSd1ySj6KDkSC3NqbDY3bqq4Y7VJEUQoCYVXRK09hY+qSpYxujEYdP7nJXckwuFi0sywASJHd1vI/UcpDg=="
-                length="2640819"
+                sparkle:edSignature="1zprxo5ocL3/gp2X3nFViMpPRtkm987RdgdXbuRFlFPb84MVn5ssQ/U7kVn26U2k61XWefLdW69wVqme/59aBQ=="
+                length="4387129"
             />
             <description><![CDATA[
-                <h2>Changes in version 1.6:</h2>
+                <h2>Changes in version 1.6.1:</h2>
                 <ul>
                     <li> - </li>
                 </ul>

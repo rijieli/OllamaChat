@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import os
 import plistlib
+import shlex
 import shutil
 import subprocess
 import sys
@@ -183,6 +184,60 @@ def render_appcast(version: str, build: str, signature: str, length: int) -> str
     )
 
 
+def git_tag_exists(tag: str) -> bool:
+    result = subprocess.run(
+        ["git", "rev-parse", "-q", "--verify", f"refs/tags/{tag}"],
+        check=False,
+        capture_output=True,
+        text=True,
+        cwd=ROOT,
+    )
+    return result.returncode == 0
+
+
+def format_command(parts: list[str]) -> str:
+    return " ".join(shlex.quote(part) for part in parts)
+
+
+def print_release_commands(version: str, dmg_path: Path) -> None:
+    create_release_command = format_command(
+        [
+            "gh",
+            "release",
+            "create",
+            version,
+            str(dmg_path),
+            "--title",
+            version,
+            "--verify-tag",
+            "--generate-notes",
+        ]
+    )
+    upload_asset_command = format_command(
+        ["gh", "release", "upload", version, str(dmg_path), "--clobber"]
+    )
+    create_tag_command = format_command(["git", "tag", version])
+    push_tag_command = format_command(["git", "push", "origin", version])
+
+    print("")
+    if git_tag_exists(version):
+        print("Git tag found locally.")
+        print("Create a new GitHub release and upload the DMG with:")
+        print(create_release_command)
+    else:
+        print(
+            f"Warning: Git tag '{version}' is missing locally. Create and push the tag before creating the GitHub release."
+        )
+        print("Create and push the tag with:")
+        print(create_tag_command)
+        print(push_tag_command)
+        print("Then create a new GitHub release and upload the DMG with:")
+        print(create_release_command)
+
+    print("Upload the DMG to an existing GitHub release with:")
+    print(upload_asset_command)
+
+
 def main() -> None:
     args = parse_args()
     app_bundle = find_app_bundle(args.app_bundle)
@@ -195,6 +250,7 @@ def main() -> None:
     OUTPUT_FILE.write_text(appcast, encoding="utf-8")
 
     print(f"Updated appcast.xml with version {version} (build {build})")
+    print_release_commands(version, dmg_path)
 
 
 if __name__ == "__main__":
