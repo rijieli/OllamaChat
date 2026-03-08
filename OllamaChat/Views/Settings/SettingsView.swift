@@ -55,13 +55,15 @@ struct SettingsView: View {
                     Image(.appicon100)
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 40, height: 40)
+                        .frame(width: 38, height: 38)
                         .padding(.vertical, 8)
                     Text(verbatim: "Ollama Chat")
-                        .font(.system(size: 20, weight: .bold, design: .rounded))
+                        .font(.system(size: 20, weight: .semibold, design: .rounded))
                 }
                 .foregroundStyle(.primary)
                 .padding(.top, 24)
+                .maxWidth(alignment: .leading)
+                .padding(.leading, 16)
 
                 ScrollView {
                     VStack(spacing: 0) {

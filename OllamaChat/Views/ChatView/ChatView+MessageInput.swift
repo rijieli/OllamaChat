@@ -6,10 +6,11 @@
 //  Copyright © 2024 IdeasForm. All rights reserved.
 //
 
+import AppKit
 import SwiftUI
 
 extension ChatView {
-    
+
     var messageInput: some View {
         ZStack {
             TextEditor(text: $viewModel.current.content)
@@ -22,7 +23,6 @@ extension ChatView {
                 }
                 .disabled(viewModel.waitingResponse || viewModel.requiresModelSelectionOverlay)
                 .focused($promptFieldIsFocused)
-                .modifier(BorderDecoratedStyleModifier())
                 .overlay(alignment: .trailing) {
                     ZStack {
                         if allowSubmitNewMessage
@@ -56,8 +56,9 @@ extension ChatView {
                 missingModelOverlay
             }
         }
-        .onChange(of: viewModel.unavailableCurrentChatModelName) { unavailableModel in
-            promptFieldIsFocused = unavailableModel == nil && !viewModel.waitingResponse
+        .modifier(BorderDecoratedStyleModifier())
+        .onChange(of: viewModel.requiresModelSelectionOverlay) { requiresOverlay in
+            promptFieldIsFocused = !requiresOverlay && !viewModel.waitingResponse
         }
         .maxFrame()
         .frame(height: 160)
@@ -66,7 +67,7 @@ extension ChatView {
             Color.ocPrimaryBackground.frame(height: 50)
         }
     }
-    
+
     var allowSubmitNewMessage: Bool {
         guard !viewModel.requiresModelSelectionOverlay else { return false }
         guard !viewModel.current.content.isEmpty else { return false }
@@ -76,24 +77,39 @@ extension ChatView {
     }
 
     private var missingModelOverlay: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack(alignment: .top, spacing: 10) {
-                Image(systemName: "exclamationmark.triangle.fill")
-                    .font(.title3)
-                    .foregroundStyle(.orange)
+        VStack(spacing: 12) {
+            VStack(spacing: 4) {
+                HStack {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .foregroundStyle(.orange)
 
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Model unavailable")
-                        .font(.headline)
+                    Text(viewModel.model.isEmpty ? "Model required" : "Model unavailable")
 
-                    if let unavailableModelName = viewModel.unavailableCurrentChatModelName {
-                        Text(overlayMessage(for: unavailableModelName))
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                    }
                 }
+                .font(.headline)
 
-                Spacer(minLength: 0)
+                Text(
+                    {
+                        if viewModel.model.isEmpty {
+                            if modelRegistry.models.isEmpty {
+                                return "No model is selected, and no models are installed right now."
+                            }
+
+                            return "No model is selected. Choose an existing model to keep chatting."
+                        }
+
+                        if let unavailableModelName = viewModel.unavailableCurrentChatModelName {
+                            return overlayMessage(for: unavailableModelName)
+                        }
+
+                        assert(false, "Missing model overlay requires a missing or unavailable chat model.")
+                        return modelRegistry.models.isEmpty
+                            ? "No models are installed right now."
+                            : "Choose an existing model to keep chatting."
+                    }()
+                )
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
             }
 
             HStack(spacing: 8) {
@@ -110,26 +126,43 @@ extension ChatView {
                     .buttonStyle(.borderedProminent)
                 }
 
-                Button {
-                    promptFieldIsFocused = false
-                    viewModel.openModelSettings()
-                } label: {
-                    Label("Open Settings", systemImage: "gearshape")
+                if #available(macOS 14.0, *) {
+                    SettingsLink {
+                        Label("Open Settings", systemImage: "gearshape")
+                    }
+                    .simultaneousGesture(
+                        TapGesture().onEnded {
+                            promptFieldIsFocused = false
+                            SettingsViewModel.shared.selectedTab = .models
+                        }
+                    )
+                    .buttonStyle(.bordered)
+                } else {
+                    Button {
+                        promptFieldIsFocused = false
+                        SettingsViewModel.shared.selectedTab = .models
+                        if #available(macOS 13.0, *) {
+                            NSApp.sendAction(
+                                Selector(("showSettingsWindow:")),
+                                to: nil,
+                                from: nil
+                            )
+                        } else {
+                            NSApp.sendAction(
+                                Selector(("showPreferencesWindow:")),
+                                to: nil,
+                                from: nil
+                            )
+                        }
+                    } label: {
+                        Label("Open Settings", systemImage: "gearshape")
+                    }
+                    .buttonStyle(.bordered)
                 }
-                .buttonStyle(.bordered)
             }
         }
         .padding(16)
-        .maxFrame(alignment: .topLeading)
-        .background(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .fill(Color.ocPrimaryBackground.opacity(0.98))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12, style: .continuous)
-                        .strokeBorder(Color.ocDividerColor, lineWidth: 1)
-                )
-        )
-        .contentShape(Rectangle())
+        .maxFrame()
     }
 
     private func overlayMessage(for unavailableModelName: String) -> String {

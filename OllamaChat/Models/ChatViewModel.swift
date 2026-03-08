@@ -63,7 +63,7 @@ class ChatViewModel: ObservableObject {
     @Published var showSettingsView = false
 
     var unavailableCurrentChatModelName: String? {
-        guard let chatModel = currentChat?.model, !chatModel.isEmpty else {
+        guard let chatModel = normalizedModelName(currentChat?.model) else {
             return nil
         }
 
@@ -74,8 +74,8 @@ class ChatViewModel: ObservableObject {
     @Published var current = ChatMessage(role: .user, content: "")
 
     var model: String {
-        if let chatModel = currentChat?.model, !chatModel.isEmpty {
-            return chatModel
+        if currentChat != nil {
+            return normalizedModelName(currentChat?.model) ?? ""
         }
 
         if let fallbackModel = UnifiedModelRegistry.shared.models.first?.name {
@@ -86,7 +86,11 @@ class ChatViewModel: ObservableObject {
     }
 
     var requiresModelSelectionOverlay: Bool {
-        unavailableCurrentChatModelName != nil
+        if model.isEmpty {
+            return true
+        }
+
+        return unavailableCurrentChatModelName != nil
     }
 
     @Published var messages: [ChatMessage]
@@ -241,7 +245,7 @@ class ChatViewModel: ObservableObject {
     func saveDataToDatabase() {
         if let chat = currentChat {
             chat.messages = messages
-            let persistedModel = chat.model.isEmpty ? model : chat.model
+            let persistedModel = normalizedModelName(chat.model) ?? ""
             chat.model = persistedModel
             chat.chatConfiguration = currentChatConfiguration
             CoreDataStack.shared.saveContext()
@@ -361,6 +365,18 @@ class ChatViewModel: ObservableObject {
         let systemPrompt = AppSettings.globalSystem
         guard !systemPrompt.isEmpty else { return [] }
         return [.init(role: .system, content: systemPrompt)]
+    }
+
+    private func normalizedModelName(_ modelName: String?) -> String? {
+        guard let modelName else { return nil }
+
+        let trimmedModelName = modelName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedModelName.isEmpty else {
+            assert(modelName.isEmpty, "Stored chat model should not contain only whitespace.")
+            return nil
+        }
+
+        return trimmedModelName
     }
 
     private func restoreActiveModelConfiguration(for chat: SingleChat?) {

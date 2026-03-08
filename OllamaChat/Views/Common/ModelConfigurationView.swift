@@ -84,6 +84,7 @@ struct ModelConfigurationView: View {
 
             TextEditor(text: $systemPrompt)
                 .disableAutoQuotes()
+                .scrollContentBackground(.hidden)
                 .font(.body)
                 .onSubmit {
                     updateSystem()
