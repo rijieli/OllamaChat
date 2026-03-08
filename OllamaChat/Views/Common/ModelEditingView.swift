@@ -87,26 +87,21 @@ struct ModelEditingView: View {
                 TextField("", value: $chatConfiguration.options.repeatLastN, format: .number)
             }
             
-            SettingsSectionHeader("Advanced Settings")
-            
-            VStack(alignment: .leading, spacing: 12) {
-                LabeledContent("Context Window") {
-                    TextField("", value: $chatConfiguration.options.numCtx, format: .number)
-                }
-                
-                LabeledContent("Max tokens to predict") {
-                    TextField("", value: $chatConfiguration.options.numPredict, format: .number)
-                }
-                
-                LabeledContent("Top K (\(chatConfiguration.options.topK))") {
-                    TextField("", value: $chatConfiguration.options.topK, format: .number)
-                }
-                
-                LabeledContent("Min P (\(chatConfiguration.options.minP, specifier: "%.2f"))") {
-                    Slider(value: $chatConfiguration.options.minP, in: 0...1, step: 0.05)
-                }
+            LabeledContent("Context Window") {
+                TextField("", value: $chatConfiguration.options.numCtx, format: .number)
             }
-            .maxWidth(alignment: .leading)
+            
+            LabeledContent("Max tokens to predict") {
+                TextField("", value: $chatConfiguration.options.numPredict, format: .number)
+            }
+            
+            LabeledContent("Top K (\(chatConfiguration.options.topK))") {
+                TextField("", value: $chatConfiguration.options.topK, format: .number)
+            }
+            
+            LabeledContent("Min P (\(chatConfiguration.options.minP, specifier: "%.2f"))") {
+                Slider(value: $chatConfiguration.options.minP, in: 0...1, step: 0.05)
+            }
         }
         .labeledContentStyle(.settings)
         .maxWidth()

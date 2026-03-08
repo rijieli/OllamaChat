@@ -23,29 +23,6 @@ extension ChatView {
                 }
                 .disabled(viewModel.waitingResponse || viewModel.requiresModelSelectionOverlay)
                 .focused($promptFieldIsFocused)
-                .overlay(alignment: .trailing) {
-                    ZStack {
-                        if allowSubmitNewMessage
-                            && !viewModel.requiresModelSelectionOverlay
-                        {
-                            Button {
-                                viewModel.send()
-                                promptFieldIsFocused = false
-                            } label: {
-                                Image(systemName: "arrow.up.circle.fill")
-                                    .font(.system(size: 24))
-                                    .frame(width: 40, height: 40)
-                                    .foregroundStyle(.blue)
-                                    .contentShape(Rectangle())
-                            }
-                            .buttonStyle(.plain)
-                            .keyboardShortcut(.return, modifiers: .command)
-                            .transition(.scale)
-                            .help("⌘ + Return")
-                        }
-                    }
-                }
-                .animation(.smooth(duration: 0.3), value: allowSubmitNewMessage)
                 .onChange(of: viewModel.waitingResponse) { newValue in
                     if newValue == false, !viewModel.requiresModelSelectionOverlay {
                         promptFieldIsFocused = true
@@ -56,7 +33,35 @@ extension ChatView {
                 missingModelOverlay
             }
         }
-        .modifier(BorderDecoratedStyleModifier())
+        .modifier(
+            BorderDecoratedStyleModifier(
+                paddingV: 16.variable(os26: 20),
+                paddingH: 12.variable(os26: 16)
+            )
+        )
+        .overlay(alignment: .trailing) {
+            ZStack {
+                if allowSubmitNewMessage
+                    && !viewModel.requiresModelSelectionOverlay
+                {
+                    Button {
+                        viewModel.send()
+                        promptFieldIsFocused = false
+                    } label: {
+                        Image(systemName: "arrow.up.circle.fill")
+                            .font(.system(size: 24))
+                            .frame(width: 40, height: 40)
+                            .foregroundStyle(.blue)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .keyboardShortcut(.return, modifiers: .command)
+                    .transition(.scale)
+                    .help("⌘ + Return")
+                }
+            }
+            .animation(.smooth(duration: 0.3), value: allowSubmitNewMessage)
+        }
         .onChange(of: viewModel.requiresModelSelectionOverlay) { requiresOverlay in
             promptFieldIsFocused = !requiresOverlay && !viewModel.waitingResponse
         }

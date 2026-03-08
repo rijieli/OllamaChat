@@ -51,6 +51,7 @@
       }
     },
     "Advanced Settings" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {

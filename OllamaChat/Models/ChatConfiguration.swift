@@ -11,10 +11,10 @@ import Foundation
 
 struct ChatConfiguration: Codable {
     /// Controls Ollama's `think` request behavior when supported by the selected model. Default: `automatic`.
-    var think: OllamaThinkMode = .automatic
+    var think: OllamaThinkMode = .disabled
     var options: ChatOptions = .defaultValue
 
-    init(think: OllamaThinkMode = .automatic, options: ChatOptions = .defaultValue) {
+    init(think: OllamaThinkMode = .disabled, options: ChatOptions = .defaultValue) {
         self.think = think
         self.options = options
     }
