@@ -17,7 +17,6 @@ class UnifiedModelRegistry: ObservableObject {
     @Published var isLoading = false
     @Published var error: Error?
     @Published private(set) var models: [OllamaLanguageModel] = []
-    @Published private(set) var hasResolvedModels = false
 
     private init() {}
 
@@ -39,7 +38,6 @@ class UnifiedModelRegistry: ObservableObject {
 
     func invalidateModels() {
         models = []
-        hasResolvedModels = false
         error = nil
     }
 
@@ -101,7 +99,6 @@ class UnifiedModelRegistry: ObservableObject {
 
     private func applyModels(_ models: [OllamaLanguageModel]) {
         self.models = models
-        hasResolvedModels = true
 
         if models.isEmpty {
             ChatViewModel.shared.errorModel = noModelsError(error: nil)

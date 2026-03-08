@@ -42,10 +42,10 @@ class ChatViewModel: ObservableObject {
 
         restoreActiveModelConfiguration(for: lastChat)
     }
-    
+
     @AppStorage("timeoutRequest") var timeoutRequest = "60"
     @AppStorage("timeoutResource") var timeoutResource = "604800"
-    
+
     @Published var chatConfiguration: ChatConfiguration {
         didSet {
             guard !isApplyingStoredModelConfiguration else { return }
@@ -53,29 +53,26 @@ class ChatViewModel: ObservableObject {
             persistCurrentChatConfiguration()
         }
     }
-    
+
     @Published var showModelConfiguration = false
-    
+
     @Published var showEditingMessage: ChatMessage?
-    
+
     @Published var currentChat: SingleChat? = nil
-    
+
     @Published var showSettingsView = false
 
     var unavailableCurrentChatModelName: String? {
-        guard UnifiedModelRegistry.shared.hasResolvedModels,
-              let chatModel = currentChat?.model,
-              !chatModel.isEmpty
-        else {
+        guard let chatModel = currentChat?.model, !chatModel.isEmpty else {
             return nil
         }
 
         let availableModels = Set(UnifiedModelRegistry.shared.models.map(\.name))
         return availableModels.contains(chatModel) ? nil : chatModel
     }
-    
+
     @Published var current = ChatMessage(role: .user, content: "")
-    
+
     var model: String {
         if let chatModel = currentChat?.model, !chatModel.isEmpty {
             return chatModel
@@ -92,23 +89,19 @@ class ChatViewModel: ObservableObject {
         unavailableCurrentChatModelName != nil
     }
 
-    var availableReplacementModels: [OllamaLanguageModel] {
-        UnifiedModelRegistry.shared.models
-    }
-    
     @Published var messages: [ChatMessage]
-    
+
     @Published var waitingResponse: Bool = false
-    
+
     @Published var errorModel: ErrorModel? = nil
-    
+
     @Published var scrollToBottomToggle = false
-    
+
     private let scrollThrottler = Throttler(interval: 0.1)
-    
+
     private var chatTask: Task<Void, Never>?
     private var ollamaService: OllamaService?
-    
+
     @MainActor
     func send() {
         guard !requiresModelSelectionOverlay else { return }
@@ -205,7 +198,7 @@ class ChatViewModel: ObservableObject {
             send()
         }
     }
-    
+
     func cancelTask() {
         chatTask?.cancel()
         Task {
@@ -214,27 +207,27 @@ class ChatViewModel: ObservableObject {
         waitingResponse = false
         clearError()
     }
-    
+
     func scrollToBottom() {
         DispatchQueue.main.async {
             self.scrollToBottomToggle.toggle()
         }
     }
-    
+
     func editMessage(_ message: ChatMessage) {
         guard messages.firstIndex(where: { $0.id == message.id }) != nil else { return }
         showEditingMessage = message
     }
-    
+
     func updateMessage(at index: Int, with newMessage: ChatMessage) {
         // Ensure the index is within bounds
         guard messages.indices.contains(index) else { return }
-        
+
         // Update the content of the message
         messages[index] = newMessage
         saveDataToDatabase()
     }
-    
+
     func updateSystem(_ newSystem: ChatMessage) {
         if let idx = messages.firstIndex(where: { $0.role == .system }) {
             messages[idx] = newSystem
@@ -244,7 +237,7 @@ class ChatViewModel: ObservableObject {
         saveDataToDatabase()
         showModelConfiguration = false
     }
-    
+
     func saveDataToDatabase() {
         if let chat = currentChat {
             chat.messages = messages
@@ -254,7 +247,7 @@ class ChatViewModel: ObservableObject {
             CoreDataStack.shared.saveContext()
         }
     }
-    
+
     func loadChat(_ chat: SingleChat?) {
         if let chat {
             messages = chat.messages
@@ -267,13 +260,12 @@ class ChatViewModel: ObservableObject {
         restoreActiveModelConfiguration(for: chat)
         TextSpeechCenter.shared.stopImmediate()
     }
-    
+
     func newChat() {
         let modelName: String
         if let firstModel = UnifiedModelRegistry.shared.models.first?.name {
             modelName = firstModel
         } else {
-            assert(false, "Creating a new chat without an available Ollama model.")
             modelName = ""
         }
 
@@ -294,7 +286,7 @@ class ChatViewModel: ObservableObject {
         )
         UnifiedModelRegistry.shared.invalidateModels()
     }
-    
+
     @MainActor
     func handleError(_ error: Error) {
         if let netError = error as? NetError {
@@ -324,7 +316,7 @@ class ChatViewModel: ObservableObject {
             errorModel = genericError(error: error)
         }
     }
-    
+
     func clearError() {
         if errorModel != nil {
             DispatchQueue.main.async { [weak self] in

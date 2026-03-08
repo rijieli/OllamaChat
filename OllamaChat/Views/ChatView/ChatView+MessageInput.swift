@@ -54,8 +54,6 @@ extension ChatView {
 
             if viewModel.requiresModelSelectionOverlay {
                 missingModelOverlay
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 16)
             }
         }
         .onChange(of: viewModel.unavailableCurrentChatModelName) { unavailableModel in
@@ -99,9 +97,9 @@ extension ChatView {
             }
 
             HStack(spacing: 8) {
-                if !viewModel.availableReplacementModels.isEmpty {
+                if !modelRegistry.models.isEmpty {
                     Menu {
-                        ForEach(viewModel.availableReplacementModels, id: \.name) { model in
+                        ForEach(modelRegistry.models, id: \.name) { model in
                             Button(model.name) {
                                 viewModel.selectAvailableModel(model.name)
                             }
@@ -135,7 +133,7 @@ extension ChatView {
     }
 
     private func overlayMessage(for unavailableModelName: String) -> String {
-        if viewModel.availableReplacementModels.isEmpty {
+        if modelRegistry.models.isEmpty {
             return "\"\(unavailableModelName)\" is no longer available. No models are installed right now."
         }
 
