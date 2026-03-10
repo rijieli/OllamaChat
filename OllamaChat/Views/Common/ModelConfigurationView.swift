@@ -25,6 +25,7 @@ struct ModelConfigurationView: View {
     }
 
     @ObservedObject var viewModel = ChatViewModel.shared
+    @ObservedObject private var modelRegistry = UnifiedModelRegistry.shared
 
     @State private var selectedTab: EditorTab = .systemPrompt
     @State var systemPrompt: String = ""
@@ -61,9 +62,15 @@ struct ModelConfigurationView: View {
             systemPrompt =
                 viewModel.messages.first(where: { $0.role == .system })?.content ?? ""
             isPopupFocused = true
+            await fetchThinkSupportIfNeeded()
         }
         .onChange(of: selectedTab) { newTab in
             isPopupFocused = newTab == .systemPrompt
+        }
+        .onChange(of: viewModel.model) { _ in
+            Task {
+                await fetchThinkSupportIfNeeded()
+            }
         }
     }
 
@@ -103,7 +110,10 @@ struct ModelConfigurationView: View {
 
     private var configurationTab: some View {
         ScrollView(.vertical, showsIndicators: false) {
-            ModelEditingView(chatConfiguration: $viewModel.chatConfiguration)
+            ModelEditingView(
+                chatConfiguration: $viewModel.chatConfiguration,
+                showsThinkingControl: modelRegistry.cachedThinkSupport(for: viewModel.model).showsThinkOption
+            )
                 .padding(.top, 4)
                 .padding(.bottom, 8)
         }
@@ -133,5 +143,18 @@ struct ModelConfigurationView: View {
 
     func updateSystem() {
         viewModel.updateSystem(.init(role: .system, content: systemPrompt))
+    }
+
+    private func fetchThinkSupportIfNeeded() async {
+        let model = viewModel.model
+        guard !model.isEmpty else { return }
+        guard APIManager.shared.configuration.isValid else { return }
+        guard modelRegistry.cachedThinkSupport(for: model) == .unknown else { return }
+
+        do {
+            _ = try await modelRegistry.fetchThinkSupport(for: model)
+        } catch {
+            log.warning("Failed to fetch think capability for \(model): \(error)")
+        }
     }
 }

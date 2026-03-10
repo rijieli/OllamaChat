@@ -9,8 +9,13 @@
 import Foundation
 
 final class OllamaService: ObservableObject {
+    private struct OllamaErrorResponse: Decodable {
+        let error: String
+    }
+
     private let configuration: OllamaConfiguration
     private let chatConfiguration: ChatConfiguration
+    private let allowsThinkingRequests: Bool
     private let timeoutRequest: TimeInterval
     private let timeoutResource: TimeInterval
     private var currentTask: Task<Void, Never>?
@@ -18,11 +23,13 @@ final class OllamaService: ObservableObject {
     init(
         configuration: OllamaConfiguration,
         chatConfiguration: ChatConfiguration,
+        allowsThinkingRequests: Bool,
         timeoutRequest: TimeInterval,
         timeoutResource: TimeInterval
     ) {
         self.configuration = configuration
         self.chatConfiguration = chatConfiguration
+        self.allowsThinkingRequests = allowsThinkingRequests
         self.timeoutRequest = timeoutRequest
         self.timeoutResource = timeoutResource
     }
@@ -69,45 +76,18 @@ final class OllamaService: ObservableObject {
             throw ChatCompletionError.invalidConfiguration("Cannot build API endpoint URL")
         }
         
-        // Prepare the request
-        var request = URLRequest(url: requestURL)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-
-        let requestBody = ChatModel(
-            model: configuration.selectedModel,
-            messages: messages,
-            configuration: chatConfiguration
-        )
-        let encoder = JSONEncoder()
-        request.httpBody = try encoder.encode(requestBody)
-        
         // Create URLSession with custom configuration for streaming
         let sessionConfig = URLSessionConfiguration.default
         sessionConfig.timeoutIntervalForRequest = timeoutRequest
         sessionConfig.timeoutIntervalForResource = timeoutResource
         let session = URLSession(configuration: sessionConfig)
         
-        // Make the streaming request - use bytes(for:) for streaming responses
-        let (bytes, response) = try await session.bytes(for: request)
-        
-        guard let httpResponse = response as? HTTPURLResponse else {
-            throw ChatCompletionError.networkError(URLError(.badServerResponse))
-        }
-        
-        guard httpResponse.statusCode == 200 else {
-            if httpResponse.statusCode == 404 {
-                throw ChatCompletionError.modelNotAvailable(configuration.selectedModel)
-            } else if httpResponse.statusCode == 401 {
-                throw ChatCompletionError.authenticationError
-            } else if httpResponse.statusCode == 429 {
-                throw ChatCompletionError.rateLimitError
-            } else {
-                throw ChatCompletionError.networkError(
-                    URLError(.init(rawValue: httpResponse.statusCode))
-                )
-            }
-        }
+        let bytes = try await openChatStream(
+            messages: messages,
+            requestURL: requestURL,
+            session: session,
+            includeThinkField: allowsThinkingRequests
+        )
         
         // Process streaming response line by line
         // Ollama returns each JSON object on a separate line (not SSE format with "data: " prefix)
@@ -131,5 +111,104 @@ final class OllamaService: ObservableObject {
         }
         
         continuation.finish()
+    }
+
+    private func openChatStream(
+        messages: [ChatMessage],
+        requestURL: URL,
+        session: URLSession,
+        includeThinkField: Bool = true
+    ) async throws -> URLSession.AsyncBytes {
+        let request = try makeRequest(
+            requestURL: requestURL,
+            messages: messages,
+            includeThinkField: includeThinkField
+        )
+        let (bytes, response) = try await session.bytes(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw ChatCompletionError.networkError(URLError(.badServerResponse))
+        }
+
+        guard httpResponse.statusCode == 200 else {
+            let serverMessage = try await serverErrorMessage(from: bytes)
+            log.error("Ollama HTTP \(httpResponse.statusCode): \(serverMessage ?? "No response body")")
+            throw mapHTTPError(statusCode: httpResponse.statusCode, serverMessage: serverMessage)
+        }
+
+        return bytes
+    }
+
+    private func makeRequest(
+        requestURL: URL,
+        messages: [ChatMessage],
+        includeThinkField: Bool
+    ) throws -> URLRequest {
+        var request = URLRequest(url: requestURL)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        let requestBody = ChatModel(
+            model: configuration.selectedModel,
+            messages: messages,
+            configuration: Self.requestConfiguration(
+                from: chatConfiguration,
+                includeThinkField: includeThinkField
+            )
+        )
+        let encoder = JSONEncoder()
+        request.httpBody = try encoder.encode(requestBody)
+        return request
+    }
+
+    static func requestConfiguration(
+        from configuration: ChatConfiguration,
+        includeThinkField: Bool
+    ) -> ChatConfiguration {
+        guard includeThinkField else {
+            return ChatConfiguration(think: .automatic, options: configuration.options)
+        }
+
+        return configuration
+    }
+
+    private func mapHTTPError(
+        statusCode: Int,
+        serverMessage: String?
+    ) -> ChatCompletionError {
+        switch statusCode {
+        case 401:
+            return .authenticationError
+        case 404:
+            return .modelNotAvailable(configuration.selectedModel)
+        case 429:
+            return .rateLimitError
+        default:
+            return .serverError(statusCode: statusCode, message: serverMessage)
+        }
+    }
+
+    private func serverErrorMessage(from bytes: URLSession.AsyncBytes) async throws -> String? {
+        var data = Data()
+        data.reserveCapacity(512)
+
+        for try await byte in bytes {
+            data.append(contentsOf: [byte])
+
+            if data.count >= 32_768 {
+                break
+            }
+        }
+
+        guard !data.isEmpty else { return nil }
+
+        if let decoded = try? JSONDecoder().decode(OllamaErrorResponse.self, from: data) {
+            let message = decoded.error.trimmingCharacters(in: .whitespacesAndNewlines)
+            return message.isEmpty ? nil : message
+        }
+
+        let message = String(data: data, encoding: .utf8)?
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        return message?.isEmpty == true ? nil : message
     }
 }

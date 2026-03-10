@@ -91,7 +91,7 @@ final class OllamaChatTests: XCTestCase {
         
         for testCase in testCases {
             XCTAssertEqual(
-                ChatViewModel.processAPIEndPoint(host: testCase.host, port: testCase.port),
+                ChatViewModel.processBaseEndPoint(host: testCase.host, port: testCase.port),
                 testCase.expected,
                 "Failed: <\(testCase.host)> <\(testCase.port)>"
             )
@@ -206,6 +206,24 @@ final class OllamaChatTests: XCTestCase {
         XCTAssertEqual(json["think"] as? String, "medium")
     }
 
+    func testRequestConfigurationOmitsThinkWhenServiceDisablesThinkField() throws {
+        let configuration = OllamaService.requestConfiguration(
+            from: ChatConfiguration(think: .disabled, options: .defaultValue),
+            includeThinkField: false
+        )
+
+        let request = ChatModel(
+            model: "qwen3",
+            messages: [ChatMessage(role: .user, content: "Hello")],
+            configuration: configuration
+        )
+
+        let json = try jsonObject(from: JSONEncoder().encode(request))
+
+        XCTAssertEqual(configuration.think, .automatic)
+        XCTAssertNil(json["think"])
+    }
+
     func testRequestOmitsEmptyStopArray() throws {
         let request = ChatModel(
             model: "qwen3",
@@ -278,6 +296,115 @@ final class OllamaChatTests: XCTestCase {
         XCTAssertEqual(model.name, "llama3.2")
         XCTAssertNil(model.details)
         XCTAssertEqual(model.modelInfo.modelName, "Llama3.2")
+    }
+
+    func testShowModelResponseDecodesDocumentedFields() throws {
+        let data = """
+        {
+          "parameters": "num_ctx 4096",
+          "license": "Apache-2.0",
+          "modified_at": "2026-03-10T00:00:00Z",
+          "template": "{{ .Prompt }}",
+          "capabilities": ["completion", "thinking"]
+        }
+        """.data(using: .utf8)!
+
+        let response = try JSONDecoder().decode(OllamaShowModelResponse.self, from: data)
+
+        XCTAssertEqual(response.parameters, "num_ctx 4096")
+        XCTAssertEqual(response.license, "Apache-2.0")
+        XCTAssertEqual(response.modifiedAt, "2026-03-10T00:00:00Z")
+        XCTAssertEqual(response.template, "{{ .Prompt }}")
+        XCTAssertEqual(response.thinkSupport, .supported)
+    }
+
+    func testShowModelRequestEncodesVerboseFlag() throws {
+        let request = OllamaShowModelRequest(model: "gemma3", verbose: true)
+
+        let json = try jsonObject(from: JSONEncoder().encode(request))
+
+        XCTAssertEqual(json["model"] as? String, "gemma3")
+        XCTAssertEqual(json["verbose"] as? Bool, true)
+    }
+
+    func testShowModelResponseDetectsUnsupportedThinking() throws {
+        let data = """
+        {
+          "capabilities": ["completion"]
+        }
+        """.data(using: .utf8)!
+
+        let response = try JSONDecoder().decode(OllamaShowModelResponse.self, from: data)
+
+        XCTAssertEqual(response.thinkSupport, .unsupported)
+    }
+
+    func testShowModelResponseDecodesDetailsModelInfoAndAdditionalFields() throws {
+        let data = """
+        {
+          "details": {
+            "parent_model": "qwen3",
+            "format": "gguf",
+            "family": "qwen",
+            "families": ["qwen"],
+            "parameter_size": "14B",
+            "quantization_level": "Q4_K_M",
+            "context_window": 4096
+          },
+          "model_info": {
+            "general.architecture": "qwen2",
+            "qwen2.context_length": 4096,
+            "qwen2.attention.head_count": 40,
+            "general.file_type": 15,
+            "general.quantization_version": 2,
+            "tokenizer.ggml.add_bos_token": false
+          },
+          "projector_info": {
+            "clip.vision.embedding_length": 1024
+          }
+        }
+        """.data(using: .utf8)!
+
+        let response = try JSONDecoder().decode(OllamaShowModelResponse.self, from: data)
+
+        XCTAssertEqual(response.details?.parentModel, "qwen3")
+        XCTAssertEqual(response.details?.format, "gguf")
+        XCTAssertEqual(response.details?.family, "qwen")
+        XCTAssertEqual(response.details?.families, ["qwen"])
+        XCTAssertEqual(response.details?.parameterSize, "14B")
+        XCTAssertEqual(response.details?.quantizationLevel, "Q4_K_M")
+        XCTAssertEqual(response.details?.additionalFields["context_window"], .int(4096))
+        XCTAssertEqual(response.modelInfo?["general.architecture"], .string("qwen2"))
+        XCTAssertEqual(response.modelInfo?["qwen2.context_length"], .int(4096))
+        XCTAssertEqual(response.modelInfo?["tokenizer.ggml.add_bos_token"], .bool(false))
+        XCTAssertEqual(
+            response.additionalFields["projector_info"],
+            .object(["clip.vision.embedding_length": .int(1024)])
+        )
+    }
+
+    func testShowModelResponseWithoutCapabilitiesDefaultsToUnknown() throws {
+        let data = """
+        {
+          "license": "Apache-2.0"
+        }
+        """.data(using: .utf8)!
+
+        let response = try JSONDecoder().decode(OllamaShowModelResponse.self, from: data)
+
+        XCTAssertEqual(response.thinkSupport, .unknown)
+    }
+
+    func testServerErrorLocalizedDescriptionIncludesResponseBody() throws {
+        let error = ChatCompletionError.serverError(
+            statusCode: 400,
+            message: "unknown field `think`"
+        )
+
+        XCTAssertEqual(
+            error.localizedDescription,
+            "Ollama returned HTTP 400: unknown field `think`"
+        )
     }
 
 }

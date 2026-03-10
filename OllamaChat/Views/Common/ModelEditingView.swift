@@ -10,10 +10,16 @@ import SwiftUI
 struct ModelEditingView: View {
     @Binding private var chatConfiguration: ChatConfiguration
     var showsResetButton = true
+    var showsThinkingControl = true
 
-    init(chatConfiguration: Binding<ChatConfiguration>, showsResetButton: Bool = true) {
+    init(
+        chatConfiguration: Binding<ChatConfiguration>,
+        showsResetButton: Bool = true,
+        showsThinkingControl: Bool = true
+    ) {
         _chatConfiguration = chatConfiguration
         self.showsResetButton = showsResetButton
+        self.showsThinkingControl = showsThinkingControl
     }
     
     var body: some View {
@@ -39,22 +45,24 @@ struct ModelEditingView: View {
                 }
             }
             
-            LabeledContent("Thinking") {
-                Picker("Thinking", selection: $chatConfiguration.think) {
-                    ForEach(OllamaThinkMode.allCases) { thinkMode in
-                        Text(thinkMode.displayName)
-                            .tag(thinkMode)
+            if showsThinkingControl {
+                LabeledContent("Thinking") {
+                    Picker("Thinking", selection: $chatConfiguration.think) {
+                        ForEach(OllamaThinkMode.allCases) { thinkMode in
+                            Text(thinkMode.displayName)
+                                .tag(thinkMode)
+                        }
                     }
+                    .pickerStyle(.menu)
+                    .labelsHidden()
                 }
-                .pickerStyle(.menu)
-                .labelsHidden()
+
+                Text(
+                    "Auto uses the model default. Low, Medium, and High only apply to models that support think levels, such as GPT-OSS."
+                )
+                .font(.caption)
+                .foregroundStyle(.secondary)
             }
-            
-            Text(
-                "Auto uses the model default. Low, Medium, and High only apply to models that support think levels, such as GPT-OSS."
-            )
-            .font(.caption)
-            .foregroundStyle(.secondary)
             
             LabeledContent("Temperature (\(chatConfiguration.options.temperature, specifier: "%.2f"))")
             {

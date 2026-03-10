@@ -12,8 +12,172 @@ var APIEndPoint: String {
     APIManager.shared.endpoint + "/api/"
 }
 
+enum OllamaThinkSupport: Equatable {
+    case unknown
+    case supported
+    case unsupported
+
+    var showsThinkOption: Bool {
+        self != .unsupported
+    }
+
+    var includesThinkInRequests: Bool {
+        showsThinkOption
+    }
+}
+
+enum JSONValue: Decodable, Hashable {
+    case string(String)
+    case int(Int)
+    case double(Double)
+    case bool(Bool)
+    case array([JSONValue])
+    case object([String: JSONValue])
+    case null
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+
+        if container.decodeNil() {
+            self = .null
+        } else if let value = try? container.decode(Bool.self) {
+            self = .bool(value)
+        } else if let value = try? container.decode(Int.self) {
+            self = .int(value)
+        } else if let value = try? container.decode(Double.self) {
+            self = .double(value)
+        } else if let value = try? container.decode(String.self) {
+            self = .string(value)
+        } else if let value = try? container.decode([String: JSONValue].self) {
+            self = .object(value)
+        } else if let value = try? container.decode([JSONValue].self) {
+            self = .array(value)
+        } else {
+            throw DecodingError.dataCorruptedError(
+                in: container,
+                debugDescription: "Unsupported JSON value."
+            )
+        }
+    }
+}
+
+private struct DynamicCodingKey: CodingKey, Hashable {
+    let stringValue: String
+    let intValue: Int?
+
+    init?(stringValue: String) {
+        self.stringValue = stringValue
+        intValue = nil
+    }
+
+    init?(intValue: Int) {
+        stringValue = String(intValue)
+        self.intValue = intValue
+    }
+}
+
+private func decodeAdditionalFields<K: CodingKey & CaseIterable>(
+    from decoder: Decoder,
+    excluding _: K.Type
+) throws -> [String: JSONValue] {
+    let dynamicContainer = try decoder.container(keyedBy: DynamicCodingKey.self)
+    let knownFieldNames = Set(K.allCases.map(\.stringValue))
+
+    return try dynamicContainer.allKeys.reduce(into: [:]) { result, key in
+        guard !knownFieldNames.contains(key.stringValue) else { return }
+        result[key.stringValue] = try dynamicContainer.decode(JSONValue.self, forKey: key)
+    }
+}
+
 struct OllamaModelGroup: Decodable, Hashable {
     let models: [OllamaLanguageModel]
+}
+
+struct OllamaShowModelRequest: Encodable {
+    let model: String
+    let verbose: Bool?
+
+    init(model: String, verbose: Bool? = nil) {
+        self.model = model
+        self.verbose = verbose
+    }
+}
+
+enum OllamaShowModelCacheVariant: Hashable {
+    case standard
+    case verbose
+
+    init(verbose: Bool?) {
+        self = verbose == true ? .verbose : .standard
+    }
+}
+
+struct OllamaShowModelResponse: Decodable, Hashable {
+    let parameters: String?
+    let license: String?
+    let modifiedAt: String?
+    let details: OllamaShowModelDetails?
+    let template: String?
+    let capabilities: [String]?
+    let modelInfo: [String: JSONValue]?
+    let additionalFields: [String: JSONValue]
+
+    private enum CodingKeys: String, CodingKey, CaseIterable {
+        case parameters
+        case license
+        case modifiedAt = "modified_at"
+        case details
+        case template
+        case capabilities
+        case modelInfo = "model_info"
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        parameters = try container.decodeIfPresent(String.self, forKey: .parameters)
+        license = try container.decodeIfPresent(String.self, forKey: .license)
+        modifiedAt = try container.decodeIfPresent(String.self, forKey: .modifiedAt)
+        details = try container.decodeIfPresent(OllamaShowModelDetails.self, forKey: .details)
+        template = try container.decodeIfPresent(String.self, forKey: .template)
+        capabilities = try container.decodeIfPresent([String].self, forKey: .capabilities)
+        modelInfo = try container.decodeIfPresent([String: JSONValue].self, forKey: .modelInfo)
+        additionalFields = try decodeAdditionalFields(from: decoder, excluding: CodingKeys.self)
+    }
+
+    var thinkSupport: OllamaThinkSupport {
+        guard let capabilities else { return .unknown }
+        return capabilities.contains("thinking") ? .supported : .unsupported
+    }
+}
+
+struct OllamaShowModelDetails: Decodable, Hashable {
+    let parentModel: String?
+    let format: String?
+    let family: String?
+    let families: [String]?
+    let parameterSize: String?
+    let quantizationLevel: String?
+    let additionalFields: [String: JSONValue]
+
+    private enum CodingKeys: String, CodingKey, CaseIterable {
+        case parentModel = "parent_model"
+        case format
+        case family
+        case families
+        case parameterSize = "parameter_size"
+        case quantizationLevel = "quantization_level"
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        parentModel = try container.decodeIfPresent(String.self, forKey: .parentModel)
+        format = try container.decodeIfPresent(String.self, forKey: .format)
+        family = try container.decodeIfPresent(String.self, forKey: .family)
+        families = try container.decodeIfPresent([String].self, forKey: .families)
+        parameterSize = try container.decodeIfPresent(String.self, forKey: .parameterSize)
+        quantizationLevel = try container.decodeIfPresent(String.self, forKey: .quantizationLevel)
+        additionalFields = try decodeAdditionalFields(from: decoder, excluding: CodingKeys.self)
+    }
 }
 
 struct OllamaModelParameter: Codable, Hashable {

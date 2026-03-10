@@ -100,7 +100,6 @@ class ChatViewModel: ObservableObject {
     @Published var errorModel: ErrorModel? = nil
 
     @Published var scrollToBottomToggle = false
-
     private let scrollThrottler = Throttler(interval: 0.1)
 
     private var chatTask: Task<Void, Never>?
@@ -135,9 +134,11 @@ class ChatViewModel: ObservableObject {
 
                 var configuration = APIManager.shared.configuration
                 configuration.selectedModel = selectedModel
+                let thinkSupport = await resolvedThinkSupport(for: selectedModel)
                 let service = OllamaService(
                     configuration: configuration,
                     chatConfiguration: currentChatConfiguration,
+                    allowsThinkingRequests: thinkSupport.includesThinkInRequests,
                     timeoutRequest: Double(timeoutRequest) ?? 60,
                     timeoutResource: Double(timeoutResource) ?? 604800
                 )
@@ -306,6 +307,29 @@ class ChatViewModel: ObservableObject {
             case .general(let error):
                 errorModel = genericError(error: error)
             }
+        } else if let completionError = error as? ChatCompletionError {
+            switch completionError {
+            case .invalidConfiguration:
+                errorModel = invalidURLError(error: error)
+            case .networkError(let nestedError):
+                if let urlError = nestedError as? URLError {
+                    switch urlError.code {
+                    case .cancelled:
+                        break
+                    case .timedOut:
+                        errorModel = unreachableError(error: urlError)
+                    default:
+                        errorModel = genericError(error: urlError)
+                    }
+                } else {
+                    errorModel = genericError(error: nestedError)
+                }
+            case .authenticationError, .rateLimitError, .modelNotAvailable, .serverError:
+                errorModel = invalidResponseError(error: error)
+            case .unknownError(let nestedError):
+                errorModel = genericError(error: nestedError)
+            }
+            log.error("Chat Error: \(error.localizedDescription)")
         } else if let urlError = error as? URLError {
             switch urlError.code {
             case .cancelled:
@@ -399,5 +423,17 @@ class ChatViewModel: ObservableObject {
 
         currentChat.chatConfiguration = currentChatConfiguration
         CoreDataStack.shared.saveContext()
+    }
+
+    private func resolvedThinkSupport(for model: String) async -> OllamaThinkSupport {
+        guard !model.isEmpty else { return .unknown }
+        guard APIManager.shared.configuration.isValid else { return .unknown }
+
+        do {
+            return try await UnifiedModelRegistry.shared.fetchThinkSupport(for: model)
+        } catch {
+            log.warning("Failed to fetch think capability for \(model): \(error)")
+            return UnifiedModelRegistry.shared.cachedThinkSupport(for: model)
+        }
     }
 }

@@ -23,6 +23,7 @@ enum ChatCompletionError: Error, LocalizedError {
     case authenticationError
     case rateLimitError
     case modelNotAvailable(String)
+    case serverError(statusCode: Int, message: String?)
     case unknownError(Error)
 
     var errorDescription: String? {
@@ -37,6 +38,12 @@ enum ChatCompletionError: Error, LocalizedError {
             return "Rate limit exceeded. Please try again later."
         case .modelNotAvailable(let model):
             return "Model '\(model)' is not available."
+        case .serverError(let statusCode, let message):
+            if let message, !message.isEmpty {
+                return "Ollama returned HTTP \(statusCode): \(message)"
+            }
+
+            return "Ollama returned HTTP \(statusCode)."
         case .unknownError(let error):
             return "Unknown error: \(error.localizedDescription)"
         }
