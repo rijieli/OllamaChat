@@ -453,6 +453,7 @@
 
     },
     "Read" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -539,6 +540,7 @@
       }
     },
     "Speech Settings" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -644,6 +646,7 @@
       }
     },
     "Voice Gender:" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
